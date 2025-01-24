@@ -118,4 +118,8 @@ public class RobotMap {
 
   //[V]ision
   public static boolean V_ENABLED = true;
+
+  //[W]oS
+  public static boolean W_ENABLED = true;
+  public static int W_MOTOR = RoboRioMap.CAN_10;
 }

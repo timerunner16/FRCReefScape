@@ -24,6 +24,18 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class WoSConstants {
+  //WoS constants
+  public static final boolean kEnableWheelPIDTuning = true;
+  public static final double kWoSP = 0;
+  public static final double kWoSI = 0;
+  public static final double kWoSD = 0;
+
+  public static final double kWoSSpeed = 1;
+  public static final double kWoSSpeedRPM = 3000;
+  }
+
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
