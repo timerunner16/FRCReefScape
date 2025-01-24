@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.WoS;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
 
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // Handle to Operator Inputs
   private OI m_oi;
+  private final WoS m_WoS = new WoS();
 
   // The robot's subsystems are defined here.
   private final Drive m_robotDrive;
