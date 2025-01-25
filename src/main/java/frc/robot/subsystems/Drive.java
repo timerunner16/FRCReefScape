@@ -165,7 +165,7 @@ public class Drive extends SubsystemBase {
     Pose2d lastPose = getPose();
     if (m_driveTime != 0 && m_limitSpeeds != null) {
       ChassisSpeeds fieldRelativSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_limitSpeeds, lastPose.getRotation());
-      double deltax = fieldRelativSpeeds.vyMetersPerSecond * (now - m_driveTime);
+      double deltax = fieldRelativSpeeds.vxMetersPerSecond * (now - m_driveTime);
       double deltay = fieldRelativSpeeds.vyMetersPerSecond * (now - m_driveTime);
       Rotation2d rot = new Rotation2d(fieldRelativSpeeds.omegaRadiansPerSecond * (now - m_driveTime));
       Translation2d translation = new Translation2d(deltax, deltay);
