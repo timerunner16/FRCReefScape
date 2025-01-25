@@ -97,20 +97,20 @@ public class RobotMap {
     }
   }
   // [R]obot geometry
-  public static double R_TRACK_WIDTH_INCHES = 22.5;
-  public static double R_WHEEL_BASE_INCHES  = 22.5;
-  public static double R_BASE_RADIUS_INCHES = 11.25 * Math.sqrt(2);
+  public static double R_TRACK_WIDTH_INCHES = 28.5;
+  public static double R_WHEEL_BASE_INCHES  = 28.5;
+  public static double R_BASE_RADIUS_INCHES = 14.25 * Math.sqrt(2);
   
   //[D]rive
-  public static int D_FRONT_LEFT_DRIVE = RoboRioMap.CAN_18;
-  public static int D_BACK_LEFT_DRIVE = RoboRioMap.CAN_5;
-  public static int D_FRONT_RIGHT_DRIVE = RoboRioMap.CAN_3;
-  public static int D_BACK_RIGHT_DRIVE = RoboRioMap.CAN_7;
+  public static int D_FRONT_LEFT_DRIVE = RoboRioMap.CAN_2;
+  public static int D_BACK_LEFT_DRIVE = RoboRioMap.CAN_4;
+  public static int D_FRONT_RIGHT_DRIVE = RoboRioMap.CAN_8;
+  public static int D_BACK_RIGHT_DRIVE = RoboRioMap.CAN_6;
 
-  public static int D_FRONT_LEFT_TURNING = RoboRioMap.CAN_2;
-  public static int D_BACK_LEFT_TURNING = RoboRioMap.CAN_6;
-  public static int D_FRONT_RIGHT_TURNING = RoboRioMap.CAN_4;
-  public static int D_BACK_RIGHT_TURNING = RoboRioMap.CAN_8;
+  public static int D_FRONT_LEFT_TURNING = RoboRioMap.CAN_3;
+  public static int D_BACK_LEFT_TURNING = RoboRioMap.CAN_5;
+  public static int D_FRONT_RIGHT_TURNING = RoboRioMap.CAN_9;
+  public static int D_BACK_RIGHT_TURNING = RoboRioMap.CAN_7;
 
   //[U]ser Input
 	public static int U_DRIVER_XBOX_CONTROLLER = 0;

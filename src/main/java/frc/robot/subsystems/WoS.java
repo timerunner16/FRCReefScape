@@ -37,24 +37,27 @@ public class WoS extends SubsystemBase {
   TDNumber m_WoSCurrentOutput;
 
   /** Creates a new ExampleSubsystem. */
-  public WoS()  {
+  private WoS() {
     super("WoS");
 
     if (RobotMap.W_ENABLED) {
       m_WoSSparkMax = new SparkMax(RobotMap.W_MOTOR, MotorType.kBrushless);
 
       SparkMaxConfig WoSSparkMaxConfig = new SparkMaxConfig();
-      
+
       m_TDwheelP = new TDNumber(this, "WheelPID", "P", Constants.WoSConstants.kWoSP);
       m_TDwheelI = new TDNumber(this, "Wheel PID", "I", Constants.WoSConstants.kWoSI);
       m_TDwheelD = new TDNumber(this, "Wheel PID", "D", Constants.WoSConstants.kWoSD);
 
-      WoSSparkMaxConfig.closedLoop.pid(Constants.WoSConstants.kWoSP, Constants.WoSConstants.kWoSI, Constants.WoSConstants.kWoSD);
+      WoSSparkMaxConfig.closedLoop.pid(Constants.WoSConstants.kWoSP, Constants.WoSConstants.kWoSI,
+          Constants.WoSConstants.kWoSD);
       m_WoSSparkMax.configure(WoSSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+      m_WoSCurrentOutput = new TDNumber(this, "WoS", "Motor Current");
     }
   }
 
-  public static WoS getInstance(){
+  public static WoS getInstance() {
     if (m_WoS == null) {
       m_WoS = new WoS();
     }
@@ -64,22 +67,21 @@ public class WoS extends SubsystemBase {
   public void setSpeeds(double RPM, boolean backwards) {
     if (!backwards) {
       m_WoSSparkMax.getClosedLoopController().setReference(RPM, ControlType.kVelocity);
-    }
-    else {
+    } else {
       m_WoSSparkMax.getClosedLoopController().setReference(-RPM, ControlType.kVelocity);
     }
   }
 
-  public void spinIn(double speed){
+  public void spinIn(double speed) {
     if (m_WoSSparkMax != null) {
       m_WoSSparkMax.set(speed);
     }
   }
 
-  public void spinOut(double speed){
+  public void spinOut(double speed) {
     if (m_WoSSparkMax != null) {
       m_WoSSparkMax.set(-speed);
-    }      
+    }
   }
 
   public void noSpin(double speed) {
@@ -90,25 +92,25 @@ public class WoS extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Constants.WoSConstants.kEnableWheelPIDTuning && 
+    if (Constants.WoSConstants.kEnableWheelPIDTuning &&
         m_WoSSparkMax != null) {
-          SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
-          double tmp = m_TDwheelP.get();
-          if (tmp != m_wheelP) {
-            m_wheelP = tmp;
-          }
-          sparkMaxConfig.closedLoop.p(m_wheelP);
-          tmp = m_TDwheelI.get();
-          if (tmp != m_wheelI) {
-            m_wheelI = tmp;
-          }
-          sparkMaxConfig.closedLoop.i(m_wheelI);
-          tmp = m_TDwheelD.get();
-          if (tmp != m_wheelD) {
-            m_wheelD = tmp;
-          }
-          sparkMaxConfig.closedLoop.d(m_wheelD);
-          m_WoSSparkMax.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+      double tmp = m_TDwheelP.get();
+      if (tmp != m_wheelP) {
+        m_wheelP = tmp;
+      }
+      sparkMaxConfig.closedLoop.p(m_wheelP);
+      tmp = m_TDwheelI.get();
+      if (tmp != m_wheelI) {
+        m_wheelI = tmp;
+      }
+      sparkMaxConfig.closedLoop.i(m_wheelI);
+      tmp = m_TDwheelD.get();
+      if (tmp != m_wheelD) {
+        m_wheelD = tmp;
+      }
+      sparkMaxConfig.closedLoop.d(m_wheelD);
+      m_WoSSparkMax.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
     if (RobotMap.W_ENABLED) {
       m_WoSCurrentOutput.set(m_WoSSparkMax.getEncoder().getVelocity());

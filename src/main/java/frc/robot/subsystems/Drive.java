@@ -130,7 +130,10 @@ public class Drive extends SubsystemBase {
     m_DLeftBackCurrentOutput = new TDNumber(this, "Current", "Drive Back Left Output");
     m_DRightBackCurrentOutput = new TDNumber(this, "Current", "Drive Back Right Output");
     
-  }
+    m_TLeftFrontCurrentOutput = new TDNumber(this, "Current", "Steering Front Left Output");
+    m_TRightFrontCurrentOutput = new TDNumber(this, "Current", "Steering Front Right Output");
+    m_TLeftBackCurrentOutput = new TDNumber(this, "Current", "Steering Back Left Output");
+    m_TRightBackCurrentOutput = new TDNumber(this, "Current", "Steering Back Right Output");  }
 
   public static Drive getInstance() {
     if(m_Drive == null){
@@ -384,6 +387,8 @@ public class Drive extends SubsystemBase {
   }
 
   public ChassisSpeeds limitRates(ChassisSpeeds commandedSpeeds) {
+    return commandedSpeeds;
+    /*
     //Apply Speed Limits
     double linearSpeed = Math.hypot(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
     Rotation2d direction = new Rotation2d(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
@@ -415,6 +420,6 @@ public class Drive extends SubsystemBase {
    m_lastSpeeds = limitedSpeeds;
    m_prevTime = currentTime;
    return limitedSpeeds;
-   
+   */
   }
 }
