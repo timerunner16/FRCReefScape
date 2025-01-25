@@ -46,67 +46,53 @@ public class MAXSwerveModule {
     m_drivingSparkMax = new SparkMax(drivingCANId, MotorType.kBrushless);
     m_turningSparkMax = new SparkMax(turningCANId, MotorType.kBrushless);
 
-    // Factory reset, so we get the SPARKS MAX to a known state before configuring
-    // them. This is useful in case a SPARK MAX is swapped out.
-    // Setup encoders and PID controllers for the driving and turning SPARKS MAX.
-    m_drivingEncoder = m_drivingSparkMax.getEncoder();
+    /* Configure the PID, FFF and other properties of the turning motors. Most of these come from 
+     * Cnstants.
+    */
+    SparkMaxConfig m_turningConfig = new SparkMaxConfig();
+    m_turningConfig.inverted(Constants.kTurningEncoderInverted);
+    m_turningConfig.idleMode(Constants.kTurningMotorIdleMode);
+    m_turningConfig.smartCurrentLimit(Constants.kTurningMotorCurrentLimit);
+    m_turningConfig.absoluteEncoder.positionConversionFactor(Constants.kTurningEncoderPositionFactor);
+    m_turningConfig.absoluteEncoder.velocityConversionFactor(Constants.kTurningEncoderVelocityFactor);
+    m_turningConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    m_turningConfig.closedLoop.p(Constants.kTurningP);
+    m_turningConfig.closedLoop.i(Constants.kTurningI);
+    m_turningConfig.closedLoop.d(Constants.kTurningD);
+    m_turningConfig.closedLoop.velocityFF(Constants.kTurningFF);
+    m_turningConfig.closedLoop.positionWrappingEnabled(true);
+    m_turningConfig.closedLoop.positionWrappingMinInput(Constants.kTurningEncoderPositionPIDMinInput);
+    m_turningConfig.closedLoop.positionWrappingMinInput(Constants.kTurningEncoderPositionPIDMaxInput);
+    m_turningConfig.closedLoop.outputRange(Constants.kTurningMinOutput, Constants.kTurningMaxOutput);
+   
+    m_turningSparkMax.configure(m_turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_turningEncoder = m_turningSparkMax.getAbsoluteEncoder();
-    m_drivingPIDController = m_drivingSparkMax.getClosedLoopController();
     m_turningPIDController = m_turningSparkMax.getClosedLoopController();
-    SparkMaxConfig drivingConfig = new SparkMaxConfig();
-    SparkMaxConfig turningConfig = new SparkMaxConfig();
 
-    drivingConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-    turningConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-
-    // Apply position and velocity conversion factors for the driving encoder. The
-    // native units for position and velocity are rotations and RPM, respectively,
-    // but we want meters and meters per second to use with WPILib's swerve APIs.
-
-    drivingConfig.encoder.positionConversionFactor(Constants.kDrivingEncoderPositionFactor);
-    drivingConfig.encoder.velocityConversionFactor(Constants.kDrivingEncoderVelocityFactor);
-    // Apply position and velocity conversion factors for the turning encoder. We
-    // want these in radians and radians per second to use with WPILib's swerve
-    // APIs.
-    turningConfig.absoluteEncoder.positionConversionFactor(Constants.kTurningEncoderPositionFactor);
-    turningConfig.absoluteEncoder.velocityConversionFactor(Constants.kTurningEncoderVelocityFactor);
-    // Invert the turning encoder, since the output shaft rotates in the opposite direction of
-    // the steering motor in the MAXSwerve Module.
-    turningConfig.absoluteEncoder.inverted(Constants.kTurningEncoderInverted);
-
-    // Enable PID wrap around for the turning motor. This will allow the PID
-    // controller to go through 0 to get to the setpoint i.e. going from 350 degrees
-    // to 10 degrees will go through 0 rather than the other direction which is a
-    // longer route.
-    turningConfig.closedLoop.positionWrappingEnabled(true);
-    turningConfig.closedLoop.positionWrappingInputRange(Constants.kTurningEncoderPositionPIDMinInput, Constants.kTurningEncoderPositionPIDMaxInput);
-
-    // Set the PID gains for the driving motor. Note these are example gains, and you
-    // may need to tune them for your own robot!
-    drivingConfig.closedLoop.pidf(Constants.kDrivingP, Constants.kDrivingI, Constants.kDrivingD, Constants.kDrivingFF);
-    drivingConfig.closedLoop.outputRange(Constants.kDrivingMinOutput,
-        Constants.kDrivingMaxOutput);
-
-    // Set the PID gains for the turning motor. Note these are example gains, and you
-    // may need to tune them for your own robot!
-    turningConfig.closedLoop.pidf(Constants.kTurningP,Constants.kTurningI, Constants.kTurningD, Constants.kTurningFF);
-    turningConfig.closedLoop.outputRange(Constants.kTurningMinOutput,
-        Constants.kTurningMaxOutput);
-
-    drivingConfig.idleMode(Constants.kDrivingMotorIdleMode);
-    turningConfig.idleMode(Constants.kTurningMotorIdleMode);
-    drivingConfig.smartCurrentLimit(Constants.kDrivingMotorCurrentLimit);
-    turningConfig.smartCurrentLimit(Constants.kTurningMotorCurrentLimit);
-
+    /* Configure the PID, FFF and other properties of the driving motors. Most of these come from 
+     * Cnstants.
+    */
+    SparkMaxConfig m_drivingConfig = new SparkMaxConfig();
+    m_drivingConfig.idleMode(Constants.kDrivingMotorIdleMode);
+    m_drivingConfig.smartCurrentLimit(Constants.kDrivingMotorCurrentLimit);
+    m_drivingConfig.encoder.positionConversionFactor(Constants.kDrivingEncoderPositionFactor);
+    m_drivingConfig.encoder.velocityConversionFactor(Constants.kDrivingEncoderVelocityFactor);
+    m_drivingConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    m_drivingConfig.closedLoop.p(Constants.kDrivingP);
+    m_drivingConfig.closedLoop.i(Constants.kDrivingI);
+    m_drivingConfig.closedLoop.d(Constants.kDrivingD);
+    m_drivingConfig.closedLoop.velocityFF(Constants.kDrivingFF);
+    m_drivingConfig.closedLoop.outputRange(Constants.kDrivingMinOutput, Constants.kDrivingMaxOutput);
+   
+    m_drivingSparkMax.configure(m_drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_drivingEncoder = m_drivingSparkMax.getEncoder();
+    m_drivingPIDController = m_drivingSparkMax.getClosedLoopController();
+   
     m_chassisAngularOffset = chassisAngularOffset;
     m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
     m_drivingEncoder.setPosition(0);
-
-    m_drivingSparkMax.configure(drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_turningSparkMax.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
   }
-
+  
   /**
    * Returns the current state of the module.
    *

@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // Handle to Operator Inputs
   private OI m_oi;
-  private final WoS m_WoS = new WoS();
 
   // The robot's subsystems are defined here.
   private final Drive m_robotDrive;
@@ -49,6 +48,7 @@ public class RobotContainer {
     // Instantiate parameterized commands to register them with the testing dashboard.
     // The first instance of a Command registers itself. No need to store the resulting
     // objects.
+    WoS.getInstance();
     registerCommands();
 
     // Robot subsystems initialized and configured here
