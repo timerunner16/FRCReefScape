@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // Handle to Operator Inputs
   private OI m_oi;
+  private Vision m_Vision;
 
   // The robot's subsystems are defined here.
   private final Drive m_robotDrive;
@@ -44,6 +46,8 @@ public class RobotContainer {
     m_pdBoard.setSwitchableChannel(true);
 
     m_oi = OI.getInstance();
+    
+    m_Vision = Vision.getInstance();
 
     // Instantiate parameterized commands to register them with the testing dashboard.
     // The first instance of a Command registers itself. No need to store the resulting
