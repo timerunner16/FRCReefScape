@@ -29,6 +29,7 @@ public class WoS extends SubsystemBase {
   double m_wheelD = Constants.WoSConstants.kWoSD;
 
   SparkMax m_WoSSparkMax;
+  SparkMaxConfig m_SparkMaxConfig;
 
   TDNumber m_WoSCurrentOutput;
 
@@ -38,6 +39,7 @@ public class WoS extends SubsystemBase {
 
     if (RobotMap.W_ENABLED) {
       m_WoSSparkMax = new SparkMax(RobotMap.W_MOTOR, MotorType.kBrushless);
+      m_SparkMaxConfig = new SparkMaxConfig();
 
       SparkMaxConfig WoSSparkMaxConfig = new SparkMaxConfig();
 
@@ -90,23 +92,28 @@ public class WoS extends SubsystemBase {
   public void periodic() {
     if (Constants.WoSConstants.kEnableWheelPIDTuning &&
         m_WoSSparkMax != null) {
-      SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
       double tmp = m_TDwheelP.get();
+      boolean changed = false;
       if (tmp != m_wheelP) {
         m_wheelP = tmp;
+        m_SparkMaxConfig.closedLoop.p(m_wheelP);
+        changed = true;
       }
-      sparkMaxConfig.closedLoop.p(m_wheelP);
       tmp = m_TDwheelI.get();
       if (tmp != m_wheelI) {
         m_wheelI = tmp;
+        changed = true;
+        m_SparkMaxConfig.closedLoop.i(m_wheelI);
       }
-      sparkMaxConfig.closedLoop.i(m_wheelI);
       tmp = m_TDwheelD.get();
       if (tmp != m_wheelD) {
         m_wheelD = tmp;
+        changed = true;
+        m_SparkMaxConfig.closedLoop.d(m_wheelD);
       }
-      sparkMaxConfig.closedLoop.d(m_wheelD);
-      m_WoSSparkMax.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      if(changed) {
+        m_WoSSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      }
     }
     if (RobotMap.W_ENABLED) {
       m_WoSCurrentOutput.set(m_WoSSparkMax.getEncoder().getVelocity());
