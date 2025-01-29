@@ -6,16 +6,32 @@ package frc.robot;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.List;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /** Add your docs here. */
 public class RobotMap {
+  /*
+  JSON RobotMap config format:
+  [
+    {
+      "VarName": "NAME_OF_VARIABLE",
+      "Value": NEW_VALUE_OF_CORRESPONDING_TYPE
+    }
+  ]
+  */
 
+  class RobotMapConfigValue {
+    String varName = null;
+    Object value = null;
+    RobotMapConfigValue(String varName, Object value) {
+      this.varName = varName;
+      this.value = value;
+    }
+  }
+  
   public static void init()
   {
     try {
@@ -29,62 +45,13 @@ public class RobotMap {
       File f = new File(home + "/1100_Config");
       if (f.exists())
       {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(f);  
-        Node root = doc.getFirstChild(); 
-        NodeList nodes = root.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); ++i)
-        {
-          String varName = "";
-          String varValue = "";
-          String varType = "";
-          Node n = nodes.item(i);
-          if (n.getNodeName() == "RobotMap")
-          {
-            NamedNodeMap nnm = n.getAttributes();
-            for (int j = 0; j < nnm.getLength(); ++j)
-            {
-              Node config = nnm.item(j);
-              if (config.getNodeType() != Node.ATTRIBUTE_NODE)
-              {
-                continue;
-              }
-              String attrName = config.getNodeName();
-              String attrVal = config.getNodeValue();
-              if (attrName.equals("VarName"))
-              {
-                varName = attrVal;
-              }
-              else if (attrName.equals("Value"))
-              {
-                varValue = attrVal;
-              }
-              else if (attrName.equals("Type"))
-              {
-                varType = attrVal;
-              }
-            }
-          }
-          if (!varName.isEmpty() && !varValue.isEmpty() && !varType.isEmpty())
-          {
-            Field field = RobotMap.class.getField(varName);
-            if (varType.equals("double"))
-            {
-              System.out.println("Configuring " + varName + " to (double)" + varValue);
-              field.setDouble(null, Double.parseDouble(varValue));
-            }
-            else if (varType.equals("int"))
-            {
-              System.out.println("Configuring " + varName + " to (int)" + varValue);
-              field.setInt(null, Integer.parseInt(varValue));
-            }
-            else if (varType.equals("boolean"))
-            {
-              System.out.println("Configuring " + varName + " to (boolean)" + varValue);
-              field.setBoolean(null, Boolean.parseBoolean(varValue));             
-            }
-          }
+        ObjectMapper mapper = new ObjectMapper();
+        List<RobotMapConfigValue> changedValues = mapper.readValue(f, new TypeReference<List<RobotMapConfigValue>>(){});
+
+        for (int i=0; i < changedValues.size(); i++) {
+          RobotMapConfigValue value = changedValues.get(i);
+          Field field = RobotMap.class.getField(value.varName);
+          field.set(null, value.value);
         }
       }  
       else
