@@ -47,6 +47,18 @@ public final class Constants {
   public static final double kWoSSpeedRPM = 3000;
   }
 
+  public static final class ElevatorConstants {
+    //Elevator Constants
+    public static final boolean kEnableElevatorPIDTuning = true;
+    public static final double kElevatorP = 0;
+    public static final double kElevatorI = 0;
+    public static final double kElevatorD = 0;
+
+    public static final double kElevatorSpeed = 1;
+    public static final double kElevatorSpeedRPM = 3000;
+  }
+
+
 
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
