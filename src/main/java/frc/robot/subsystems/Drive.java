@@ -17,18 +17,20 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.math.Matrix;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.*;
 import frc.robot.utils.SwerveUtils;
 import frc.robot.utils.FieldUtils;
-
 
 public class Drive extends SubsystemBase {
   private static Drive m_Drive;
@@ -202,6 +204,18 @@ public class Drive extends SubsystemBase {
       return m_limitSpeeds;
     }
   }
+
+  /**
+   * Updates pose estimator with estimate from the Vision subsystem.
+   * 
+   * @param pose Current pose of the robot.
+   * @param timestamp When the vision measurement was taken.
+   * @param stdDevs Confidence.
+   */
+  public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3, N1> stdDevs) {
+    m_DrivePoseEstimator.addVisionMeasurement(pose, timestamp, stdDevs);
+  }
+
   /*
    * Resets the odometry to the specified pose
    * 
