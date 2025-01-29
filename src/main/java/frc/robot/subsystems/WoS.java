@@ -108,7 +108,7 @@ public class WoS extends SubsystemBase {
       sparkMaxConfig.closedLoop.d(m_wheelD);
       m_WoSSparkMax.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
-    if (RobotMap.W_ENABLED) {
+    if (RobotMap.E_ENABLED) {
       m_WoSCurrentOutput.set(m_WoSSparkMax.getEncoder().getVelocity());
     }
 
