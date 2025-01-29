@@ -14,30 +14,37 @@ public class Expel extends Command {
   WoS m_WoS;
 
   TDNumber m_RPM;
+  TDNumber m_enablePID;
 
   TDNumber m_WoSSpeed;
 
   /** Creates a new Expel. */
   public Expel() {
-    super(WoS.getInstance(), "Intake", "Expel");
+    super(WoS.getInstance(), "WoS", "Expel");
     m_WoS = WoS.getInstance();
 
-    m_RPM = new TDNumber(m_WoS, "Intake Speed (RPM)", "RPM", Constants.WoSConstants.kWoSSpeedRPM);
-
-    m_WoSSpeed = new TDNumber(m_WoS, "Intake Speed (Power)", "Speed", Constants.WoSConstants.kWoSSpeed);
+    m_RPM = new TDNumber(m_WoS, "WoS Speed (RPM)", "RPM", Constants.WoSConstants.kWoSSpeedRPM);
+    m_enablePID = new TDNumber(m_WoS, "WoS Speed (RPM)", "Enable PID w 1");
+    
+    m_WoSSpeed = new TDNumber(m_WoS, "WoS Speed (Power)", "Speed", Constants.WoSConstants.kWoSSpeed);
 
     addRequirements(m_WoS);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_WoS.spinOut(m_WoSSpeed.get());
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (m_enablePID.get() == 1) {
+      m_WoS.setSpeeds(m_RPM.get(), true);
+    }
+    else {
+      m_WoS.spinOut(m_WoSSpeed.get());
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

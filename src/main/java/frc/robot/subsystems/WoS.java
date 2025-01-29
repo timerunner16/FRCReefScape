@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDNumber;
 
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -15,9 +14,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 
@@ -45,7 +41,7 @@ public class WoS extends SubsystemBase {
 
       SparkMaxConfig WoSSparkMaxConfig = new SparkMaxConfig();
 
-      m_TDwheelP = new TDNumber(this, "WheelPID", "P", Constants.WoSConstants.kWoSP);
+      m_TDwheelP = new TDNumber(this, "Wheel PID", "P", Constants.WoSConstants.kWoSP);
       m_TDwheelI = new TDNumber(this, "Wheel PID", "I", Constants.WoSConstants.kWoSI);
       m_TDwheelD = new TDNumber(this, "Wheel PID", "D", Constants.WoSConstants.kWoSD);
 

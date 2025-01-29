@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
+import frc.robot.subsystems.Elevator;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
 
@@ -50,6 +51,10 @@ public class RobotContainer {
     // objects.
     WoS.getInstance();
     registerCommands();
+
+    Elevator.getInstance();
+    registerCommands();
+
 
     // Robot subsystems initialized and configured here
     m_robotDrive = Drive.getInstance();
