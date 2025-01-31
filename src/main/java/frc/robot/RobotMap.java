@@ -11,9 +11,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/** Add your docs here. */
-public class RobotMap {
-  /*
+/*
   JSON RobotMap config format:
   [
     {
@@ -21,17 +19,24 @@ public class RobotMap {
       "Value": NEW_VALUE_OF_CORRESPONDING_TYPE
     }
   ]
-  */
+*/
 
-  class RobotMapConfigValue {
-    String varName = null;
-    Object value = null;
-    RobotMapConfigValue(String varName, Object value) {
+class RobotMapConfigValue {
+  String varName = null;
+  Object value = null;
+
+  public void setVarName(String varName) {
       this.varName = varName;
-      this.value = value;
-    }
   }
-  
+
+  public void setValue(Object value) {
+      this.value = value;
+  }
+}
+
+/** Add your docs here. */
+public class RobotMap {
+
   public static void init()
   {
     try {
@@ -50,8 +55,14 @@ public class RobotMap {
 
         for (int i=0; i < changedValues.size(); i++) {
           RobotMapConfigValue value = changedValues.get(i);
-          Field field = RobotMap.class.getField(value.varName);
-          field.set(null, value.value);
+          try {
+            Field field = RobotMap.class.getField(value.varName);
+            field.set(null, value.value);
+            System.out.println("Configuring " + value.varName + " to " + value.value);
+          }
+          catch (java.lang.NoSuchFieldException x) {
+            System.out.println("No RobotMap field named " + value.varName);
+          }
         }
       }  
       else
