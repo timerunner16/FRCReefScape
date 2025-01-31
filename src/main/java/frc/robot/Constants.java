@@ -154,7 +154,7 @@ public final class Constants {
                                 new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180))),
                          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                          PoseStrategy.LOWEST_AMBIGUITY),
-        new VisionConfig("Forward_Facing_Arducam_OV9281",
+        new VisionConfig("Arducam_OV2311_USB_Camera",
                          new Transform3d(new Translation3d(Units.inchesToMeters(15.5), Units.inchesToMeters(0.5), Units.inchesToMeters(21.5)), 
                 new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(0))),
                          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
