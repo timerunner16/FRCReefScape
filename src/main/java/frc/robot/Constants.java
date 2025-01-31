@@ -36,6 +36,35 @@ import frc.robot.utils.vision.VisionConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class AlgaeIntakeConstants {
+    //AlgaeIntake constants
+    public static final boolean kEnableAnglePIDTuning = true;
+    public static final double kAngleP = 0;
+    public static final double kAngleI = 0;
+    public static final double kAngleD = 0;
+
+    public static final double kAngleSpeed = 1;
+    public static final double kAngleSpeedRPM = 3000;
+
+    public static final double kAngleLowerLimitDegrees = 0;
+    public static final double kAngleUpperLimitDegrees = 0;
+
+    public static final double kAngleScorePositionDegrees = 0;
+    public static final double kAngleIntakePositionDegrees = 0;
+
+    public static final double kAngleEncoderPositionFactor = (2 * Math.PI);
+
+    public static final boolean kEnableRollerPIDTuning = true;
+    public static final double kRollerP = 0;
+    public static final double kRollerI = 0;
+    public static final double kRollerD = 0;
+
+    public static final double kRollerSpeed = 1;
+    public static final double kRollerSpeedRPM = 3000;
+
+    public static final double DEGREES_PER_REVOLUTION = 360;
+  }
+
   public static final class WoSConstants {
   //WoS constants
   public static final boolean kEnableWheelPIDTuning = true;
