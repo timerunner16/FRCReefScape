@@ -39,7 +39,7 @@ public class VisionSystem {
     }
 
     public PhotonPipelineResult getLatestResult() {
-        if(m_camera != null){
+        if(m_camera != null && !m_camera.getAllUnreadResults().isEmpty()){
             return m_camera.getAllUnreadResults().get(0);
         } else {
             return new PhotonPipelineResult();
