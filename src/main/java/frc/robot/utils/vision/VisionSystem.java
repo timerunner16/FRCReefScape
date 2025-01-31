@@ -4,6 +4,7 @@
 
 package frc.robot.utils.vision;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -39,11 +40,14 @@ public class VisionSystem {
     }
 
     public PhotonPipelineResult getLatestResult() {
-        if(m_camera != null && !m_camera.getAllUnreadResults().isEmpty()){
-            return m_camera.getAllUnreadResults().get(0);
-        } else {
-            return new PhotonPipelineResult();
+        if(m_camera != null){
+            List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
+            if (!results.isEmpty())
+            {
+                return results.get(0);
+            }
         }
+        return new PhotonPipelineResult();
     }
 
     public Optional<VisionEstimationResult> getEstimatedPose() {
