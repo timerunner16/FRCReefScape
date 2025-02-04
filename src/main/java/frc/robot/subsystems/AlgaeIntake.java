@@ -62,7 +62,7 @@ public class AlgaeIntake extends SubsystemBase {
   private AlgaeIntake() {
     super("AlgaeIntake");
 
-    if (RobotMap.W_ENABLED) {
+    if (RobotMap.A_ENABLED) {
       // setup pivot on algae intake mechanism
       m_angleSparkMax = new SparkMax(RobotMap.A_ANGLEMOTOR, MotorType.kBrushless);
       m_angleSparkMaxConfig = new SparkMaxConfig();
