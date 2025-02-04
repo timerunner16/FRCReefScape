@@ -24,6 +24,8 @@ import frc.robot.subsystems.WoS;
 import frc.robot.commands.WoS.*;
 import frc.robot.commands.elevator.Jesus;
 import frc.robot.commands.elevator.Lucifer;
+import frc.robot.commands.funnel.Explode;
+import frc.robot.commands.funnel.Implode;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
 import frc.robot.testingdashboard.TDNumber;
@@ -84,6 +86,9 @@ public class OI {
     //Operator Cookie Monster Special Abilities(MEGA OP)
     new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Jesus());
     new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new Lucifer());
+    new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new Implode());
+    new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Explode());
+   
     new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new Consume());
     new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
     new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new Nibble());

@@ -8,6 +8,7 @@ import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Funnel;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
 
@@ -59,7 +60,8 @@ public class RobotContainer {
     Elevator.getInstance();
     registerCommands();
 
-
+    Funnel.getInstance();
+    registerCommands();
     // Robot subsystems initialized and configured here
     m_robotDrive = Drive.getInstance();
     m_robotDrive.setDefaultCommand(new SwerveDrive(m_oi.getDriveInputs()));

@@ -95,6 +95,11 @@ public class RobotMap {
   public static int E_LEFTMOTOR = RoboRioMap.CAN_11;
   public static int E_RIGHTMOTOR = RoboRioMap.CAN_12;
 
+  //[F]unnel
+  public static boolean F_ENABLED = true;
+  public static int F_LEFTMOTOR = RoboRioMap.CAN_13;
+  public static int F_RIGHTMOTOR = RoboRioMap.CAN_14;
+  
   //[U]ser Input
 	public static int U_DRIVER_XBOX_CONTROLLER = 0;
 	public static int U_OPERATOR_XBOX_CONTROLLER = 1;

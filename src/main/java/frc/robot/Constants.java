@@ -87,6 +87,15 @@ public final class Constants {
     public static final double kElevatorSpeedRPM = 3000;
   }
 
+  public static final class FunnelConstants {
+    public static final boolean kEnableFunnelPIDTuning = true;
+    public static final double kFunnelP = 0;
+    public static final double kFunnelI = 0;
+    public static final double kFunnelD = 0;
+
+    public static final double kFunnelSpeed = 1;
+    public static final double kFunnelSpeedRPM = 3000;
+  }
 
 
   public static final class DriveConstants {
