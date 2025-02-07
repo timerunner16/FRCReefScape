@@ -14,6 +14,9 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 
@@ -120,5 +123,21 @@ public class WoS extends SubsystemBase {
     }
 
     super.periodic();
+  }
+
+  public void setRollerVoltage(Voltage volts) {
+    m_WoSSparkMax.setVoltage(volts.in(BaseUnits.VoltageUnit));
+  }
+
+  public double getRollerVoltage() {
+    return m_WoSSparkMax.get() * RobotController.getBatteryVoltage();
+  }
+
+  public double getRollerPosition() {
+    return m_WoSSparkMax.getEncoder().getPosition();
+  }
+
+  public double getRollerVelocity() {
+    return m_WoSSparkMax.getEncoder().getVelocity();
   }
 }
