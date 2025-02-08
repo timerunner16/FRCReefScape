@@ -21,13 +21,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
-import frc.robot.commands.WoS.*;
+import frc.robot.commands.drive.TargetDrive;
 import frc.robot.commands.elevator.Jesus;
 import frc.robot.commands.elevator.Lucifer;
 import frc.robot.commands.funnel.Explode;
 import frc.robot.commands.funnel.Implode;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
+import frc.robot.commands.WoS.*;
 import frc.robot.testingdashboard.TDNumber;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.SwerveDriveInputs;
@@ -82,7 +83,10 @@ public class OI {
 
     // Driver Grease Man's Special Abilities(OP)
     new JoystickButton(m_DriverXboxController, Button.kBack.value).onTrue(new InstantCommand(()->Drive.getInstance().zeroHeading()));
-
+    new JoystickButton(m_DriverXboxController, Button.kA.value).whileTrue(
+      new TargetDrive(()->{return FieldUtils.getInstance().getTagPose(
+        FieldUtils.getInstance().getAllianceAprilTags().middleFrontReef).toPose2d();}, m_driveInputs));
+        
     //Operator Cookie Monster Special Abilities(MEGA OP)
     new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Jesus());
     new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new Lucifer());

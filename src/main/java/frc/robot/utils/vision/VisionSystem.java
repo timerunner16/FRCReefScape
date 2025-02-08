@@ -32,7 +32,6 @@ public class VisionSystem {
     public VisionSystem(VisionConfig config) {
         m_camera = new PhotonCamera(config.cameraName);
         m_photonEstimator = new PhotonPoseEstimator(Constants.VisionConstants.kTagLayout, config.primaryStrategy, config.cameraPosition);
-        //m_photonEstimator = new PhotonPoseEstimator(Constants.kTagLayout, config.primaryStrategy, m_camera, config.cameraPosition);
         if((config.primaryStrategy == PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR) ||
             (config.primaryStrategy == PoseStrategy.MULTI_TAG_PNP_ON_RIO)) {
             m_photonEstimator.setMultiTagFallbackStrategy(config.fallBackStrategy);
