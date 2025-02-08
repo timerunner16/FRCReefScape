@@ -16,7 +16,8 @@ public class Nibble extends Command {
   AlgaeIntake m_algaeIntake;
 
   TDNumber m_RPM;
-  TDBoolean m_enablePID;
+  // TDBoolean m_enablePID;
+  boolean m_enablePID;
 
   TDNumber m_rollerSpeed;
 
@@ -26,7 +27,7 @@ public class Nibble extends Command {
     m_algaeIntake = AlgaeIntake.getInstance();
 
     m_RPM = new TDNumber(m_algaeIntake, "Roller Speed (RPM)", "RPM", Constants.AlgaeIntakeConstants.kRollerSpeedRPM);
-    m_enablePID = new TDBoolean(m_algaeIntake, "Roller Speed (RPM)", "Enable PID w 1");
+    m_enablePID = false; // new TDBoolean(m_algaeIntake, "Roller Speed (RPM)", "Enable PID w 1");
 
     m_rollerSpeed = new TDNumber(m_algaeIntake, "Roller Speed (Power)", "Speed", Constants.AlgaeIntakeConstants.kAngleSpeed);
 
@@ -40,8 +41,8 @@ public class Nibble extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_enablePID.get()) m_algaeIntake.setRollerSpeeds(m_RPM.get(), false);
-    else m_algaeIntake.spinRollerIn(m_rollerSpeed.get());
+    //if (m_enablePID.get()) m_algaeIntake.setRollerSpeeds(m_RPM.get(), false);
+    // else m_algaeIntake.spinRollerIn(m_rollerSpeed.get());
 
     if (m_algaeIntake.seesAlgae()) m_algaeIntake.setTargetAngle(Constants.AlgaeIntakeConstants.kAngleScorePositionDegrees);
     else m_algaeIntake.setTargetAngle(Constants.AlgaeIntakeConstants.kAngleIntakePositionDegrees);

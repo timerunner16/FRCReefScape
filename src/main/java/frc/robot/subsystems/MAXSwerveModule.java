@@ -50,7 +50,7 @@ public class MAXSwerveModule {
      * Cnstants.
     */
     SparkMaxConfig m_turningConfig = new SparkMaxConfig();
-    m_turningConfig.inverted(Constants.kTurningEncoderInverted);
+    m_turningConfig.absoluteEncoder.inverted(Constants.kTurningEncoderInverted);
     m_turningConfig.idleMode(Constants.kTurningMotorIdleMode);
     m_turningConfig.smartCurrentLimit(Constants.kTurningMotorCurrentLimit);
     m_turningConfig.absoluteEncoder.positionConversionFactor(Constants.kTurningEncoderPositionFactor);

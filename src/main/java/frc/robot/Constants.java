@@ -163,7 +163,10 @@ public final class Constants {
 
     public static final double kPXController = 1;
     public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPThetaController = 10;
+    public static final double kIThetaController = 0.1;
+    public static final double kDThetaController = 0.05;
+    public static final double kThetaTolerance = 0.1;//radians
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -188,13 +191,13 @@ public final class Constants {
     // TODO: These values are from Mania! Must be determined for new robot...
     public static final VisionConfig[] kVisionSystems = {
         new VisionConfig("Arducam_OV9281_USB_Camera",
-                         new Transform3d(new Translation3d(Units.inchesToMeters(11.5), Units.inchesToMeters(0.5), Units.inchesToMeters(20.5)), 
-                                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(180))),
+                         new Transform3d(new Translation3d(Units.inchesToMeters(15.5), Units.inchesToMeters(0.0), Units.inchesToMeters(21.5)), 
+                                new Rotation3d(0, Units.degreesToRadians(180), Units.degreesToRadians(0))),
                          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                          PoseStrategy.LOWEST_AMBIGUITY),
         new VisionConfig("Arducam_OV2311_USB_Camera",
-                         new Transform3d(new Translation3d(Units.inchesToMeters(15.5), Units.inchesToMeters(0.5), Units.inchesToMeters(21.5)), 
-                new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(0))),
+                         new Transform3d(new Translation3d(Units.inchesToMeters(15.75), Units.inchesToMeters(8.0), Units.inchesToMeters(8.0)), 
+                new Rotation3d(0, Units.degreesToRadians(180), Units.degreesToRadians(0))),
                          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                          PoseStrategy.LOWEST_AMBIGUITY)
     };
@@ -235,7 +238,7 @@ public final class Constants {
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
     / kDrivingMotorReduction; // meters per second
 
-    public static final double kDrivingP = 0.04;
+    public static final double kDrivingP = 0.02;
     public static final double kDrivingI = 0;
     public static final double kDrivingD = 0;
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;

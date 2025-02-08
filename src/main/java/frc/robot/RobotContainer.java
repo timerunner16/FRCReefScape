@@ -5,12 +5,15 @@
 package frc.robot;
 
 import frc.robot.commands.drive.SwerveDrive;
+import frc.robot.commands.drive.TestTargetDrive;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Funnel;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
+import frc.robot.commands.AlgaeIntake.Nibble;
+import frc.robot.commands.AlgaeIntake.Spit;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -82,6 +85,9 @@ public class RobotContainer {
 
     //TDNumber testX = new TDNumber(Drive.getInstance(), "Test Inputs", "TargetPoseX");
     //TDNumber testY = new TDNumber(Drive.getInstance(), "Test Inputs", "TargetPoseY");
+    new Spit();
+    new Nibble();
+    new TestTargetDrive();
   }
 
   /**

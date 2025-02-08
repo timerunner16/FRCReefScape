@@ -40,6 +40,12 @@ public class FieldUtils{
         }
         return tags;
     }
+
+    public Pose3d getTagPose(int tagId)
+    {
+        return Constants.VisionConstants.kTagLayout.getTagPose(tagId).get();
+    }
+    
     public Rotation2d getRotationOffset() {
         Rotation2d offset = new Rotation2d();//returns no offset by default
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
