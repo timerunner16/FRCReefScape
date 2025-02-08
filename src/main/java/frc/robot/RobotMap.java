@@ -113,7 +113,7 @@ public class RobotMap {
 
   //[A]lgae Intake
   public static boolean A_ENABLED = true;
-  public static int A_ANGLEMOTOR = RoboRioMap.CAN_13;
-  public static int A_ROLLERMOTOR = RoboRioMap.CAN_14;
+  public static int A_ANGLEMOTOR = RoboRioMap.CAN_15;
+  public static int A_ROLLERMOTOR = RoboRioMap.CAN_16;
   public static int A_INTAKESENSOR = RoboRioMap.DIO_0;
 }
