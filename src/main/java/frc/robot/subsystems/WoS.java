@@ -159,6 +159,11 @@ public class WoS extends SubsystemBase {
     }
   }
 
+  public void setTargetLevel(int level) {
+    if (level < 1 || level > 4) return;
+    setTargetAngle(Constants.WoSConstants.kWoSShoulderLevels[level]);
+  }
+
 
   @Override
   public void periodic() {
