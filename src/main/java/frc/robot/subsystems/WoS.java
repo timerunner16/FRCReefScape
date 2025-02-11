@@ -8,12 +8,17 @@ import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDNumber;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
@@ -27,20 +32,37 @@ public class WoS extends SubsystemBase {
   TDNumber m_TDwheelP;
   TDNumber m_TDwheelI;
   TDNumber m_TDwheelD;
+  TDNumber m_WoSCurrentOutput;
   double m_wheelP = Constants.WoSConstants.kWoSP;
   double m_wheelI = Constants.WoSConstants.kWoSI;
   double m_wheelD = Constants.WoSConstants.kWoSD;
 
+  TDNumber m_targetAngle;
+  TDNumber m_WoSShoulderEncoderValueRotations;
+  TDNumber m_WoSShoulderEncoderValueDegrees;
+  TDNumber m_WoSShoulderCurrentOutput;
+  TDNumber m_TDshoulderP;
+  TDNumber m_TDshoulderI;
+  TDNumber m_TDshoulderD;
+  double m_shoulderP = Constants.WoSConstants.kShoulderP;
+  double m_shoulderI = Constants.WoSConstants.kShoulderI;
+  double m_shoulderD = Constants.WoSConstants.kShoulderD;
+  private double m_lastAngle = 0;
+
   SparkMax m_WoSSparkMax;
   SparkMaxConfig m_SparkMaxConfig;
 
-  TDNumber m_WoSCurrentOutput;
+  SparkMax m_WoSShoulderSparkMax;
+  SparkMaxConfig m_WoSShoulderSparkMaxConfig;
+  SparkAbsoluteEncoder m_WoSShoulderAbsoluteEncoder;
+  SparkClosedLoopController m_WoSShoulderClosedLoopController;
 
   /** Creates a new ExampleSubsystem. */
   private WoS() {
     super("WoS");
 
     if (RobotMap.W_ENABLED) {
+      // setup wheels
       m_WoSSparkMax = new SparkMax(RobotMap.W_MOTOR, MotorType.kBrushless);
       m_SparkMaxConfig = new SparkMaxConfig();
 
@@ -55,6 +77,36 @@ public class WoS extends SubsystemBase {
       m_WoSSparkMax.configure(WoSSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       m_WoSCurrentOutput = new TDNumber(this, "WoS", "Motor Current");
+
+      
+      // setup shoulder
+      m_WoSShoulderSparkMax = new SparkMax(RobotMap.A_ANGLEMOTOR, MotorType.kBrushless);
+      m_WoSShoulderSparkMaxConfig = new SparkMaxConfig();
+
+      m_TDshoulderP = new TDNumber(this, "WoS Shoulder PID", "P", Constants.WoSConstants.kShoulderP);
+      m_TDshoulderI = new TDNumber(this, "WoS Shoulder PID", "I", Constants.WoSConstants.kShoulderI);
+      m_TDshoulderD = new TDNumber(this, "WoS Shoulder PID", "D", Constants.WoSConstants.kShoulderD);
+
+      m_WoSShoulderSparkMaxConfig.idleMode(IdleMode.kBrake);
+
+      m_WoSShoulderSparkMaxConfig.closedLoop.pid(Constants.WoSConstants.kShoulderP, Constants.WoSConstants.kShoulderI,
+          Constants.WoSConstants.kShoulderD);
+      m_WoSShoulderSparkMaxConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+      m_WoSShoulderSparkMaxConfig.closedLoop.positionWrappingEnabled(true);
+      m_WoSShoulderSparkMaxConfig.closedLoop.positionWrappingMinInput(0);
+      m_WoSShoulderSparkMaxConfig.closedLoop.positionWrappingMaxInput(Constants.WoSConstants.DEGREES_PER_REVOLUTION);
+
+      m_WoSShoulderSparkMaxConfig.absoluteEncoder.positionConversionFactor(Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
+      m_WoSShoulderSparkMaxConfig.absoluteEncoder.inverted(false);
+
+      m_WoSShoulderSparkMax.configure(m_WoSShoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+      m_WoSShoulderAbsoluteEncoder = m_WoSShoulderSparkMax.getAbsoluteEncoder();
+
+      m_targetAngle = new TDNumber(this, "WoS Encoder Values", "Target Angle", getAngle());
+      m_WoSShoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getAngle() / Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
+      m_WoSShoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Angle (degrees)", getAngle());
+      m_WoSShoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_WoSShoulderSparkMax.getOutputCurrent());
     }
   }
 
@@ -91,6 +143,23 @@ public class WoS extends SubsystemBase {
     }
   }
 
+  public double getAngle() {
+    return m_WoSShoulderAbsoluteEncoder.getPosition();
+  }
+
+  public void setTargetAngle(double angle) {
+    double setpoint = angle % Constants.AlgaeIntakeConstants.DEGREES_PER_REVOLUTION;
+    setpoint = MathUtil.clamp(setpoint,
+                              Constants.AlgaeIntakeConstants.kAngleLowerLimitDegrees, 
+                              Constants.AlgaeIntakeConstants.kAngleUpperLimitDegrees);
+    if (setpoint != m_lastAngle) {
+      m_targetAngle.set(setpoint);
+      m_lastAngle = setpoint;
+      m_WoSShoulderClosedLoopController.setReference(setpoint, ControlType.kPosition);
+    }
+  }
+
+
   @Override
   public void periodic() {
     if (Constants.WoSConstants.kEnableWheelPIDTuning &&
@@ -118,8 +187,36 @@ public class WoS extends SubsystemBase {
         m_WoSSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       }
     }
+    if (Constants.WoSConstants.kEnableShoulderPIDTuning &&
+        m_WoSShoulderSparkMax != null) {
+      double tmp = m_TDshoulderP.get();
+      boolean changed = false;
+      if (tmp != m_shoulderP) {
+        m_shoulderP = tmp;
+        m_WoSShoulderSparkMaxConfig.closedLoop.p(m_shoulderP);
+        changed = true;
+      }
+      tmp = m_TDshoulderI.get();
+      if (tmp != m_shoulderI) {
+        m_shoulderI = tmp;
+        changed = true;
+        m_WoSShoulderSparkMaxConfig.closedLoop.i(m_shoulderI);
+      }
+      tmp = m_TDshoulderD.get();
+      if (tmp != m_shoulderD) {
+        m_shoulderD = tmp;
+        changed = true;
+        m_WoSShoulderSparkMaxConfig.closedLoop.d(m_shoulderD);
+      }
+      if(changed) {
+        m_WoSShoulderSparkMax.configure(m_WoSShoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      }
+    }
     if (RobotMap.E_ENABLED) {
       m_WoSCurrentOutput.set(m_WoSSparkMax.getEncoder().getVelocity());
+      m_WoSShoulderCurrentOutput.set(m_WoSShoulderSparkMax.getOutputCurrent());
+      m_WoSShoulderEncoderValueDegrees.set(getAngle()/Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
+      m_WoSShoulderEncoderValueRotations.set(getAngle());
     }
 
     super.periodic();

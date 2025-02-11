@@ -66,14 +66,26 @@ public final class Constants {
   }
 
   public static final class WoSConstants {
-  //WoS constants
-  public static final boolean kEnableWheelPIDTuning = true;
-  public static final double kWoSP = 0;
-  public static final double kWoSI = 0;
-  public static final double kWoSD = 0;
+    //WoS constants
+    public static final boolean kEnableWheelPIDTuning = true;
+    public static final double kWoSP = 0;
+    public static final double kWoSI = 0;
+    public static final double kWoSD = 0;
 
-  public static final double kWoSSpeed = 1;
-  public static final double kWoSSpeedRPM = 3000;
+    public static final double kWoSSpeed = 1;
+    public static final double kWoSSpeedRPM = 3000;
+
+    public static final boolean kEnableShoulderPIDTuning = true;
+    public static final double kShoulderP = 0;
+    public static final double kShoulderI = 0;
+    public static final double kShoulderD = 0;
+
+    public static final double kWoSShoulderSpeed = 1;
+    public static final double kWoSShoulderSpeedRPM = 3000;
+    
+    public static final double kWoSShoulderEncoderPositionFactor = (2 * Math.PI);
+
+    public static final double DEGREES_PER_REVOLUTION = 360;
   }
 
   public static final class ElevatorConstants {
