@@ -86,6 +86,8 @@ public final class Constants {
     public static final double kWoSShoulderEncoderPositionFactor = (2 * Math.PI);
 
     public static final double DEGREES_PER_REVOLUTION = 360;
+    public static final double kAngleLowerLimitDegrees = 0;
+    public static final double kAngleUpperLimitDegrees = 0;
 
     public static final double[] kWoSShoulderLevels = {
       0,

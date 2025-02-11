@@ -80,7 +80,7 @@ public class WoS extends SubsystemBase {
 
       
       // setup shoulder
-      m_WoSShoulderSparkMax = new SparkMax(RobotMap.A_ANGLEMOTOR, MotorType.kBrushless);
+      m_WoSShoulderSparkMax = new SparkMax(RobotMap.W_SHOULDERMOTOR, MotorType.kBrushless);
       m_WoSShoulderSparkMaxConfig = new SparkMaxConfig();
 
       m_TDshoulderP = new TDNumber(this, "WoS Shoulder PID", "P", Constants.WoSConstants.kShoulderP);
@@ -148,10 +148,10 @@ public class WoS extends SubsystemBase {
   }
 
   public void setTargetAngle(double angle) {
-    double setpoint = angle % Constants.AlgaeIntakeConstants.DEGREES_PER_REVOLUTION;
+    double setpoint = angle % Constants.WoSConstants.DEGREES_PER_REVOLUTION;
     setpoint = MathUtil.clamp(setpoint,
-                              Constants.AlgaeIntakeConstants.kAngleLowerLimitDegrees, 
-                              Constants.AlgaeIntakeConstants.kAngleUpperLimitDegrees);
+                              Constants.WoSConstants.kAngleLowerLimitDegrees, 
+                              Constants.WoSConstants.kAngleUpperLimitDegrees);
     if (setpoint != m_lastAngle) {
       m_targetAngle.set(setpoint);
       m_lastAngle = setpoint;
