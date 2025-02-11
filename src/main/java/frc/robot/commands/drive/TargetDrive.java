@@ -91,7 +91,7 @@ public class TargetDrive extends Command {
             MathUtil.angleModulus(targetRot.getRadians()));
     double ff = calculateRotationFF(fieldRelativeSpeeds, currentPose, targetPose, targetRot);
     TDRotationFeedForward.set(ff);
-    rotation = ff;
+    rotation += ff;
 
     double xSpeed =  -MathUtil.applyDeadband(m_driveInputs.getX(), Constants.OIConstants.kDriveDeadband) * Constants.kMaxSpeedMetersPerSecond;
     double ySpeed =  -MathUtil.applyDeadband(m_driveInputs.getY(), Constants.OIConstants.kDriveDeadband) * Constants.kMaxSpeedMetersPerSecond;
@@ -117,7 +117,7 @@ public class TargetDrive extends Command {
 
     Translation2d velocityTrans = new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
     Translation2d nextTrans = velocityTrans.times(periodTime);
-    Pose2d nextPose = currentPose.plus(new Transform2d(nextTrans, new Rotation2d()));
+    Pose2d nextPose = new Pose2d(currentPose.getX(), currentPose.getY(), Rotation2d.kZero).plus(new Transform2d(nextTrans, Rotation2d.kZero));
     Rotation2d nextAngle = FieldUtils.getInstance().getAngleToPose(nextPose, targetPose);
     Rotation2d dif = nextAngle.minus(targetAngle);
     FFDif.set(targetAngle.getDegrees());
