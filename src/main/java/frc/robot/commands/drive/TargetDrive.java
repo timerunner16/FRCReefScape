@@ -7,10 +7,9 @@ package frc.robot.commands.drive;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.testingdashboard.Command;
@@ -25,9 +24,7 @@ public class TargetDrive extends Command {
     private Drive m_drive;
     private SwerveDriveInputs m_driveInputs;
     private Supplier<Pose2d> m_tgtSupplier;
-    private ProfiledPIDController m_thetaController;
-
-    private final double periodTime = 0.02;
+    private PIDController m_thetaController;
     
     private boolean atGoal = false;
 
@@ -45,9 +42,7 @@ public class TargetDrive extends Command {
     m_driveInputs = driveInputs;
     m_tgtSupplier = targetSupplier;
 
-    m_thetaController = new ProfiledPIDController(
-        Constants.AutoConstants.kPThetaController, 0, Constants.AutoConstants.kDThetaController,
-        Constants.AutoConstants.kThetaControllerConstraints);
+    m_thetaController = new PIDController(5, 0, Constants.AutoConstants.kDThetaController);//Should be separated from Auto ThetaController and may need retuning
     m_thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     m_thetaController.setTolerance(0.1);
@@ -71,7 +66,7 @@ public class TargetDrive extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_thetaController.reset(MathUtil.angleModulus(m_drive.getPose().getRotation().getRadians()));
+    m_thetaController.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -114,15 +109,9 @@ public class TargetDrive extends Command {
   }
 
   private double calculateRotationFF(ChassisSpeeds currentSpeeds, Pose2d currentPose, Pose2d targetPose, Rotation2d targetAngle) {
-
+    //Calculates angular velocity around the target point to compensate for current velocity
     Translation2d velocityTrans = new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
-    Translation2d nextTrans = velocityTrans.times(periodTime);
-    Pose2d nextPose = new Pose2d(currentPose.getX(), currentPose.getY(), Rotation2d.kZero).plus(new Transform2d(nextTrans, Rotation2d.kZero));
-    Rotation2d nextAngle = FieldUtils.getInstance().getAngleToPose(nextPose, targetPose);
-    Rotation2d dif = nextAngle.minus(targetAngle);
-    FFDif.set(targetAngle.getDegrees());
-    
-    double output = MathUtil.angleModulus(dif.getRadians())/periodTime;
-    return output;
+    double perpVelocity = (velocityTrans.getAngle().minus(targetAngle.plus(Rotation2d.k180deg)).getSin() * velocityTrans.getNorm());
+    return perpVelocity / (targetPose.minus(currentPose).getTranslation().getNorm()); //omega = v/r
   }
 }
