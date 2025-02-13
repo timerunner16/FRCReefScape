@@ -11,6 +11,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
@@ -22,7 +24,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import frc.robot.Constants;
 
 public class MAXSwerveModule {
-  private final SparkMax m_drivingSparkMax;
+  private final SparkFlex m_drivingSparkFlex;
   private final SparkMax m_turningSparkMax;
 
   private final RelativeEncoder m_drivingEncoder;
@@ -43,7 +45,7 @@ public class MAXSwerveModule {
    * Encoder.
    */
   public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
-    m_drivingSparkMax = new SparkMax(drivingCANId, MotorType.kBrushless);
+    m_drivingSparkFlex = new SparkFlex(drivingCANId, MotorType.kBrushless);
     m_turningSparkMax = new SparkMax(turningCANId, MotorType.kBrushless);
 
     /* Configure the PID, FFF and other properties of the turning motors. Most of these come from 
@@ -72,7 +74,7 @@ public class MAXSwerveModule {
     /* Configure the PID, FFF and other properties of the driving motors. Most of these come from 
      * Cnstants.
     */
-    SparkMaxConfig m_drivingConfig = new SparkMaxConfig();
+    SparkFlexConfig m_drivingConfig = new SparkFlexConfig();
     m_drivingConfig.idleMode(Constants.kDrivingMotorIdleMode);
     m_drivingConfig.smartCurrentLimit(Constants.kDrivingMotorCurrentLimit);
     m_drivingConfig.encoder.positionConversionFactor(Constants.kDrivingEncoderPositionFactor);
@@ -84,9 +86,9 @@ public class MAXSwerveModule {
     m_drivingConfig.closedLoop.velocityFF(Constants.kDrivingFF);
     m_drivingConfig.closedLoop.outputRange(Constants.kDrivingMinOutput, Constants.kDrivingMaxOutput);
    
-    m_drivingSparkMax.configure(m_drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_drivingEncoder = m_drivingSparkMax.getEncoder();
-    m_drivingPIDController = m_drivingSparkMax.getClosedLoopController();
+    m_drivingSparkFlex.configure(m_drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_drivingEncoder = m_drivingSparkFlex.getEncoder();
+    m_drivingPIDController = m_drivingSparkFlex.getClosedLoopController();
    
     m_chassisAngularOffset = chassisAngularOffset;
     m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
@@ -151,7 +153,7 @@ public class MAXSwerveModule {
   }
 
   public double getDriveOutputCurrent() {
-    return m_drivingSparkMax.getOutputCurrent();
+    return m_drivingSparkFlex.getOutputCurrent();
   }
   public double getTurningOutputCurrent() {
     return m_turningSparkMax.getOutputCurrent();
