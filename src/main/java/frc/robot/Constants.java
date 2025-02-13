@@ -136,7 +136,7 @@ public final class Constants {
     public static final double kFunnelI = 0;
     public static final double kFunnelD = 0;
 
-    public static final double kFunnelSpeed = 1;
+    public static final double kFunnelSpeed = 0.2;
     public static final double kFunnelSpeedRPM = 3000;
   }
 
