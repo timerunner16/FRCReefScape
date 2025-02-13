@@ -401,8 +401,6 @@ public class Drive extends SubsystemBase {
   }
 
   public ChassisSpeeds limitRates(ChassisSpeeds commandedSpeeds) {
-    return commandedSpeeds;
-    /*
     //Apply Speed Limits
     double linearSpeed = Math.hypot(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
     Rotation2d direction = new Rotation2d(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
@@ -434,6 +432,5 @@ public class Drive extends SubsystemBase {
    m_lastSpeeds = limitedSpeeds;
    m_prevTime = currentTime;
    return limitedSpeeds;
-   */
   }
 }
