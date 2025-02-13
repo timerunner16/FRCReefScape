@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
@@ -15,6 +16,8 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -22,6 +25,8 @@ import frc.robot.testingdashboard.TDNumber;
 
 public class Elevator extends SubsystemBase {
   private static Elevator m_elevator;
+
+  private final double periodTime = 0.02;
 
   TDNumber m_targetAngle;
   TDNumber m_elevatorEncoderValueRotations;
@@ -46,6 +51,11 @@ public class Elevator extends SubsystemBase {
 
   SparkClosedLoopController m_closedLoopController;
   SparkAbsoluteEncoder m_absoluteEncoder;
+
+  ElevatorFeedforward m_elevatorFeedForwardController;
+  TrapezoidProfile m_profile;
+  TrapezoidProfile.State m_state;
+  TrapezoidProfile.State m_setpoint;
 
   /** Creates a new Elevator. */
   private Elevator() {
@@ -77,6 +87,12 @@ public class Elevator extends SubsystemBase {
 
       m_closedLoopController = m_leftSparkMax.getClosedLoopController();
       m_absoluteEncoder = m_leftSparkMax.getAbsoluteEncoder();
+
+      m_elevatorFeedForwardController = new ElevatorFeedforward(Constants.ElevatorConstants.kElevatorkS, Constants.ElevatorConstants.kElevatorkG, Constants.ElevatorConstants.kElevatorkV);
+      m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
+        Constants.ElevatorConstants.kElevatorMaxVelocity,
+        Constants.ElevatorConstants.kElevatorMaxAcceleration
+      ));
 
       m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getAngle());
       m_elevatorEncoderValueRotations = new TDNumber(this, "Elevator Encoder Values", "Rotations", getAngle() / Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
@@ -116,14 +132,13 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setTargetAngle(double angle) {
-    double setpoint = angle % Constants.ElevatorConstants.DEGREES_PER_REVOLUTION;
-    setpoint = MathUtil.clamp(setpoint,
+    angle = MathUtil.clamp(angle,
                               Constants.ElevatorConstants.kElevatorLowerLimitDegrees, 
                               Constants.ElevatorConstants.kElevatorUpperLimitDegrees);
-    if (setpoint != m_lastAngle) {
-      m_targetAngle.set(setpoint);
-      m_lastAngle = setpoint;
-      m_closedLoopController.setReference(setpoint, ControlType.kPosition);
+    if (angle != m_lastAngle) {
+      m_targetAngle.set(angle);
+      m_lastAngle = angle;
+      m_setpoint = new TrapezoidProfile.State(angle, 0.0);
     }
   }
 
@@ -164,6 +179,10 @@ public class Elevator extends SubsystemBase {
       m_rightCurrentOutput.set(m_rightSparkMax.getOutputCurrent());
       m_elevatorEncoderValueDegrees.set(getAngle()/Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
       m_elevatorEncoderValueRotations.set(getAngle());
+
+      m_state = m_profile.calculate(periodTime, m_state, m_setpoint);
+      double arbFeedForward = m_elevatorFeedForwardController.calculate(m_setpoint.velocity);
+      m_closedLoopController.setReference(m_setpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFeedForward);
     }
 
     super.periodic();
