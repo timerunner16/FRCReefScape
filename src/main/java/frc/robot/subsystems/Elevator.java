@@ -93,6 +93,24 @@ public class Elevator extends SubsystemBase {
     return m_elevator;
   }
 
+  public void moveUp() {
+    if (m_leftSparkMax != null) {
+      m_leftSparkMax.set(Constants.ElevatorConstants.kElevatorSpeed);
+    }
+  }
+
+  public void moveDown() {
+    if (m_leftSparkMax != null) {
+      m_leftSparkMax.set(-Constants.ElevatorConstants.kElevatorSpeed);
+    }
+  }
+
+  public void stop() {
+    if (m_leftSparkMax != null) {
+      m_leftSparkMax.set(0.0);
+    }
+  }
+
   public double getAngle() {
     return m_absoluteEncoder.getPosition();
   }
