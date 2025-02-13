@@ -79,11 +79,15 @@ public final class Constants {
     public static final double kShoulderP = 0;
     public static final double kShoulderI = 0;
     public static final double kShoulderD = 0;
+    public static final double kShoulderkS = 0;
+    public static final double kShoulderkG = 0;
+    public static final double kShoulderkV = 0;
 
     public static final double kWoSShoulderSpeed = 1;
     public static final double kWoSShoulderSpeedRPM = 3000;
     
     public static final double kWoSShoulderEncoderPositionFactor = (2 * Math.PI);
+    public static final double kWoSShoulderEncoderVelocityFactor = (2 * Math.PI / 60.0);
 
     public static final double DEGREES_PER_REVOLUTION = 360;
     public static final double kAngleLowerLimitDegrees = 0;
