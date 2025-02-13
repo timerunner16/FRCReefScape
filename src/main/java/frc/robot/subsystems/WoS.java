@@ -8,6 +8,7 @@ import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDNumber;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 
@@ -47,6 +49,9 @@ public class WoS extends SubsystemBase {
   double m_shoulderP = Constants.WoSConstants.kShoulderP;
   double m_shoulderI = Constants.WoSConstants.kShoulderI;
   double m_shoulderD = Constants.WoSConstants.kShoulderD;
+  double m_shoulderkS = Constants.WoSConstants.kShoulderkS;
+  double m_shoulderkG = Constants.WoSConstants.kShoulderkG;
+  double m_shoulderkV = Constants.WoSConstants.kShoulderkV;
   private double m_lastAngle = 0;
 
   SparkMax m_WoSSparkMax;
@@ -56,6 +61,8 @@ public class WoS extends SubsystemBase {
   SparkMaxConfig m_WoSShoulderSparkMaxConfig;
   SparkAbsoluteEncoder m_WoSShoulderAbsoluteEncoder;
   SparkClosedLoopController m_WoSShoulderClosedLoopController;
+
+  ArmFeedforward m_WoSShoulderArmFeedForwardController;
 
   /** Creates a new ExampleSubsystem. */
   private WoS() {
@@ -97,11 +104,14 @@ public class WoS extends SubsystemBase {
       m_WoSShoulderSparkMaxConfig.closedLoop.positionWrappingMaxInput(Constants.WoSConstants.DEGREES_PER_REVOLUTION);
 
       m_WoSShoulderSparkMaxConfig.absoluteEncoder.positionConversionFactor(Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
+      m_WoSShoulderSparkMaxConfig.absoluteEncoder.velocityConversionFactor(Constants.WoSConstants.kWoSShoulderEncoderVelocityFactor);
       m_WoSShoulderSparkMaxConfig.absoluteEncoder.inverted(false);
 
       m_WoSShoulderSparkMax.configure(m_WoSShoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       m_WoSShoulderAbsoluteEncoder = m_WoSShoulderSparkMax.getAbsoluteEncoder();
+
+      m_WoSShoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
 
       m_targetAngle = new TDNumber(this, "WoS Encoder Values", "Target Angle", getAngle());
       m_WoSShoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getAngle() / Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
@@ -155,7 +165,6 @@ public class WoS extends SubsystemBase {
     if (setpoint != m_lastAngle) {
       m_targetAngle.set(setpoint);
       m_lastAngle = setpoint;
-      m_WoSShoulderClosedLoopController.setReference(setpoint, ControlType.kPosition);
     }
   }
 
@@ -217,11 +226,14 @@ public class WoS extends SubsystemBase {
         m_WoSShoulderSparkMax.configure(m_WoSShoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       }
     }
-    if (RobotMap.E_ENABLED) {
+    if (RobotMap.W_ENABLED) {
       m_WoSCurrentOutput.set(m_WoSSparkMax.getEncoder().getVelocity());
       m_WoSShoulderCurrentOutput.set(m_WoSShoulderSparkMax.getOutputCurrent());
       m_WoSShoulderEncoderValueDegrees.set(getAngle()/Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
       m_WoSShoulderEncoderValueRotations.set(getAngle());
+
+      double arbFeedforward = m_WoSShoulderArmFeedForwardController.calculate(m_lastAngle, 0.0);
+      m_WoSShoulderClosedLoopController.setReference(m_lastAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFeedforward);
     }
 
     super.periodic();
@@ -241,5 +253,21 @@ public class WoS extends SubsystemBase {
 
   public double getRollerVelocity() {
     return m_WoSSparkMax.getEncoder().getVelocity();
+  }
+
+  public void setShoulderVoltage(Voltage volts) {
+    m_WoSShoulderSparkMax.setVoltage(volts.in(BaseUnits.VoltageUnit));
+  }
+
+  public double getShoulderVoltage() {
+    return m_WoSShoulderSparkMax.get() * RobotController.getBatteryVoltage();
+  }
+
+  public double getShoulderPosition() {
+    return m_WoSShoulderSparkMax.getEncoder().getPosition();
+  }
+
+  public double getShoulderVelocity() {
+    return m_WoSShoulderSparkMax.getEncoder().getVelocity();
   }
 }
