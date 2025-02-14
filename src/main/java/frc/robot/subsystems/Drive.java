@@ -401,11 +401,13 @@ public class Drive extends SubsystemBase {
   }
 
   public ChassisSpeeds limitRates(ChassisSpeeds commandedSpeeds) {
-    return commandedSpeeds;
-    /*
     //Apply Speed Limits
     double linearSpeed = Math.hypot(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
-    Rotation2d direction = new Rotation2d(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
+    Rotation2d direction = Rotation2d.kZero;
+    if(Math.abs(commandedSpeeds.vxMetersPerSecond) > 1e-6 ||
+       Math.abs(commandedSpeeds.vyMetersPerSecond) > 1e-6){
+      direction = new Rotation2d(commandedSpeeds.vxMetersPerSecond, commandedSpeeds.vyMetersPerSecond);
+    }
     double limitedSpeed = Math.min(linearSpeed, Constants.kMaxSpeedMetersPerSecond);
     double limitedTheta = MathUtil.clamp(commandedSpeeds.omegaRadiansPerSecond, 
                                             -Constants.kMaxAngularSpeed, 
@@ -434,6 +436,5 @@ public class Drive extends SubsystemBase {
    m_lastSpeeds = limitedSpeeds;
    m_prevTime = currentTime;
    return limitedSpeeds;
-   */
   }
 }

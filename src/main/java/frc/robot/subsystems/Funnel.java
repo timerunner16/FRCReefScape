@@ -53,6 +53,7 @@ public class Funnel extends SubsystemBase {
       LeftFunnelSparkMaxConfig.closedLoop.pid(Constants.FunnelConstants.kFunnelP, Constants.FunnelConstants.kFunnelI, 
           Constants.FunnelConstants.kFunnelD);
       m_FLeftSparkMax.configure(LeftFunnelSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      m_FRightSparkMax.configure(RightFunnelSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       m_FunnelCurrentOutput = new TDNumber(this, "Funnel", "Motor Current");
     }
