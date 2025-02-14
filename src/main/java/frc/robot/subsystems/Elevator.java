@@ -93,6 +93,8 @@ public class Elevator extends SubsystemBase {
         Constants.ElevatorConstants.kElevatorMaxVelocity,
         Constants.ElevatorConstants.kElevatorMaxAcceleration
       ));
+      m_setpoint = new TrapezoidProfile.State(m_absoluteEncoder.getPosition(), 0.0);
+      m_state = new TrapezoidProfile.State(m_absoluteEncoder.getPosition(), 0.0);
 
       m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getAngle());
       m_elevatorEncoderValueRotations = new TDNumber(this, "Elevator Encoder Values", "Rotations", getAngle() / Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
