@@ -140,7 +140,10 @@ public final class Constants {
     public static final double kFunnelSpeedRPM = 3000;
   }
 
-
+  public static final class LightsConstants {
+    // Defines Lights constants
+    public static final int LED_LENGTH = 42; // number of LEDs
+  }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
