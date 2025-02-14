@@ -110,6 +110,7 @@ public class WoS extends SubsystemBase {
       m_WoSShoulderSparkMax.configure(m_WoSShoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       m_WoSShoulderAbsoluteEncoder = m_WoSShoulderSparkMax.getAbsoluteEncoder();
+      m_WoSShoulderClosedLoopController = m_WoSShoulderSparkMax.getClosedLoopController();
 
       m_WoSShoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
 
