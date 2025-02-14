@@ -4,32 +4,19 @@
 
 package frc.robot.commands.elevator;
 
-import frc.robot.Constants;
-import frc.robot.testingdashboard.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
-import frc.robot.testingdashboard.TDNumber;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Lucifer extends Command {
+public class Level2 extends Command {
+  /** Creates a new Level2. */
   Elevator m_Elevator;
-
-  TDNumber m_RPM;
-  TDNumber m_enablePID;
-  
-  TDNumber m_ElevatorSpeed;
-
-  /* Creates a new Lucifer. */
-  public Lucifer() {
-    super(Elevator.getInstance(), "Elevator", "Lucifer");
+  public Level2() {
+    // Use addRequirements() here to declare subsystem dependencies.
     m_Elevator = Elevator.getInstance();
-
-    m_RPM = new TDNumber(m_Elevator, "Elevator Speed (RPM)", "RPM", Constants.ElevatorConstants.kElevatorSpeedRPM);
-    m_enablePID = new TDNumber(m_Elevator, "Elevator Speed (RPM)", "Enable PID w 1");
-
-    m_ElevatorSpeed = new TDNumber(m_Elevator, "Elevator Speed (Power)", "Speed", Constants.ElevatorConstants.kElevatorSpeed);
-
     addRequirements(m_Elevator);
   }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
@@ -37,18 +24,16 @@ public class Lucifer extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Elevator.moveDown();
+    m_Elevator.setTargetLevel(2);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_Elevator.stop();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
