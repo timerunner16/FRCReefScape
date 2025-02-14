@@ -37,18 +37,13 @@ public class Lucifer extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_enablePID.get() == 1) {
-      m_Elevator.setSpeeds(m_RPM.get(), true);
-    }
-    else {
-      m_Elevator.down(m_ElevatorSpeed.get());
-    }
+    m_Elevator.moveDown();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Elevator.stop(0);
+    m_Elevator.stop();
   }
 
   // Returns true when the command should end.
