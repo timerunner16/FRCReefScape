@@ -120,4 +120,8 @@ public class RobotMap {
   public static int A_ANGLEMOTOR = RoboRioMap.CAN_15;
   public static int A_ROLLERMOTOR = RoboRioMap.CAN_16;
   public static int A_INTAKESENSOR = RoboRioMap.DIO_0;
+
+  //[C]limber
+  public static boolean C_ENABLED = true;
+  public static int C_WINCHMOTOR = RoboRioMap.CAN_18;
 }

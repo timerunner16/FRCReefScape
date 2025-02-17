@@ -249,6 +249,13 @@ public final class Constants {
     };
   }
 
+  public static final class ClimberConstants {
+    public static final double kWinchP = 0;
+    public static final double kWinchI = 0;
+    public static final double kWinchD = 0;
+    public static final boolean kEnableWinchPIDTuning = false;
+  }
+
   //Driver control rate limits
   public static final double kMaxAccelerationMetersPerSecondSquared = 10;
   public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
