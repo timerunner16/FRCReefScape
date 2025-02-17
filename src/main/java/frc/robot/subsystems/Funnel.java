@@ -120,7 +120,7 @@ public class Funnel extends SubsystemBase {
       }
     }
     if (RobotMap.E_ENABLED) {
-      m_FunnelCurrentOutput.set(m_FLeftSparkMax.getEncoder().getVelocity());
+      m_FunnelCurrentOutput.set(m_FLeftSparkMax.getOutputCurrent());
     }
 
     super.periodic();

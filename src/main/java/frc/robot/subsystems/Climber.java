@@ -113,7 +113,7 @@ public class Climber extends SubsystemBase {
       }
     }
     if (RobotMap.C_ENABLED) {
-      m_ClimberCurrentOutput.set(m_WinchMotor.getEncoder().getVelocity());
+      m_ClimberCurrentOutput.set(m_WinchMotor.getOutputCurrent());
     }
 
     super.periodic();
