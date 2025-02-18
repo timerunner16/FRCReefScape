@@ -160,7 +160,12 @@ public class AlgaeIntake extends SubsystemBase {
   }
 
   public boolean seesAlgae() {
-    return m_algaeIntakeSensor.seesAlgae();
+    if (RobotMap.A_ENABLED)
+    {
+      return m_algaeIntakeSensor.seesAlgae();
+    }
+    return false;
+
   }
 
   @Override

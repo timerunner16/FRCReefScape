@@ -119,7 +119,7 @@ public class Funnel extends SubsystemBase {
         m_FLeftSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       }
     }
-    if (RobotMap.E_ENABLED) {
+    if (RobotMap.F_ENABLED) {
       m_FunnelCurrentOutput.set(m_FLeftSparkMax.getOutputCurrent());
     }
 

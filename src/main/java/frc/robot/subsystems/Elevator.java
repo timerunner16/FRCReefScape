@@ -98,8 +98,8 @@ public class Elevator extends SubsystemBase {
       m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getAngle());
       m_elevatorEncoderValueRotations = new TDNumber(this, "Elevator Encoder Values", "Rotations", getAngle() / Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
       m_elevatorEncoderValueDegrees = new TDNumber(this, "Elevator Encoder Values", "Angle (degrees)", getAngle());
-      m_leftCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "Left Elevator Output", m_leftSparkFlex.getOutputCurrent());
-      m_rightCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "Right Elevator Output", m_rightSparkFlex.getOutputCurrent());
+      m_leftCurrentOutput = new TDNumber(this, "Current", "Left Elevator Output", m_leftSparkFlex.getOutputCurrent());
+      m_rightCurrentOutput = new TDNumber(this, "Current", "Right Elevator Output", m_rightSparkFlex.getOutputCurrent());
     }
   }
 
