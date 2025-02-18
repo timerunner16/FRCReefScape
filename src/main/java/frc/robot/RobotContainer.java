@@ -6,6 +6,10 @@ package frc.robot;
 
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.TestTargetDrive;
+import frc.robot.commands.elevator.Level1;
+import frc.robot.commands.elevator.Level2;
+import frc.robot.commands.elevator.Level3;
+import frc.robot.commands.elevator.Level4;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
 import frc.robot.subsystems.Elevator;
@@ -57,15 +61,12 @@ public class RobotContainer {
     // Instantiate parameterized commands to register them with the testing dashboard.
     // The first instance of a Command registers itself. No need to store the resulting
     // objects.
-    WoS.getInstance();
     registerCommands();
 
-    Elevator.getInstance();
-    registerCommands();
-
-    Funnel.getInstance();
-    registerCommands();
     // Robot subsystems initialized and configured here
+    WoS.getInstance();
+    Elevator.getInstance();
+    Funnel.getInstance();
     m_robotDrive = Drive.getInstance();
     m_robotDrive.setDefaultCommand(new SwerveDrive(m_oi.getDriveInputs()));
 
@@ -88,6 +89,10 @@ public class RobotContainer {
     new Spit();
     new Nibble();
     new TestTargetDrive();
+    new Level1();
+    new Level2();
+    new Level3();
+    new Level4();
   }
 
   /**

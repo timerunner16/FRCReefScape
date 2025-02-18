@@ -4,7 +4,7 @@
 
 package frc.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.testingdashboard.Command;
 import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -14,6 +14,7 @@ public class Level1 extends Command {
   Elevator m_Elevator;
 
   public Level1() {
+    super(Elevator.getInstance(), "Elevator", "Level1");
     m_Elevator = Elevator.getInstance();
     addRequirements(m_Elevator);
   }
