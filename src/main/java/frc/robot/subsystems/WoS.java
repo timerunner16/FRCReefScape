@@ -114,9 +114,9 @@ public class WoS extends SubsystemBase {
 
       m_WoSShoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
 
-      m_targetAngle = new TDNumber(this, "WoS Encoder Values", "Target Angle", getAngle());
-      m_WoSShoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getAngle() / Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
-      m_WoSShoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Angle (degrees)", getAngle());
+      m_targetAngle = new TDNumber(this, "WoS Encoder Values", "Target Shoulder Angle", getShoulderAngle());
+      m_WoSShoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getShoulderAngle() / Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
+      m_WoSShoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Shoulder Angle (radians)", getShoulderAngle());
       m_WoSShoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_WoSShoulderSparkMax.getOutputCurrent());
     }
   }
@@ -154,8 +154,8 @@ public class WoS extends SubsystemBase {
     }
   }
 
-  public double getAngle() {
-    return m_WoSShoulderAbsoluteEncoder.getPosition();
+  public double getShoulderAngle() { 
+    return m_WoSShoulderAbsoluteEncoder.getPosition() * Constants.WoSConstants.kWoSShoulderMotorToShoulderRatio;
   }
 
   public void setTargetAngle(double angle) {
@@ -230,8 +230,8 @@ public class WoS extends SubsystemBase {
     if (RobotMap.W_ENABLED) {
       m_WoSCurrentOutput.set(m_WoSSparkMax.getEncoder().getVelocity());
       m_WoSShoulderCurrentOutput.set(m_WoSShoulderSparkMax.getOutputCurrent());
-      m_WoSShoulderEncoderValueDegrees.set(getAngle()/Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
-      m_WoSShoulderEncoderValueRotations.set(getAngle());
+      m_WoSShoulderEncoderValueDegrees.set(getShoulderAngle()/Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
+      m_WoSShoulderEncoderValueRotations.set(getShoulderAngle());
 
       double arbFeedforward = m_WoSShoulderArmFeedForwardController.calculate(m_lastAngle, 0.0);
       m_WoSShoulderClosedLoopController.setReference(m_lastAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFeedforward);
