@@ -88,15 +88,15 @@ public class OI {
         FieldUtils.getInstance().getAllianceAprilTags().middleFrontReef).toPose2d();}, m_driveInputs));
         
     //Operator Cookie Monster Special Abilities(MEGA OP)
-    new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Jesus());
-    new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new Lucifer());
+   // new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Jesus());
+    //new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new Lucifer());
     new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new Implode());
     new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Explode());
    
     new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new Consume());
     new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
-    new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new Nibble());
-    new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Spit());
+    //new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new Nibble());
+    //new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Spit());
   };
   
     
