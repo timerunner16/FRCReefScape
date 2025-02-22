@@ -88,7 +88,7 @@ public final class Constants {
     
     public static final double kWoSShoulderEncoderPositionFactor = (2 * Math.PI);
     public static final double kWoSShoulderEncoderVelocityFactor = (2 * Math.PI / 60.0);
-    public static final double kWoSShoulderMotorToShoulderRatio = 40/22.0;
+    public static final double kWoSShoulderMotorToShoulderRatio = 40/18.0;
 
     public static final double DEGREES_PER_REVOLUTION = 360;
     public static final double kAngleLowerLimitDegrees = -5;
