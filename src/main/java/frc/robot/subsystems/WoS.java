@@ -114,9 +114,9 @@ public class WoS extends SubsystemBase {
 
       m_WoSShoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
 
-      m_targetShoulderAngle = new TDNumber(this, "WoS Encoder Values", "Target Angle", getShoulderAngle());
+      m_targetShoulderAngle = new TDNumber(this, "WoS Encoder Values", "Target Shoulder Angle", getShoulderAngle());
       m_WoSShoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getShoulderAngle() / Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
-      m_WoSShoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Angle (degrees)", getShoulderAngle());
+      m_WoSShoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Shoulder Angle (radians)", getShoulderAngle());
       m_WoSShoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_WoSShoulderSparkMax.getOutputCurrent());
     }
   }
@@ -154,8 +154,8 @@ public class WoS extends SubsystemBase {
     }
   }
 
-  public double getShoulderAngle() {
-    return m_WoSShoulderAbsoluteEncoder.getPosition();
+  public double getShoulderAngle() { 
+    return m_WoSShoulderAbsoluteEncoder.getPosition() * Constants.WoSConstants.kWoSShoulderMotorToShoulderRatio;
   }
 
   public void setTargetShoulderAngle(double angle) {
