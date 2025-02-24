@@ -39,7 +39,7 @@ public class WoS extends SubsystemBase {
   double m_wheelI = Constants.WoSConstants.kWoSI;
   double m_wheelD = Constants.WoSConstants.kWoSD;
 
-  TDNumber m_targetAngle;
+  TDNumber m_targetShoulderAngle;
   TDNumber m_WoSShoulderEncoderValueRotations;
   TDNumber m_WoSShoulderEncoderValueDegrees;
   TDNumber m_WoSShoulderCurrentOutput;
@@ -114,7 +114,7 @@ public class WoS extends SubsystemBase {
 
       m_WoSShoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
 
-      m_targetAngle = new TDNumber(this, "WoS Encoder Values", "Target Shoulder Angle", getShoulderAngle());
+      m_targetShoulderAngle = new TDNumber(this, "WoS Encoder Values", "Target Shoulder Angle", getShoulderAngle());
       m_WoSShoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getShoulderAngle() / Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
       m_WoSShoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Shoulder Angle (radians)", getShoulderAngle());
       m_WoSShoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_WoSShoulderSparkMax.getOutputCurrent());
@@ -158,22 +158,31 @@ public class WoS extends SubsystemBase {
     return m_WoSShoulderAbsoluteEncoder.getPosition() * Constants.WoSConstants.kWoSShoulderMotorToShoulderRatio;
   }
 
-  public void setTargetAngle(double angle) {
+  public void setTargetShoulderAngle(double angle) {
     double setpoint = angle % Constants.WoSConstants.DEGREES_PER_REVOLUTION;
     setpoint = MathUtil.clamp(setpoint,
                               Constants.WoSConstants.kAngleLowerLimitDegrees, 
                               Constants.WoSConstants.kAngleUpperLimitDegrees);
     if (setpoint != m_lastAngle) {
-      m_targetAngle.set(setpoint);
+      m_targetShoulderAngle.set(setpoint);
       m_lastAngle = setpoint;
     }
   }
 
   public void setTargetLevel(int level) {
     if (level < 1 || level > 4) return;
-    setTargetAngle(Constants.WoSConstants.kWoSShoulderLevels[level]);
+    setTargetShoulderAngle(Constants.WoSConstants.kWoSShoulderLevels[level]);
   }
 
+  public void setShoulderSpeeds(double ShoulderRPM) {
+      m_WoSSparkMax.getClosedLoopController().setReference(ShoulderRPM, ControlType.kVelocity);
+  }
+
+  public void shoulderSpin(double shoulderSpeed){
+    if (m_WoSShoulderSparkMax != null) {
+      m_WoSShoulderSparkMax.set(shoulderSpeed);
+    }
+  }
 
   @Override
   public void periodic() {
