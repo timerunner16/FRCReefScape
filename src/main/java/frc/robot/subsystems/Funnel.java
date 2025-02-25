@@ -41,7 +41,7 @@ public class Funnel extends SubsystemBase {
       m_FLeftSparkMax = new SparkMax(RobotMap.F_LEFTMOTOR, MotorType.kBrushless);
       m_FRightSparkMax = new SparkMax(RobotMap.F_RIGHTMOTOR, MotorType.kBrushless);
 
-      SparkMaxConfig LeftFunnelSparkMaxConfig = new SparkMaxConfig();
+      m_SparkMaxConfig = new SparkMaxConfig();
       SparkMaxConfig RightFunnelSparkMaxConfig = new SparkMaxConfig();
 
       RightFunnelSparkMaxConfig.follow(m_FLeftSparkMax, true);
@@ -50,9 +50,9 @@ public class Funnel extends SubsystemBase {
       m_TDwheelI = new TDNumber(this, "Wheel PID", "I", Constants.FunnelConstants.kFunnelI);
       m_TDwheelD = new TDNumber(this, "Wheel PID", "D", Constants.FunnelConstants.kFunnelD);
       
-      LeftFunnelSparkMaxConfig.closedLoop.pid(Constants.FunnelConstants.kFunnelP, Constants.FunnelConstants.kFunnelI, 
+      m_SparkMaxConfig.closedLoop.pid(Constants.FunnelConstants.kFunnelP, Constants.FunnelConstants.kFunnelI, 
           Constants.FunnelConstants.kFunnelD);
-      m_FLeftSparkMax.configure(LeftFunnelSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      m_FLeftSparkMax.configure(m_SparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       m_FRightSparkMax.configure(RightFunnelSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       m_FunnelCurrentOutput = new TDNumber(this, "Funnel", "Motor Current");

@@ -16,6 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Funnel;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
+import frc.robot.SysId.RoutineManager;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
 
@@ -67,6 +68,7 @@ public class RobotContainer {
     WoS.getInstance();
     Elevator.getInstance();
     Funnel.getInstance();
+    RoutineManager.getInstance();
     m_robotDrive = Drive.getInstance();
     m_robotDrive.setDefaultCommand(new SwerveDrive(m_oi.getDriveInputs()));
 

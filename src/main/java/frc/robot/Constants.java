@@ -75,6 +75,8 @@ public final class Constants {
     public static final double kWoSSpeed = 0.2;
     public static final double kWoSSpeedRPM = 30;
 
+    public static final double kWoSRPMSurfaceSpeedRatio = 6.28;
+
     public static final boolean kEnableShoulderPIDTuning = true;
     public static final double kShoulderP = 0;
     public static final double kShoulderI = 0;
@@ -146,6 +148,8 @@ public final class Constants {
 
     public static final double kFunnelSpeed = 0.2;
     public static final double kFunnelSpeedRPM = 30;
+
+    public static final double kFunnelRPMSurfaceSpeedRatio = 4.18;
   }
 
   public static final class LightsConstants {
@@ -246,12 +250,12 @@ public final class Constants {
     public static final VisionConfig[] kVisionSystems = {
         new VisionConfig("Arducam_OV9281_USB_Camera",
                          new Transform3d(new Translation3d(Units.inchesToMeters(15.5), Units.inchesToMeters(0.0), Units.inchesToMeters(21.5)), 
-                                new Rotation3d(0, Units.degreesToRadians(180), Units.degreesToRadians(0))),
+                                new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0))),
                          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                          PoseStrategy.LOWEST_AMBIGUITY),
         new VisionConfig("Arducam_OV2311_USB_Camera",
                          new Transform3d(new Translation3d(Units.inchesToMeters(15.75), Units.inchesToMeters(8.0), Units.inchesToMeters(8.0)), 
-                new Rotation3d(0, Units.degreesToRadians(180), Units.degreesToRadians(0))),
+                new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0))),
                          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                          PoseStrategy.LOWEST_AMBIGUITY)
     };
@@ -320,5 +324,5 @@ public final class Constants {
     public static final int kTurningMotorCurrentLimit = 20; // amps
 
     //Enables SysID Characterization Mode. !!Should be false during competitions. Can cause the Operator controller to be remapped!!
-    public static final boolean kSysIdModeEnabled = false;
+    public static final boolean kSysIdModeEnabled = true;
 }
