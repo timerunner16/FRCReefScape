@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.WoS.Consume;
-import frc.robot.commands.WoS.EatPosition;
+import frc.robot.commands.elevator.EatPosition;
 import frc.robot.commands.elevator.Level1;
 import frc.robot.commands.funnel.Implode;
 

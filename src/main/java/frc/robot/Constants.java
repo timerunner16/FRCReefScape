@@ -163,6 +163,8 @@ public final class Constants {
       0,
       0
     };
+
+    public static final double kWoSShoulderEatAngle = 0;
   }
 
   public static final class FunnelConstants {

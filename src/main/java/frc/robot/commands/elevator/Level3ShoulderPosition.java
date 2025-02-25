@@ -2,30 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.CompositeCommands;
+package frc.robot.commands.elevator;
 
-import java.util.logging.Level;
-
-import frc.robot.subsystems.Elevator;
 import frc.robot.testingdashboard.Command;
+import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ScoreLevel1 extends Command {
-  frc.robot.commands.elevator.Level1ShoulderPosition m_ShoulderLevel1;
-  frc.robot.commands.elevator.Level1 m_ElevatorLevel1;
+public class Level3ShoulderPosition extends Command {
   
-  enum State {
-    kInit,
-  };
-
-  State m_state = State.kInit;
-
-  /** Creates a new ScoreLevel1. */
-  public ScoreLevel1() {
-    super(Elevator.getInstance(), "Scoring Commands", "ScoreLevel1");
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_ShoulderLevel1 = new frc.robot.commands.elevator.Level1ShoulderPosition();
-    m_ElevatorLevel1 = new frc.robot.commands.elevator.Level1();
+  Elevator m_elevator;
+  /** Creates a new EatPosition. */
+  public Level3ShoulderPosition() {
+    super(Elevator.getInstance(),"Elevator","Level3ShoulderPosition");
+    m_elevator = Elevator.getInstance();
+    addRequirements(m_elevator);
   }
 
   // Called when the command is initially scheduled.
@@ -35,13 +25,7 @@ public class ScoreLevel1 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    switch (m_state) {
-      case kInit:
-        m_ShoulderLevel1.schedule();
-        m_ElevatorLevel1.schedule();
-        m_state = State.kInit;
-        break;
-    }
+    m_elevator.setShoulderTargetLevel(3);
   }
 
   // Called once the command ends or is interrupted.

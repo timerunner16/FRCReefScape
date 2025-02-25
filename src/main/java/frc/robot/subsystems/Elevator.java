@@ -290,6 +290,12 @@ public class Elevator extends SubsystemBase {
     }
   }
 
+  public void stopShoulder(){
+    if (m_WoSShoulderSparkMax != null) {
+      m_WoSShoulderSparkMax.set(0);
+    }
+  }
+
   @Override
   public void periodic() {
     if (Constants.ElevatorConstants.kEnableElevatorPIDTuning &&

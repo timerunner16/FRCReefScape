@@ -2,51 +2,39 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.WoS;
+package frc.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.WoS;
-
-import frc.robot.Constants;
-import edu.wpi.first.math.MathUtil;
+import frc.robot.testingdashboard.Command;
+import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Level1 extends Command {
-  /** Creates a new SetLevel1. */
-  WoS m_WoS;
-
-  private boolean m_isFinished = false;
-
-  public Level1() {
-    m_WoS = WoS.getInstance();
-    addRequirements(m_WoS);
+public class Level2ShoulderPosition extends Command {
+  
+  Elevator m_elevator;
+  /** Creates a new EatPosition. */
+  public Level2ShoulderPosition() {
+    super(Elevator.getInstance(),"Elevator","Level23ShoulderPosition");
+    m_elevator = Elevator.getInstance();
+    addRequirements(m_elevator);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_WoS.setTargetLevel(1);
-
-    if (MathUtil.isNear(Constants.WoSConstants.kWoSShoulderLevels[1], m_WoS.getShoulderAngle(), Math.PI/180.0)) {
-       m_isFinished = true;
-    }
+    m_elevator.setShoulderTargetLevel(2);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_WoS.noSpin(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_isFinished;
+    return false;
   }
 }

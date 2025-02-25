@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.WoS.L23ScorePosition;
+import frc.robot.commands.elevator.Level3ShoulderPosition;
 import frc.robot.commands.elevator.Level3;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -16,6 +16,6 @@ public class Level3Score extends ParallelCommandGroup {
   public Level3Score() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new Level3(), new L23ScorePosition());
+    addCommands(new Level3(), new Level3ShoulderPosition());
   }
 }
