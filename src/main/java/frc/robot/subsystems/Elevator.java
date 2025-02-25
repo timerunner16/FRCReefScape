@@ -17,11 +17,25 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.TDNumber;
+import frc.robot.testingdashboard.TDSendable;
 
 public class Elevator extends SubsystemBase {
   private static Elevator m_elevator;
@@ -57,6 +71,30 @@ public class Elevator extends SubsystemBase {
   TrapezoidProfile.State m_state;
   TrapezoidProfile.State m_setpoint;
 
+  // This gearbox represents a gearbox containing 2 Vex 775pro motors.
+  private final DCMotor m_elevatorMotor = DCMotor.getNEO(2);
+
+  // Simulation classes help us simulate what's going on, including gravity.
+  private final ElevatorSim m_elevatorSim =
+      new ElevatorSim(m_elevatorMotor,
+       20,
+       5.0,
+       0.10,
+       0.0,
+       1.0,
+       true,
+       0.0);
+  private Encoder m_encoder;
+  private EncoderSim m_encoderSim;
+  private DCMotorSim m_motorSim;
+
+  // Create a Mechanism2d visualization of the elevator
+  private final Mechanism2d m_mech2d = new Mechanism2d(20, 50);
+  private final MechanismRoot2d m_mech2dRoot = m_mech2d.getRoot("Elevator Root", 10, 0);
+  private final MechanismLigament2d m_elevatorMech2d =
+      m_mech2dRoot.append(
+          new MechanismLigament2d("Elevator", m_elevatorSim.getPositionMeters() * 20, 90));
+  
   /** Creates a new Elevator. */
   private Elevator() {
     super("Elevator");
@@ -100,6 +138,12 @@ public class Elevator extends SubsystemBase {
       m_elevatorEncoderValueDegrees = new TDNumber(this, "Elevator Encoder Values", "Angle (degrees)", getAngle());
       m_leftCurrentOutput = new TDNumber(this, "Current", "Left Elevator Output", m_leftSparkFlex.getOutputCurrent());
       m_rightCurrentOutput = new TDNumber(this, "Current", "Right Elevator Output", m_rightSparkFlex.getOutputCurrent());
+
+      m_encoder = new Encoder(1,2);
+      m_encoderSim = new EncoderSim(m_encoder);
+      m_motorSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(6, 8), m_elevatorMotor);
+
+      new TDSendable(this, "Elevator", "Position", m_mech2d);
     }
   }
 
@@ -113,18 +157,21 @@ public class Elevator extends SubsystemBase {
   public void moveUp() {
     if (m_leftSparkFlex != null) {
       m_leftSparkFlex.set(Constants.ElevatorConstants.kElevatorSpeed);
+      m_motorSim.setInputVoltage(Constants.ElevatorConstants.kElevatorSpeed * 12);
     }
   }
 
   public void moveDown() {
     if (m_leftSparkFlex != null) {
       m_leftSparkFlex.set(-Constants.ElevatorConstants.kElevatorSpeed);
+      m_motorSim.setInputVoltage(-Constants.ElevatorConstants.kElevatorSpeed * 12);
     }
   }
 
   public void stop() {
     if (m_leftSparkFlex != null) {
       m_leftSparkFlex.set(0.0);
+      m_motorSim.setInputVoltage(0);
     }
   }
 
@@ -185,7 +232,24 @@ public class Elevator extends SubsystemBase {
       double arbFeedForward = m_elevatorFeedForwardController.calculate(m_setpoint.velocity);
       m_closedLoopController.setReference(m_setpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFeedForward);
     }
-
+    m_elevatorMech2d.setLength(m_elevatorSim.getPositionMeters() * 20);
     super.periodic();
   }
+
+  /** Advance the simulation. */
+  public void simulationPeriodic() {
+    // In this method, we update our simulation of what our elevator is doing
+    // First, we set our "inputs" (voltages)
+    m_elevatorSim.setInput(m_motorSim.getInputVoltage());
+
+    // Next, we update it. The standard loop time is 20ms.
+    m_elevatorSim.update(0.020);
+
+    // Finally, we set our simulated encoder's readings and simulated battery voltage
+    m_encoderSim.setDistance(m_elevatorSim.getPositionMeters() * 10);
+    // SimBattery estimates loaded battery voltages
+    RoboRioSim.setVInVoltage(
+        BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
+  }
+
 }
