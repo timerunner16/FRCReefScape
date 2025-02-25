@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Level4"
+                  "name": "Level4Score"
                 }
               }
             ]
@@ -51,12 +51,6 @@
                 "data": {
                   "pathName": "BottomRight_BottomStationLeft"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Level1"
-                }
               }
             ]
           }
@@ -74,13 +68,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Implode"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Consume"
+                  "name": "FeedingTime"
                 }
               }
             ]
@@ -99,7 +87,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Level4"
+                  "name": "Level4Score"
                 }
               }
             ]
@@ -133,12 +121,6 @@
                 "data": {
                   "pathName": "BottomLeft_BottomStationLeft"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Level1"
-                }
               }
             ]
           }
@@ -156,13 +138,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Implode"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Consume"
+                  "name": "FeedingTime"
                 }
               }
             ]
