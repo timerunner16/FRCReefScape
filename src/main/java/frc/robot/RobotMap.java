@@ -91,7 +91,7 @@ public class RobotMap {
   public static int D_BACK_RIGHT_TURNING = RoboRioMap.CAN_7;
 
   // [E]levator
-  public static boolean E_ENABLED = false;
+  public static boolean E_ENABLED = true;
   public static int E_LEFTMOTOR = RoboRioMap.CAN_11;
   public static int E_RIGHTMOTOR = RoboRioMap.CAN_12;
 
