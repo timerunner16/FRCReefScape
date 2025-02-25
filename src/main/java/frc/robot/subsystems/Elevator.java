@@ -81,12 +81,12 @@ public class Elevator extends SubsystemBase {
   TDNumber m_TDshoulderP;
   TDNumber m_TDshoulderI;
   TDNumber m_TDshoulderD;
-  double m_shoulderP = Constants.WoSConstants.kShoulderP;
-  double m_shoulderI = Constants.WoSConstants.kShoulderI;
-  double m_shoulderD = Constants.WoSConstants.kShoulderD;
-  double m_shoulderkS = Constants.WoSConstants.kShoulderkS;
-  double m_shoulderkG = Constants.WoSConstants.kShoulderkG;
-  double m_shoulderkV = Constants.WoSConstants.kShoulderkV;
+  double m_shoulderP = Constants.ElevatorConstants.kShoulderP;
+  double m_shoulderI = Constants.ElevatorConstants.kShoulderI;
+  double m_shoulderD = Constants.ElevatorConstants.kShoulderD;
+  double m_shoulderkS = Constants.ElevatorConstants.kShoulderkS;
+  double m_shoulderkG = Constants.ElevatorConstants.kShoulderkG;
+  double m_shoulderkV = Constants.ElevatorConstants.kShoulderkV;
   private double m_shoulderLastAngle = 0;
 
   SparkMax m_WoSSparkMax;
