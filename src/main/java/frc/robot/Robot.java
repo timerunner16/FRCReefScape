@@ -101,6 +101,8 @@ public class Robot extends TimedRobot {
     if(Constants.kSysIdModeEnabled)
     {
       m_sysIDManager = RoutineManager.getInstance();
+      m_sysIDManager.registerRoutines();
+      m_sysIDManager.mapRoutinesToController();
     }
   }
 
