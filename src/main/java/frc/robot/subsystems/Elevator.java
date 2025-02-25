@@ -24,6 +24,8 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -377,4 +379,19 @@ public class Elevator extends SubsystemBase {
         BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
   }
 
+  public void setShoulderVoltage(Voltage volts) {
+    m_WoSShoulderSparkMax.setVoltage(volts.in(BaseUnits.VoltageUnit));
+  }
+
+  public double getShoulderVoltage() {
+    return m_WoSShoulderSparkMax.get() * RobotController.getBatteryVoltage();
+  }
+
+  public double getShoulderPosition() {
+    return m_WoSShoulderSparkMax.getEncoder().getPosition();
+  }
+
+  public double getShoulderVelocity() {
+    return m_WoSShoulderSparkMax.getEncoder().getVelocity();
+  }
 }
