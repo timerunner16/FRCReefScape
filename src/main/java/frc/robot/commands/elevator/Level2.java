@@ -25,7 +25,7 @@ public class Level2 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Elevator.setTargetLevel(2);
+    m_Elevator.setElevatorTargetLevel(2);
   }
 
   // Called once the command ends or is interrupted.

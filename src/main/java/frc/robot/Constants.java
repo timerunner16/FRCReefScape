@@ -138,6 +138,31 @@ public final class Constants {
       0,
       0
     };
+
+    public static final boolean kEnableShoulderPIDTuning = true;
+    public static final double kShoulderP = 0;
+    public static final double kShoulderI = 0;
+    public static final double kShoulderD = 0;
+    public static final double kShoulderkS = 0;
+    public static final double kShoulderkG = 0;
+    public static final double kShoulderkV = 0;
+
+    public static final double kWoSShoulderSpeed = 0.2;
+    public static final double kWoSShoulderSpeedRPM = 30;
+    
+    public static final double kWoSShoulderEncoderPositionFactor = (2 * Math.PI);
+    public static final double kWoSShoulderEncoderVelocityFactor = (2 * Math.PI / 60.0);
+    public static final double kWoSShoulderMotorToShoulderRatio = 40/18.0;
+
+    public static final double kWoSShoulderLowerLimitDegrees = -5;
+    public static final double kWoSShoulderUpperLimitDegrees = 365;
+
+    public static final double[] kWoSShoulderLevels = {
+      0,
+      0,
+      0,
+      0
+    };
   }
 
   public static final class FunnelConstants {
