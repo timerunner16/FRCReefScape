@@ -104,6 +104,8 @@ public final class Constants {
     };
 
     public static final double kEatAngle = 0;
+    public static final double kL23ScoreAngle = 0;
+    public static final double kL4ScoreAngle = 0;
     public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 0.5;
     public static final double kShoulderDeadband = 0.05;
 
