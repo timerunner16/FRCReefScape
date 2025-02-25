@@ -34,7 +34,7 @@ public class Level1ShoulderPosition extends Command {
   public void execute() {
     m_elevator.setShoulderTargetAngle(1);
 
-    if (MathUtil.isNear(Constants.ElevatorConstants.kWoSShoulderLevels[1], m_elevator.getShoulderAngle(), Math.PI/180.0)) {
+    if (MathUtil.isNear(Constants.ElevatorConstants.kShoulderLevels[1], m_elevator.getShoulderAngle(), Math.PI/180.0)) {
        m_isFinished = true;
     }
   }

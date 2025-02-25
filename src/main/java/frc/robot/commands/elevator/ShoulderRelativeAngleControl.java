@@ -33,9 +33,9 @@ public class ShoulderRelativeAngleControl extends Command {
   public void execute() {
     double angle = m_elevator.getShoulderAngle();
     // upward input on joystick will move Barrel Pivot upwards and vice versa
-    double input = -MathUtil.applyDeadband(m_operatorController.getLeftY(), Constants.WoSConstants.kShoulderDeadband);
+    double input = -MathUtil.applyDeadband(m_operatorController.getLeftY(), Constants.ElevatorConstants.kShoulderDeadband);
 
-    angle += input * Constants.WoSConstants.SHOULDER_ANGLE_INCREMENT_DEGREES;
+    angle += input * Constants.ElevatorConstants.SHOULDER_ANGLE_INCREMENT_DEGREES;
 
     m_elevator.setShoulderTargetAngle(angle);
   }

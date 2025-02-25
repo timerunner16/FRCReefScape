@@ -77,9 +77,9 @@ public class Elevator extends SubsystemBase {
   TrapezoidProfile.State m_elevatorSetpoint;
 
   TDNumber m_targetShoulderAngle;
-  TDNumber m_WoSShoulderEncoderValueRotations;
-  TDNumber m_WoSShoulderEncoderValueDegrees;
-  TDNumber m_WoSShoulderCurrentOutput;
+  TDNumber m_shoulderEncoderValueRotations;
+  TDNumber m_shoulderEncoderValueDegrees;
+  TDNumber m_shoulderCurrentOutput;
   TDNumber m_TDshoulderP;
   TDNumber m_TDshoulderI;
   TDNumber m_TDshoulderD;
@@ -94,12 +94,12 @@ public class Elevator extends SubsystemBase {
   SparkMax m_WoSSparkMax;
   SparkMaxConfig m_SparkMaxConfig;
 
-  SparkMax m_WoSShoulderSparkMax;
-  SparkMaxConfig m_WoSShoulderSparkMaxConfig;
-  SparkAbsoluteEncoder m_WoSShoulderAbsoluteEncoder;
-  SparkClosedLoopController m_WoSShoulderClosedLoopController;
+  SparkMax m_shoulderSparkMax;
+  SparkMaxConfig m_shoulderSparkMaxConfig;
+  SparkAbsoluteEncoder m_shoulderAbsoluteEncoder;
+  SparkClosedLoopController m_shoulderClosedLoopController;
 
-  ArmFeedforward m_WoSShoulderArmFeedForwardController;
+  ArmFeedforward m_shoulderArmFeedForwardController;
 
   // This gearbox represents a gearbox containing 2 Vex 775pro motors.
   private final DCMotor m_elevatorMotor = DCMotor.getNEO(2);
@@ -172,37 +172,37 @@ public class Elevator extends SubsystemBase {
 
       
       // setup shoulder
-      m_WoSShoulderSparkMax = new SparkMax(RobotMap.W_SHOULDERMOTOR, MotorType.kBrushless);
-      m_WoSShoulderSparkMaxConfig = new SparkMaxConfig();
+      m_shoulderSparkMax = new SparkMax(RobotMap.E_SHOULDERMOTOR, MotorType.kBrushless);
+      m_shoulderSparkMaxConfig = new SparkMaxConfig();
 
-      m_TDshoulderP = new TDNumber(this, "WoS Shoulder PID", "P", Constants.WoSConstants.kShoulderP);
-      m_TDshoulderI = new TDNumber(this, "WoS Shoulder PID", "I", Constants.WoSConstants.kShoulderI);
-      m_TDshoulderD = new TDNumber(this, "WoS Shoulder PID", "D", Constants.WoSConstants.kShoulderD);
+      m_TDshoulderP = new TDNumber(this, "WoS Shoulder PID", "P", Constants.ElevatorConstants.kShoulderP);
+      m_TDshoulderI = new TDNumber(this, "WoS Shoulder PID", "I", Constants.ElevatorConstants.kShoulderI);
+      m_TDshoulderD = new TDNumber(this, "WoS Shoulder PID", "D", Constants.ElevatorConstants.kShoulderD);
 
-      m_WoSShoulderSparkMaxConfig.idleMode(IdleMode.kBrake);
+      m_shoulderSparkMaxConfig.idleMode(IdleMode.kBrake);
 
-      m_WoSShoulderSparkMaxConfig.closedLoop.pid(Constants.ElevatorConstants.kShoulderP, Constants.ElevatorConstants.kShoulderI,
+      m_shoulderSparkMaxConfig.closedLoop.pid(Constants.ElevatorConstants.kShoulderP, Constants.ElevatorConstants.kShoulderI,
           Constants.ElevatorConstants.kShoulderD);
-      m_WoSShoulderSparkMaxConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-      m_WoSShoulderSparkMaxConfig.closedLoop.positionWrappingEnabled(true);
-      m_WoSShoulderSparkMaxConfig.closedLoop.positionWrappingMinInput(0);
-      m_WoSShoulderSparkMaxConfig.closedLoop.positionWrappingMaxInput(Constants.ElevatorConstants.DEGREES_PER_REVOLUTION);
+      m_shoulderSparkMaxConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+      m_shoulderSparkMaxConfig.closedLoop.positionWrappingEnabled(true);
+      m_shoulderSparkMaxConfig.closedLoop.positionWrappingMinInput(0);
+      m_shoulderSparkMaxConfig.closedLoop.positionWrappingMaxInput(Constants.ElevatorConstants.DEGREES_PER_REVOLUTION);
 
-      m_WoSShoulderSparkMaxConfig.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.kWoSShoulderEncoderPositionFactor);
-      m_WoSShoulderSparkMaxConfig.absoluteEncoder.velocityConversionFactor(Constants.ElevatorConstants.kWoSShoulderEncoderVelocityFactor);
-      m_WoSShoulderSparkMaxConfig.absoluteEncoder.inverted(false);
+      m_shoulderSparkMaxConfig.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.kShoulderEncoderPositionFactor);
+      m_shoulderSparkMaxConfig.absoluteEncoder.velocityConversionFactor(Constants.ElevatorConstants.kShoulderEncoderVelocityFactor);
+      m_shoulderSparkMaxConfig.absoluteEncoder.inverted(false);
 
-      m_WoSShoulderSparkMax.configure(m_WoSShoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      m_shoulderSparkMax.configure(m_shoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-      m_WoSShoulderAbsoluteEncoder = m_WoSShoulderSparkMax.getAbsoluteEncoder();
-      m_WoSShoulderClosedLoopController = m_WoSShoulderSparkMax.getClosedLoopController();
+      m_shoulderAbsoluteEncoder = m_shoulderSparkMax.getAbsoluteEncoder();
+      m_shoulderClosedLoopController = m_shoulderSparkMax.getClosedLoopController();
 
-      m_WoSShoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
+      m_shoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
 
       m_targetShoulderAngle = new TDNumber(this, "WoS Encoder Values", "Target Shoulder Angle", getShoulderAngle());
-      m_WoSShoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getShoulderAngle() / Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
-      m_WoSShoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Shoulder Angle (radians)", getShoulderAngle());
-      m_WoSShoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_WoSShoulderSparkMax.getOutputCurrent());
+      m_shoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getShoulderAngle() / Constants.ElevatorConstants.kShoulderEncoderPositionFactor);
+      m_shoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Shoulder Angle (radians)", getShoulderAngle());
+      m_shoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_shoulderSparkMax.getOutputCurrent());
 
       m_encoder = new Encoder(1,2);
       m_encoderSim = new EncoderSim(m_encoder);
@@ -261,14 +261,14 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getShoulderAngle() { 
-    return m_WoSShoulderAbsoluteEncoder.getPosition() * Constants.ElevatorConstants.kWoSShoulderMotorToShoulderRatio;
+    return m_shoulderAbsoluteEncoder.getPosition() * Constants.ElevatorConstants.kShoulderMotorToShoulderRatio;
   }
 
   public void setShoulderTargetAngle(double angle) {
     double setpoint = angle % Constants.ElevatorConstants.DEGREES_PER_REVOLUTION;
     setpoint = MathUtil.clamp(setpoint,
-                              Constants.ElevatorConstants.kWoSShoulderLowerLimitDegrees, 
-                              Constants.ElevatorConstants.kWoSShoulderUpperLimitDegrees);
+                              Constants.ElevatorConstants.kShoulderLowerLimitDegrees, 
+                              Constants.ElevatorConstants.kShoulderUpperLimitDegrees);
     if (setpoint != m_shoulderLastAngle) {
       m_targetShoulderAngle.set(setpoint);
       m_shoulderLastAngle = setpoint;
@@ -277,7 +277,7 @@ public class Elevator extends SubsystemBase {
 
   public void setShoulderTargetLevel(int level) {
     if (level < 1 || level > 4) return;
-    setShoulderTargetAngle(Constants.ElevatorConstants.kWoSShoulderLevels[level]);
+    setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderLevels[level]);
   }
 
   public void setShoulderSpeeds(double ShoulderRPM) {
@@ -285,14 +285,14 @@ public class Elevator extends SubsystemBase {
   }
 
   public void spinShoulder(double shoulderSpeed){
-    if (m_WoSShoulderSparkMax != null) {
-      m_WoSShoulderSparkMax.set(shoulderSpeed);
+    if (m_shoulderSparkMax != null) {
+      m_shoulderSparkMax.set(shoulderSpeed);
     }
   }
 
   public void stopShoulder(){
-    if (m_WoSShoulderSparkMax != null) {
-      m_WoSShoulderSparkMax.set(0);
+    if (m_shoulderSparkMax != null) {
+      m_shoulderSparkMax.set(0);
     }
   }
 
@@ -324,28 +324,28 @@ public class Elevator extends SubsystemBase {
       }
     }
     if (Constants.ElevatorConstants.kEnableShoulderPIDTuning &&
-        m_WoSShoulderSparkMax != null) {
+        m_shoulderSparkMax != null) {
       double tmp = m_TDshoulderP.get();
       boolean changed = false;
       if (tmp != m_shoulderP) {
         m_shoulderP = tmp;
-        m_WoSShoulderSparkMaxConfig.closedLoop.p(m_shoulderP);
+        m_shoulderSparkMaxConfig.closedLoop.p(m_shoulderP);
         changed = true;
       }
       tmp = m_TDshoulderI.get();
       if (tmp != m_shoulderI) {
         m_shoulderI = tmp;
         changed = true;
-        m_WoSShoulderSparkMaxConfig.closedLoop.i(m_shoulderI);
+        m_shoulderSparkMaxConfig.closedLoop.i(m_shoulderI);
       }
       tmp = m_TDshoulderD.get();
       if (tmp != m_shoulderD) {
         m_shoulderD = tmp;
         changed = true;
-        m_WoSShoulderSparkMaxConfig.closedLoop.d(m_shoulderD);
+        m_shoulderSparkMaxConfig.closedLoop.d(m_shoulderD);
       }
       if(changed) {
-        m_WoSShoulderSparkMax.configure(m_WoSShoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_shoulderSparkMax.configure(m_shoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       }
     }
     if (RobotMap.E_ENABLED) {
@@ -354,12 +354,12 @@ public class Elevator extends SubsystemBase {
       m_elevatorEncoderValueDegrees.set(getElevatorAngle()/Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
       m_elevatorEncoderValueRotations.set(getElevatorAngle());
 
-      m_WoSShoulderCurrentOutput.set(m_WoSShoulderSparkMax.getOutputCurrent());
-      m_WoSShoulderEncoderValueDegrees.set(getShoulderAngle()/Constants.WoSConstants.kWoSShoulderEncoderPositionFactor);
-      m_WoSShoulderEncoderValueRotations.set(getShoulderAngle());
+      m_shoulderCurrentOutput.set(m_shoulderSparkMax.getOutputCurrent());
+      m_shoulderEncoderValueDegrees.set(getShoulderAngle()/Constants.ElevatorConstants.kShoulderEncoderPositionFactor);
+      m_shoulderEncoderValueRotations.set(getShoulderAngle());
 
-      double shoulderArbFeedforward = m_WoSShoulderArmFeedForwardController.calculate(m_shoulderLastAngle, 0.0);
-      m_WoSShoulderClosedLoopController.setReference(m_shoulderLastAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0, shoulderArbFeedforward);
+      double shoulderArbFeedforward = m_shoulderArmFeedForwardController.calculate(m_shoulderLastAngle, 0.0);
+      m_shoulderClosedLoopController.setReference(m_shoulderLastAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0, shoulderArbFeedforward);
 
       m_elevatorState = m_elevatorProfile.calculate(periodTime, m_elevatorState, m_elevatorSetpoint);
       double elevatorArbFeedforward = m_elevatorFeedForwardController.calculate(m_elevatorSetpoint.velocity);
@@ -386,18 +386,18 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setShoulderVoltage(Voltage volts) {
-    m_WoSShoulderSparkMax.setVoltage(volts.in(BaseUnits.VoltageUnit));
+    m_shoulderSparkMax.setVoltage(volts.in(BaseUnits.VoltageUnit));
   }
 
   public double getShoulderVoltage() {
-    return m_WoSShoulderSparkMax.get() * RobotController.getBatteryVoltage();
+    return m_shoulderSparkMax.get() * RobotController.getBatteryVoltage();
   }
 
   public double getShoulderPosition() {
-    return m_WoSShoulderSparkMax.getEncoder().getPosition();
+    return m_shoulderSparkMax.getEncoder().getPosition();
   }
 
   public double getShoulderVelocity() {
-    return m_WoSShoulderSparkMax.getEncoder().getVelocity();
+    return m_shoulderSparkMax.getEncoder().getVelocity();
   }
 }

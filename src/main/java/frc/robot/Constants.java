@@ -76,39 +76,6 @@ public final class Constants {
     public static final double kWoSSpeedRPM = 30;
 
     public static final double kWoSRPMSurfaceSpeedRatio = 6.28;
-
-    public static final boolean kEnableShoulderPIDTuning = true;
-    public static final double kShoulderP = 0;
-    public static final double kShoulderI = 0;
-    public static final double kShoulderD = 0;
-    public static final double kShoulderkS = 0;
-    public static final double kShoulderkG = 0;
-    public static final double kShoulderkV = 0;
-
-    public static final double kWoSShoulderSpeed = 0.2;
-    public static final double kWoSShoulderSpeedRPM = 30;
-    
-    public static final double kWoSShoulderEncoderPositionFactor = (2 * Math.PI);
-    public static final double kWoSShoulderEncoderVelocityFactor = (2 * Math.PI / 60.0);
-    public static final double kWoSShoulderMotorToShoulderRatio = 40/18.0;
-
-    public static final double DEGREES_PER_REVOLUTION = 360;
-    public static final double kAngleLowerLimitDegrees = -5;
-    public static final double kAngleUpperLimitDegrees = 365;
-
-    public static final double[] kWoSShoulderLevels = {
-      0,
-      0,
-      0,
-      0
-    };
-
-    public static final double kEatAngle = 0;
-    public static final double kL23ScoreAngle = 0;
-    public static final double kL4ScoreAngle = 0;
-    public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 0.5;
-    public static final double kShoulderDeadband = 0.05;
-
   }
 
   public static final class ElevatorConstants {
@@ -147,24 +114,26 @@ public final class Constants {
     public static final double kShoulderkG = 0;
     public static final double kShoulderkV = 0;
 
-    public static final double kWoSShoulderSpeed = 0.2;
-    public static final double kWoSShoulderSpeedRPM = 30;
+    public static final double kShoulderSpeed = 0.2;
+    public static final double kShoulderSpeedRPM = 30;
     
-    public static final double kWoSShoulderEncoderPositionFactor = (2 * Math.PI);
-    public static final double kWoSShoulderEncoderVelocityFactor = (2 * Math.PI / 60.0);
-    public static final double kWoSShoulderMotorToShoulderRatio = 40/18.0;
+    public static final double kShoulderEncoderPositionFactor = (2 * Math.PI);
+    public static final double kShoulderEncoderVelocityFactor = (2 * Math.PI / 60.0);
+    public static final double kShoulderMotorToShoulderRatio = 40/18.0;
 
-    public static final double kWoSShoulderLowerLimitDegrees = -5;
-    public static final double kWoSShoulderUpperLimitDegrees = 365;
+    public static final double kShoulderLowerLimitDegrees = -5;
+    public static final double kShoulderUpperLimitDegrees = 365;
 
-    public static final double[] kWoSShoulderLevels = {
+    public static final double[] kShoulderLevels = {
       0,
       0,
       0,
       0
     };
 
-    public static final double kWoSShoulderEatAngle = 0;
+    public static final double kShoulderEatAngle = 0;
+    public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 0.5;
+    public static final double kShoulderDeadband = 0.05;
   }
 
   public static final class FunnelConstants {
