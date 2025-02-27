@@ -11,6 +11,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -262,6 +264,15 @@ public final class Constants {
     public static final double kWinchI = 0;
     public static final double kWinchD = 0;
     public static final boolean kEnableWinchPIDTuning = false;
+  }
+
+  public static final class FieldLocationConstants {
+    public static final double kMidfieldX = 8.75;
+    public static final Pose2d kBlueReefCenter = new Pose2d(4.5, 4, Rotation2d.kZero);
+    public static final Pose2d kRedReefCenter = new Pose2d(13, 4, Rotation2d.kZero);
+
+    public static final Translation2d kReefLeftScoreTrans = new Translation2d(0, 0);
+    public static final Translation2d kReefRightScoreTrans = new Translation2d(0, -0);//Should be the same but with -y
   }
 
   //Driver control rate limits

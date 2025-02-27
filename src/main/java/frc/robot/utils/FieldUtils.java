@@ -9,14 +9,17 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 
 public class FieldUtils{
     private static FieldUtils m_fieldUtils;
 
-    public static final AllianceAprilTags RedTags = new AllianceAprilTags(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+    public static final AllianceAprilTags RedTags = new AllianceAprilTags(1, 2, 3, 4, 5, 8, 7, 6, 11, 10, 9);
     public static final AllianceAprilTags BlueTags = new AllianceAprilTags(12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
 
     public static FieldUtils getInstance(){
@@ -61,5 +64,96 @@ public class FieldUtils{
         Translation2d targetTrans = targetPose.getTranslation();
         Translation2d toTarget = targetTrans.minus(curTrans);
         return toTarget.getAngle();
+    }
+
+    enum ReefFaceOffset {
+        kLeft,
+        kRight
+    }
+
+    /**
+     * Returns the best scoring postion on the reef based on current robot pose
+     * @param currentRobotPose
+     * @param offsetDirection
+     * @return the Pose2d to score at, or null if scoring position couldn't be found
+     */
+    public Pose2d getClosestReefScoringPosition(Pose2d currentRobotPose, ReefFaceOffset offsetDirection, Alliance alliance) {
+        if(!inAllianceHalf(currentRobotPose, alliance)) {
+            return null;
+        }
+        int sextant = getSextant(currentRobotPose, alliance);
+
+        Pose2d faceTagPose = new Pose2d();
+        switch (alliance) {
+            case Blue:
+                faceTagPose = getBlueFaceTag(sextant);
+                break;
+            case Red:
+                faceTagPose = getRedFaceTag(sextant);
+                break;
+        }
+
+        Rotation2d tranlationRotate = new Rotation2d(Units.degreesToRadians(sextant * 60));
+        Translation2d scoreTranslation = ((offsetDirection==ReefFaceOffset.kLeft)? 
+                                            Constants.FieldLocationConstants.kReefLeftScoreTrans :
+                                            Constants.FieldLocationConstants.kReefRightScoreTrans).rotateBy(tranlationRotate);
+        Transform2d scoreTransform = new Transform2d(scoreTranslation, Rotation2d.k180deg);
+        Pose2d scoringPose = faceTagPose.transformBy(scoreTransform);
+
+        return scoringPose;
+    }
+
+    private Pose2d getBlueFaceTag(int sextant)
+    {
+        switch (sextant) {
+            case 0:
+                return getTagPose(getAllianceAprilTags().middleFrontReef).toPose2d();
+            case 1:
+                return getTagPose(getAllianceAprilTags().rightFrontReef).toPose2d();
+            case 2:
+                return getTagPose(getAllianceAprilTags().rightBackReef).toPose2d();
+            case 3:
+                return getTagPose(getAllianceAprilTags().middleBackReef).toPose2d();
+            case 4:
+                return getTagPose(getAllianceAprilTags().leftBackReef).toPose2d();
+            case 5:
+                return getTagPose(getAllianceAprilTags().leftFrontReef).toPose2d();
+            default:
+                return null;
+        }
+    }
+    private Pose2d getRedFaceTag(int sextant)
+    {
+        switch (sextant) {
+            case 0:
+                return getTagPose(getAllianceAprilTags().middleBackReef).toPose2d();
+            case 1:
+                return getTagPose(getAllianceAprilTags().leftBackReef).toPose2d();
+            case 2:
+                return getTagPose(getAllianceAprilTags().leftFrontReef).toPose2d();
+            case 3:
+                return getTagPose(getAllianceAprilTags().middleFrontReef).toPose2d();
+            case 4:
+                return getTagPose(getAllianceAprilTags().rightFrontReef).toPose2d();
+            case 5:
+                return getTagPose(getAllianceAprilTags().rightBackReef).toPose2d();
+            default:
+                return null;
+        }
+    }
+
+    public int getSextant(Pose2d robotPose, Alliance alliance) {
+        Pose2d reefCenter = (alliance == Alliance.Blue) ? 
+        Constants.FieldLocationConstants.kBlueReefCenter :
+        Constants.FieldLocationConstants.kRedReefCenter;
+
+        Rotation2d angle = getAngleToPose(reefCenter, robotPose);
+        Rotation2d offsetAngle = angle.plus(new Rotation2d(Units.degreesToRadians(30)));
+
+        return ((int)Math.floor((offsetAngle.getDegrees() / 360) * 6)) + 3;
+    }
+
+    public boolean inAllianceHalf(Pose2d robotPose, Alliance alliance) {
+        return (alliance == Alliance.Blue) ^ (robotPose.getX() > Constants.FieldLocationConstants.kMidfieldX);
     }
 }
