@@ -38,13 +38,13 @@ public class Jesus extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Elevator.moveUp();
+    m_Elevator.moveElevatorUp();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Elevator.stop();
+    m_Elevator.stopElevator();
   }
 
   // Returns true when the command should end.

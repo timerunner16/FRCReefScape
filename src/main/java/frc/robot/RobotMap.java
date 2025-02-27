@@ -94,6 +94,7 @@ public class RobotMap {
   public static boolean E_ENABLED = true;
   public static int E_LEFTMOTOR = RoboRioMap.CAN_11;
   public static int E_RIGHTMOTOR = RoboRioMap.CAN_12;
+  public static int E_SHOULDERMOTOR = RoboRioMap.CAN_17;
 
   //[F]unnel
   public static boolean F_ENABLED = true;
@@ -113,7 +114,6 @@ public class RobotMap {
   //[W]oS
   public static boolean W_ENABLED = true;
   public static int W_MOTOR = RoboRioMap.CAN_10;
-  public static int W_SHOULDERMOTOR = RoboRioMap.CAN_17;
 
   //[A]lgae Intake
   public static boolean A_ENABLED = false;

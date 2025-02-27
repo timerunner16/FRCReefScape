@@ -6,12 +6,12 @@ package frc.robot.commands.CompositeCommands;
 
 import java.util.logging.Level;
 
-import frc.robot.subsystems.WoS;
+import frc.robot.subsystems.Elevator;
 import frc.robot.testingdashboard.Command;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ScoreLevel1 extends Command {
-  frc.robot.commands.WoS.Level1 m_WoSLevel1;
+  frc.robot.commands.elevator.Level1ShoulderPosition m_ShoulderLevel1;
   frc.robot.commands.elevator.Level1 m_ElevatorLevel1;
   
   enum State {
@@ -22,9 +22,9 @@ public class ScoreLevel1 extends Command {
 
   /** Creates a new ScoreLevel1. */
   public ScoreLevel1() {
-    super(WoS.getInstance(), "Scoring Commands", "ScoreLevel1");
+    super(Elevator.getInstance(), "Scoring Commands", "ScoreLevel1");
     // Use addRequirements() here to declare subsystem dependencies.
-    m_WoSLevel1 = new frc.robot.commands.WoS.Level1();
+    m_ShoulderLevel1 = new frc.robot.commands.elevator.Level1ShoulderPosition();
     m_ElevatorLevel1 = new frc.robot.commands.elevator.Level1();
   }
 
@@ -37,7 +37,7 @@ public class ScoreLevel1 extends Command {
   public void execute() {
     switch (m_state) {
       case kInit:
-        m_WoSLevel1.schedule();
+        m_ShoulderLevel1.schedule();
         m_ElevatorLevel1.schedule();
         m_state = State.kInit;
         break;

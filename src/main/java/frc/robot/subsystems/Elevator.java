@@ -12,14 +12,20 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -52,24 +58,48 @@ public class Elevator extends SubsystemBase {
   double m_elevatorP = Constants.ElevatorConstants.kElevatorP;
   double m_elevatorI = Constants.ElevatorConstants.kElevatorI;
   double m_elevatorD = Constants.ElevatorConstants.kElevatorD;
-  TDNumber m_encoderValueRotations;
-  private double m_lastAngle = 0;
+  private double m_elevatorLastAngle = 0;
 
-  SparkFlex m_leftSparkFlex;
-  SparkFlex m_rightSparkFlex;
+  SparkFlex m_elevatorLeftSparkFlex;
+  SparkFlex m_elevatorRightSparkFlex;
 
   SparkFlexConfig m_leftSparkFlexConfig;
 
-  TDNumber m_leftCurrentOutput;
-  TDNumber m_rightCurrentOutput;
+  TDNumber m_elevatorLeftCurrentOutput;
+  TDNumber m_elevatorRightCurrentOutput;
 
-  SparkClosedLoopController m_closedLoopController;
-  SparkAbsoluteEncoder m_absoluteEncoder;
+  SparkClosedLoopController m_elevatorClosedLoopController;
+  SparkAbsoluteEncoder m_elevatorAbsoluteEncoder;
 
   ElevatorFeedforward m_elevatorFeedForwardController;
-  TrapezoidProfile m_profile;
-  TrapezoidProfile.State m_state;
-  TrapezoidProfile.State m_setpoint;
+  TrapezoidProfile m_elevatorProfile;
+  TrapezoidProfile.State m_elevatorState;
+  TrapezoidProfile.State m_elevatorSetpoint;
+
+  TDNumber m_targetShoulderAngle;
+  TDNumber m_shoulderEncoderValueRotations;
+  TDNumber m_shoulderEncoderValueDegrees;
+  TDNumber m_shoulderCurrentOutput;
+  TDNumber m_TDshoulderP;
+  TDNumber m_TDshoulderI;
+  TDNumber m_TDshoulderD;
+  double m_shoulderP = Constants.ElevatorConstants.kShoulderP;
+  double m_shoulderI = Constants.ElevatorConstants.kShoulderI;
+  double m_shoulderD = Constants.ElevatorConstants.kShoulderD;
+  double m_shoulderkS = Constants.ElevatorConstants.kShoulderkS;
+  double m_shoulderkG = Constants.ElevatorConstants.kShoulderkG;
+  double m_shoulderkV = Constants.ElevatorConstants.kShoulderkV;
+  private double m_shoulderLastAngle = 0;
+
+  SparkMax m_WoSSparkMax;
+  SparkMaxConfig m_SparkMaxConfig;
+
+  SparkMax m_shoulderSparkMax;
+  SparkMaxConfig m_shoulderSparkMaxConfig;
+  SparkAbsoluteEncoder m_shoulderAbsoluteEncoder;
+  SparkClosedLoopController m_shoulderClosedLoopController;
+
+  ArmFeedforward m_shoulderArmFeedForwardController;
 
   // This gearbox represents a gearbox containing 2 Vex 775pro motors.
   private final DCMotor m_elevatorMotor = DCMotor.getNEO(2);
@@ -100,13 +130,14 @@ public class Elevator extends SubsystemBase {
     super("Elevator");
 
     if (RobotMap.E_ENABLED) {
-      m_leftSparkFlex = new SparkFlex(RobotMap.E_LEFTMOTOR, MotorType.kBrushless);
-      m_rightSparkFlex = new SparkFlex(RobotMap.E_RIGHTMOTOR, MotorType.kBrushless);
+      // setup elevator
+      m_elevatorLeftSparkFlex = new SparkFlex(RobotMap.E_LEFTMOTOR, MotorType.kBrushless);
+      m_elevatorRightSparkFlex = new SparkFlex(RobotMap.E_RIGHTMOTOR, MotorType.kBrushless);
 
       m_leftSparkFlexConfig = new SparkFlexConfig();
       SparkFlexConfig rightElevatorSparkFlexConfig = new SparkFlexConfig();
 
-      rightElevatorSparkFlexConfig.follow(m_leftSparkFlex, true);
+      rightElevatorSparkFlexConfig.follow(m_elevatorLeftSparkFlex, true);
 
       m_TDelevatorP = new TDNumber(this, "Elevator PID", "P", Constants.ElevatorConstants.kElevatorP);
       m_TDelevatorI = new TDNumber(this, "Elevator PID", "I", Constants.ElevatorConstants.kElevatorI);
@@ -120,24 +151,58 @@ public class Elevator extends SubsystemBase {
       m_leftSparkFlexConfig.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
       m_leftSparkFlexConfig.absoluteEncoder.inverted(false);
 
-      m_leftSparkFlex.configure(m_leftSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      m_elevatorLeftSparkFlex.configure(m_leftSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-      m_closedLoopController = m_leftSparkFlex.getClosedLoopController();
-      m_absoluteEncoder = m_leftSparkFlex.getAbsoluteEncoder();
+      m_elevatorClosedLoopController = m_elevatorLeftSparkFlex.getClosedLoopController();
+      m_elevatorAbsoluteEncoder = m_elevatorLeftSparkFlex.getAbsoluteEncoder();
 
       m_elevatorFeedForwardController = new ElevatorFeedforward(Constants.ElevatorConstants.kElevatorkS, Constants.ElevatorConstants.kElevatorkG, Constants.ElevatorConstants.kElevatorkV);
-      m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
+      m_elevatorProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
         Constants.ElevatorConstants.kElevatorMaxVelocity,
         Constants.ElevatorConstants.kElevatorMaxAcceleration
       ));
-      m_setpoint = new TrapezoidProfile.State(m_absoluteEncoder.getPosition(), 0.0);
-      m_state = new TrapezoidProfile.State(m_absoluteEncoder.getPosition(), 0.0);
+      m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorAbsoluteEncoder.getPosition(), 0.0);
+      m_elevatorState = new TrapezoidProfile.State(m_elevatorAbsoluteEncoder.getPosition(), 0.0);
 
-      m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getAngle());
-      m_elevatorEncoderValueRotations = new TDNumber(this, "Elevator Encoder Values", "Rotations", getAngle() / Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
-      m_elevatorEncoderValueDegrees = new TDNumber(this, "Elevator Encoder Values", "Angle (degrees)", getAngle());
-      m_leftCurrentOutput = new TDNumber(this, "Current", "Left Elevator Output", m_leftSparkFlex.getOutputCurrent());
-      m_rightCurrentOutput = new TDNumber(this, "Current", "Right Elevator Output", m_rightSparkFlex.getOutputCurrent());
+      m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getElevatorAngle());
+      m_elevatorEncoderValueRotations = new TDNumber(this, "Elevator Encoder Values", "Rotations", getElevatorAngle() / Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
+      m_elevatorEncoderValueDegrees = new TDNumber(this, "Elevator Encoder Values", "Angle (degrees)", getElevatorAngle());
+      m_elevatorLeftCurrentOutput = new TDNumber(this, "Current", "Left Elevator Output", m_elevatorLeftSparkFlex.getOutputCurrent());
+      m_elevatorRightCurrentOutput = new TDNumber(this, "Current", "Right Elevator Output", m_elevatorRightSparkFlex.getOutputCurrent());
+
+      
+      // setup shoulder
+      m_shoulderSparkMax = new SparkMax(RobotMap.E_SHOULDERMOTOR, MotorType.kBrushless);
+      m_shoulderSparkMaxConfig = new SparkMaxConfig();
+
+      m_TDshoulderP = new TDNumber(this, "WoS Shoulder PID", "P", Constants.ElevatorConstants.kShoulderP);
+      m_TDshoulderI = new TDNumber(this, "WoS Shoulder PID", "I", Constants.ElevatorConstants.kShoulderI);
+      m_TDshoulderD = new TDNumber(this, "WoS Shoulder PID", "D", Constants.ElevatorConstants.kShoulderD);
+
+      m_shoulderSparkMaxConfig.idleMode(IdleMode.kBrake);
+
+      m_shoulderSparkMaxConfig.closedLoop.pid(Constants.ElevatorConstants.kShoulderP, Constants.ElevatorConstants.kShoulderI,
+          Constants.ElevatorConstants.kShoulderD);
+      m_shoulderSparkMaxConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+      m_shoulderSparkMaxConfig.closedLoop.positionWrappingEnabled(true);
+      m_shoulderSparkMaxConfig.closedLoop.positionWrappingMinInput(0);
+      m_shoulderSparkMaxConfig.closedLoop.positionWrappingMaxInput(Constants.ElevatorConstants.DEGREES_PER_REVOLUTION);
+
+      m_shoulderSparkMaxConfig.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.kShoulderEncoderPositionFactor);
+      m_shoulderSparkMaxConfig.absoluteEncoder.velocityConversionFactor(Constants.ElevatorConstants.kShoulderEncoderVelocityFactor);
+      m_shoulderSparkMaxConfig.absoluteEncoder.inverted(false);
+
+      m_shoulderSparkMax.configure(m_shoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+      m_shoulderAbsoluteEncoder = m_shoulderSparkMax.getAbsoluteEncoder();
+      m_shoulderClosedLoopController = m_shoulderSparkMax.getClosedLoopController();
+
+      m_shoulderArmFeedForwardController = new ArmFeedforward(m_shoulderkS, m_shoulderkG, m_shoulderkV);
+
+      m_targetShoulderAngle = new TDNumber(this, "WoS Encoder Values", "Target Shoulder Angle", getShoulderAngle());
+      m_shoulderEncoderValueRotations = new TDNumber(this, "WoS Encoder Values", "Rotations", getShoulderAngle() / Constants.ElevatorConstants.kShoulderEncoderPositionFactor);
+      m_shoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Shoulder Angle (radians)", getShoulderAngle());
+      m_shoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_shoulderSparkMax.getOutputCurrent());
 
       m_encoder = new Encoder(1,2);
       m_encoderSim = new EncoderSim(m_encoder);
@@ -154,51 +219,87 @@ public class Elevator extends SubsystemBase {
     return m_elevator;
   }
 
-  public void moveUp() {
-    if (m_leftSparkFlex != null) {
-      m_leftSparkFlex.set(Constants.ElevatorConstants.kElevatorSpeed);
+  public void moveElevatorUp() {
+    if (m_elevatorLeftSparkFlex != null) {
+      m_elevatorLeftSparkFlex.set(Constants.ElevatorConstants.kElevatorSpeed);
       m_motorSim.setInputVoltage(Constants.ElevatorConstants.kElevatorSpeed * 12);
     }
   }
 
-  public void moveDown() {
-    if (m_leftSparkFlex != null) {
-      m_leftSparkFlex.set(-Constants.ElevatorConstants.kElevatorSpeed);
+  public void moveElevatorDown() {
+    if (m_elevatorLeftSparkFlex != null) {
+      m_elevatorLeftSparkFlex.set(-Constants.ElevatorConstants.kElevatorSpeed);
       m_motorSim.setInputVoltage(-Constants.ElevatorConstants.kElevatorSpeed * 12);
     }
   }
 
-  public void stop() {
-    if (m_leftSparkFlex != null) {
-      m_leftSparkFlex.set(0.0);
+  public void stopElevator() {
+    if (m_elevatorLeftSparkFlex != null) {
+      m_elevatorLeftSparkFlex.set(0.0);
       m_motorSim.setInputVoltage(0);
     }
   }
 
-  public double getAngle() {
-    return m_absoluteEncoder.getPosition();
+  public double getElevatorAngle() {
+    return m_elevatorAbsoluteEncoder.getPosition();
   }
 
-  public void setTargetAngle(double angle) {
+  public void setElevatorTargetAngle(double angle) {
     angle = MathUtil.clamp(angle,
                               Constants.ElevatorConstants.kElevatorLowerLimitDegrees, 
                               Constants.ElevatorConstants.kElevatorUpperLimitDegrees);
-    if (angle != m_lastAngle) {
+    if (angle != m_elevatorLastAngle) {
       m_targetAngle.set(angle);
-      m_lastAngle = angle;
-      m_setpoint = new TrapezoidProfile.State(angle, 0.0);
+      m_elevatorLastAngle = angle;
+      m_elevatorSetpoint = new TrapezoidProfile.State(angle, 0.0);
     }
   }
 
-  public void setTargetLevel(int level) {
+  public void setElevatorTargetLevel(int level) {
     if (level < 1 || level > 4) return;
-    setTargetAngle(Constants.ElevatorConstants.kElevatorLevels[level]);
+    setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorLevels[level]);
+  }
+
+  public double getShoulderAngle() { 
+    return m_shoulderAbsoluteEncoder.getPosition() * Constants.ElevatorConstants.kShoulderMotorToShoulderRatio;
+  }
+
+  public void setShoulderTargetAngle(double angle) {
+    double setpoint = angle % Constants.ElevatorConstants.DEGREES_PER_REVOLUTION;
+    setpoint = MathUtil.clamp(setpoint,
+                              Constants.ElevatorConstants.kShoulderLowerLimitDegrees, 
+                              Constants.ElevatorConstants.kShoulderUpperLimitDegrees);
+    if (setpoint != m_shoulderLastAngle) {
+      m_targetShoulderAngle.set(setpoint);
+      m_shoulderLastAngle = setpoint;
+    }
+  }
+
+  public void setShoulderTargetLevel(int level) {
+    if (level < 1 || level > 4) return;
+    setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderLevels[level]);
+  }
+
+  public void setShoulderSpeeds(double ShoulderRPM) {
+      m_WoSSparkMax.getClosedLoopController().setReference(ShoulderRPM, ControlType.kVelocity);
+  }
+
+  public void spinShoulder(double shoulderSpeed){
+    if (m_shoulderSparkMax != null) {
+      m_shoulderSparkMax.set(shoulderSpeed);
+    }
+  }
+
+  public void stopShoulder(){
+    if (m_shoulderSparkMax != null) {
+      m_shoulderSparkMax.set(0);
+    }
   }
 
   @Override
   public void periodic() {
     if (Constants.ElevatorConstants.kEnableElevatorPIDTuning &&
-        m_leftSparkFlex != null) {
+        m_elevatorLeftSparkFlex != null) {
       double tmp = m_TDelevatorP.get();
       boolean changed = false;
       if (tmp != m_elevatorP) {
@@ -219,18 +320,50 @@ public class Elevator extends SubsystemBase {
         m_leftSparkFlexConfig.closedLoop.d(m_elevatorD);
       }
       if(changed) {
-        m_leftSparkFlex.configure(m_leftSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_elevatorLeftSparkFlex.configure(m_leftSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      }
+    }
+    if (Constants.ElevatorConstants.kEnableShoulderPIDTuning &&
+        m_shoulderSparkMax != null) {
+      double tmp = m_TDshoulderP.get();
+      boolean changed = false;
+      if (tmp != m_shoulderP) {
+        m_shoulderP = tmp;
+        m_shoulderSparkMaxConfig.closedLoop.p(m_shoulderP);
+        changed = true;
+      }
+      tmp = m_TDshoulderI.get();
+      if (tmp != m_shoulderI) {
+        m_shoulderI = tmp;
+        changed = true;
+        m_shoulderSparkMaxConfig.closedLoop.i(m_shoulderI);
+      }
+      tmp = m_TDshoulderD.get();
+      if (tmp != m_shoulderD) {
+        m_shoulderD = tmp;
+        changed = true;
+        m_shoulderSparkMaxConfig.closedLoop.d(m_shoulderD);
+      }
+      if(changed) {
+        m_shoulderSparkMax.configure(m_shoulderSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       }
     }
     if (RobotMap.E_ENABLED) {
-      m_leftCurrentOutput.set(m_leftSparkFlex.getOutputCurrent());
-      m_rightCurrentOutput.set(m_rightSparkFlex.getOutputCurrent());
-      m_elevatorEncoderValueDegrees.set(getAngle()/Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
-      m_elevatorEncoderValueRotations.set(getAngle());
+      m_elevatorLeftCurrentOutput.set(m_elevatorLeftSparkFlex.getOutputCurrent());
+      m_elevatorRightCurrentOutput.set(m_elevatorRightSparkFlex.getOutputCurrent());
+      m_elevatorEncoderValueDegrees.set(getElevatorAngle()/Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
+      m_elevatorEncoderValueRotations.set(getElevatorAngle());
 
-      m_state = m_profile.calculate(periodTime, m_state, m_setpoint);
-      double arbFeedForward = m_elevatorFeedForwardController.calculate(m_setpoint.velocity);
-      m_closedLoopController.setReference(m_setpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFeedForward);
+      m_shoulderCurrentOutput.set(m_shoulderSparkMax.getOutputCurrent());
+      m_shoulderEncoderValueDegrees.set(getShoulderAngle()/Constants.ElevatorConstants.kShoulderEncoderPositionFactor);
+      m_shoulderEncoderValueRotations.set(getShoulderAngle());
+
+      double shoulderArbFeedforward = m_shoulderArmFeedForwardController.calculate(m_shoulderLastAngle, 0.0);
+      m_shoulderClosedLoopController.setReference(m_shoulderLastAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0, shoulderArbFeedforward);
+
+      m_elevatorState = m_elevatorProfile.calculate(periodTime, m_elevatorState, m_elevatorSetpoint);
+      double elevatorArbFeedforward = m_elevatorFeedForwardController.calculate(m_elevatorSetpoint.velocity);
+      m_elevatorClosedLoopController.setReference(m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, elevatorArbFeedforward);
     }
     m_elevatorMech2d.setLength(m_elevatorSim.getPositionMeters() * 20);
     super.periodic();
@@ -252,4 +385,19 @@ public class Elevator extends SubsystemBase {
         BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
   }
 
+  public void setShoulderVoltage(Voltage volts) {
+    m_shoulderSparkMax.setVoltage(volts.in(BaseUnits.VoltageUnit));
+  }
+
+  public double getShoulderVoltage() {
+    return m_shoulderSparkMax.get() * RobotController.getBatteryVoltage();
+  }
+
+  public double getShoulderPosition() {
+    return m_shoulderSparkMax.getEncoder().getPosition();
+  }
+
+  public double getShoulderVelocity() {
+    return m_shoulderSparkMax.getEncoder().getVelocity();
+  }
 }
