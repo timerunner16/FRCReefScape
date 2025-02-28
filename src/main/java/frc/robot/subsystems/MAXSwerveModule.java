@@ -76,6 +76,7 @@ public class MAXSwerveModule {
     */
     SparkFlexConfig m_drivingConfig = new SparkFlexConfig();
     m_drivingConfig.idleMode(Constants.kDrivingMotorIdleMode);
+    m_drivingConfig.inverted(false);
     m_drivingConfig.smartCurrentLimit(Constants.kDrivingMotorCurrentLimit);
     m_drivingConfig.encoder.positionConversionFactor(Constants.kDrivingEncoderPositionFactor);
     m_drivingConfig.encoder.velocityConversionFactor(Constants.kDrivingEncoderVelocityFactor);
@@ -150,6 +151,11 @@ public class MAXSwerveModule {
   /** Zeroes all the SwerveModule encoders. */
   public void resetEncoders() {
     m_drivingEncoder.setPosition(0);
+  }
+
+  public double getLastSpeed()
+  {
+    return m_lastSpeed;
   }
 
   public double getDriveOutputCurrent() {

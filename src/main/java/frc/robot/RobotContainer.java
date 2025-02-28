@@ -6,10 +6,12 @@ package frc.robot;
 
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.TestTargetDrive;
+import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Level1;
 import frc.robot.commands.elevator.Level2;
 import frc.robot.commands.elevator.Level3;
 import frc.robot.commands.elevator.Level4;
+import frc.robot.commands.elevator.ShoulderPowerControl;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
 import frc.robot.subsystems.Elevator;
@@ -19,6 +21,7 @@ import frc.robot.testingdashboard.TestingDashboard;
 import frc.robot.SysId.RoutineManager;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
+import frc.robot.commands.WoS.WosFunnelTest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -88,13 +91,17 @@ public class RobotContainer {
 
     //TDNumber testX = new TDNumber(Drive.getInstance(), "Test Inputs", "TargetPoseX");
     //TDNumber testY = new TDNumber(Drive.getInstance(), "Test Inputs", "TargetPoseY");
-    /*new Spit();
+    new Spit();
     new Nibble();
     new TestTargetDrive();
     new Level1();
     new Level2();
     new Level3();
-    new Level4();*/
+    new Level4();
+
+    new ElevatorManualPowerControl();
+    new ShoulderPowerControl();
+    new WosFunnelTest();
 
   }
 
