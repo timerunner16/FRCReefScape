@@ -40,7 +40,7 @@ import frc.robot.utils.vision.VisionConfig;
 public final class Constants {
   public static final class AlgaeIntakeConstants {
     //AlgaeIntake constants
-    public static final boolean kEnableAnglePIDTuning = true;
+    public static final boolean kEnableAnglePIDTuning = false;
     public static final double kAngleP = 0;
     public static final double kAngleI = 0;
     public static final double kAngleD = 0;
@@ -56,7 +56,7 @@ public final class Constants {
 
     public static final double kAngleEncoderPositionFactor = (2 * Math.PI);
 
-    public static final boolean kEnableRollerPIDTuning = true;
+    public static final boolean kEnableRollerPIDTuning = false;
     public static final double kRollerP = 0;
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
@@ -69,7 +69,7 @@ public final class Constants {
 
   public static final class WoSConstants {
     //WoS constants
-    public static final boolean kEnableWheelPIDTuning = true;
+    public static final boolean kEnableWheelPIDTuning = false;
     public static final double kWoSP = 0;
     public static final double kWoSI = 0;
     public static final double kWoSD = 0;
@@ -77,12 +77,13 @@ public final class Constants {
     public static final double kWoSSpeed = 0.2;
     public static final double kWoSSpeedRPM = 30;
 
-    public static final double kWoSRPMSurfaceSpeedRatio = 6.28;
+    public static final double kWoSRPMSurfaceSpeedRatio = 1.5;
   }
 
   public static final class ElevatorConstants {
     //Elevator Constants
-    public static final boolean kEnableElevatorPIDTuning = true;
+    public static final boolean kEnableElevatorPIDTuning = false;
+    public static final boolean kEnableElevatorClosedLoopControl = false;
     public static final double kElevatorP = 0;
     public static final double kElevatorI = 0;
     public static final double kElevatorD = 0;
@@ -108,7 +109,8 @@ public final class Constants {
       0
     };
 
-    public static final boolean kEnableShoulderPIDTuning = true;
+    public static final boolean kEnableShoulderPIDTuning = false;
+    public static final boolean kEnableShoulderClosedLoopControl = false;
     public static final double kShoulderP = 0;
     public static final double kShoulderI = 0;
     public static final double kShoulderD = 0;
@@ -139,7 +141,7 @@ public final class Constants {
   }
 
   public static final class FunnelConstants {
-    public static final boolean kEnableFunnelPIDTuning = true;
+    public static final boolean kEnableFunnelPIDTuning = false;
     public static final double kFunnelP = 0;
     public static final double kFunnelI = 0;
     public static final double kFunnelD = 0;
@@ -324,7 +326,7 @@ public final class Constants {
     public static final double kTurningMinOutput = -1;
     public static final double kTurningMaxOutput = 1;
 
-    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
+    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
     public static final int kDrivingMotorCurrentLimit = 50; // amps

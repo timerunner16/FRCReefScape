@@ -95,6 +95,8 @@ public class RobotMap {
   public static int E_LEFTMOTOR = RoboRioMap.CAN_11;
   public static int E_RIGHTMOTOR = RoboRioMap.CAN_12;
   public static int E_SHOULDERMOTOR = RoboRioMap.CAN_17;
+  public static int E_LIMITHIGH = RoboRioMap.DIO_0;
+  public static int E_LIMITLOW = RoboRioMap.DIO_1;
 
   //[F]unnel
   public static boolean F_ENABLED = true;

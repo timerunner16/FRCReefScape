@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -26,6 +27,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -38,6 +40,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.testingdashboard.SubsystemBase;
+import frc.robot.testingdashboard.TDBoolean;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.TDNumber;
@@ -65,11 +68,18 @@ public class Elevator extends SubsystemBase {
 
   SparkFlexConfig m_leftSparkFlexConfig;
 
+  DigitalInput m_elevatorHighLimit;
+  DigitalInput m_elevatorLowLimit;
+
+  TDBoolean m_TDHighLimitHit;
+  TDBoolean m_TDLowLimitHit;
+
   TDNumber m_elevatorLeftCurrentOutput;
   TDNumber m_elevatorRightCurrentOutput;
 
   SparkClosedLoopController m_elevatorClosedLoopController;
   SparkAbsoluteEncoder m_elevatorAbsoluteEncoder;
+  RelativeEncoder m_elevatorMotorEncoder;
 
   ElevatorFeedforward m_elevatorFeedForwardController;
   TrapezoidProfile m_elevatorProfile;
@@ -150,11 +160,18 @@ public class Elevator extends SubsystemBase {
 
       m_leftSparkFlexConfig.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
       m_leftSparkFlexConfig.absoluteEncoder.inverted(false);
+      m_leftSparkFlexConfig.encoder.positionConversionFactor(Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
 
       m_elevatorLeftSparkFlex.configure(m_leftSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+      m_elevatorLowLimit = new DigitalInput(RobotMap.E_LIMITLOW);
+      m_elevatorHighLimit = new DigitalInput(RobotMap.E_LIMITHIGH);
+      m_TDHighLimitHit = new TDBoolean(this , "Limits", "High Limit");
+      m_TDLowLimitHit = new TDBoolean(this, "Limits", "Low Limit");
+
       m_elevatorClosedLoopController = m_elevatorLeftSparkFlex.getClosedLoopController();
       m_elevatorAbsoluteEncoder = m_elevatorLeftSparkFlex.getAbsoluteEncoder();
+      m_elevatorMotorEncoder = m_elevatorLeftSparkFlex.getEncoder();
 
       m_elevatorFeedForwardController = new ElevatorFeedforward(Constants.ElevatorConstants.kElevatorkS, Constants.ElevatorConstants.kElevatorkG, Constants.ElevatorConstants.kElevatorkV);
       m_elevatorProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
@@ -204,7 +221,7 @@ public class Elevator extends SubsystemBase {
       m_shoulderEncoderValueDegrees = new TDNumber(this, "WoS Encoder Values", "Shoulder Angle (radians)", getShoulderAngle());
       m_shoulderCurrentOutput = new TDNumber(Drive.getInstance(), "Current", "WoS Angle Output", m_shoulderSparkMax.getOutputCurrent());
 
-      m_encoder = new Encoder(1,2);
+      m_encoder = new Encoder(8,9);
       m_encoderSim = new EncoderSim(m_encoder);
       m_motorSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(6, 8), m_elevatorMotor);
 
@@ -217,6 +234,27 @@ public class Elevator extends SubsystemBase {
       m_elevator = new Elevator();
     }
     return m_elevator;
+  }
+
+  /**
+   * Move elevator under power control
+   * @param commandedSpeed
+   */
+  public void moveElevator(double commandedSpeed)
+  {
+
+    double speed = commandedSpeed;
+    if(m_elevatorLeftSparkFlex != null) {
+      if(!m_elevatorHighLimit.get() && speed > 0)
+      {
+        speed = 0;
+      }
+      if(!m_elevatorLowLimit.get() && speed < 0)
+      {
+        speed = 0;
+      }
+      m_elevatorLeftSparkFlex.set(speed);
+    }
   }
 
   public void moveElevatorUp() {
@@ -241,7 +279,9 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getElevatorAngle() {
-    return m_elevatorAbsoluteEncoder.getPosition();
+    //Temporarily get measurement from built in encoder
+    //Switch to external encoder when it works
+    return m_elevatorMotorEncoder.getPosition();
   }
 
   public void setElevatorTargetAngle(double angle) {
@@ -355,17 +395,36 @@ public class Elevator extends SubsystemBase {
       m_elevatorEncoderValueRotations.set(getElevatorAngle());
 
       m_shoulderCurrentOutput.set(m_shoulderSparkMax.getOutputCurrent());
-      m_shoulderEncoderValueDegrees.set(getShoulderAngle()/Constants.ElevatorConstants.kShoulderEncoderPositionFactor);
+      m_shoulderEncoderValueDegrees.set(getShoulderAngle());
       m_shoulderEncoderValueRotations.set(getShoulderAngle());
 
-      double shoulderArbFeedforward = m_shoulderArmFeedForwardController.calculate(m_shoulderLastAngle, 0.0);
-      m_shoulderClosedLoopController.setReference(m_shoulderLastAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0, shoulderArbFeedforward);
+      if(Constants.ElevatorConstants.kEnableShoulderClosedLoopControl){
+        double shoulderArbFeedforward = m_shoulderArmFeedForwardController.calculate(m_shoulderLastAngle, 0.0);
+        m_shoulderClosedLoopController.setReference(m_shoulderLastAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0, shoulderArbFeedforward);
+      }
+      if(Constants.ElevatorConstants.kEnableElevatorClosedLoopControl){
+        m_elevatorState = m_elevatorProfile.calculate(periodTime, m_elevatorState, m_elevatorSetpoint);
+        double elevatorArbFeedforward = m_elevatorFeedForwardController.calculate(m_elevatorSetpoint.velocity);
+        m_elevatorClosedLoopController.setReference(m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, elevatorArbFeedforward);
+      }
 
-      m_elevatorState = m_elevatorProfile.calculate(periodTime, m_elevatorState, m_elevatorSetpoint);
-      double elevatorArbFeedforward = m_elevatorFeedForwardController.calculate(m_elevatorSetpoint.velocity);
-      m_elevatorClosedLoopController.setReference(m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, elevatorArbFeedforward);
+      m_elevatorMech2d.setLength(m_elevatorSim.getPositionMeters() * 20);
+      m_TDHighLimitHit.set(m_elevatorHighLimit.get());
+      m_TDLowLimitHit.set(m_elevatorLowLimit.get());
+      if(!m_elevatorHighLimit.get() && m_elevatorLeftSparkFlex.get() > 0)
+      {
+        m_elevatorLeftSparkFlex.set(0);
+      }
+      if(!m_elevatorLowLimit.get() && m_elevatorLeftSparkFlex.get() < 0)
+      {
+        if(getElevatorAngle() != 0)
+        {
+          m_elevatorMotorEncoder.setPosition(0);
+        }
+        m_elevatorLeftSparkFlex.set(0);
+      }
     }
-    m_elevatorMech2d.setLength(m_elevatorSim.getPositionMeters() * 20);
+
     super.periodic();
   }
 
