@@ -77,6 +77,11 @@ public class Drive extends SubsystemBase {
   TDNumber TDySpeedCommanded;
   TDNumber TDrotSpeedCommanded;
 
+  TDNumber TDFrontLeftDriveSpeed;
+  TDNumber TDFrontRightDriveSpeed;
+  TDNumber TDBackLeftDriveSpeed;
+  TDNumber TDBackRightDriveSpeed;
+
   TDNumber TDxSpeedMeasured;
   TDNumber TDySpeedMeasured;
   TDNumber TDrotSpeedMeasured;
@@ -122,6 +127,11 @@ public class Drive extends SubsystemBase {
     TDxSpeedMeasured = new TDNumber(this, "Drive Speed", "XMeasuredSpeed");
     TDySpeedMeasured = new TDNumber(this, "Drive Speed", "YMeasuredSpeed");
     TDrotSpeedMeasured = new TDNumber(this, "Drive Speed", "RotMeasuredSpeed");
+
+    TDFrontLeftDriveSpeed = new TDNumber(this, "Drive Speed", "Front Left Speed");
+    TDFrontRightDriveSpeed = new TDNumber(this, "Drive Speed", "Front Right Speed");
+    TDBackLeftDriveSpeed = new TDNumber(this, "Drive Speed", "Back Left Speed");
+    TDBackRightDriveSpeed = new TDNumber(this, "Drive Speed", "Back Right Speed");
     
     TDPoseX = new TDNumber(this, "Drive Pose", "PoseX");
     TDPoseY = new TDNumber(this, "Drive Pose", "PoseY");
@@ -388,6 +398,11 @@ public class Drive extends SubsystemBase {
     TDPoseX.set(currentPose.getX());
     TDPoseY.set(currentPose.getY());
     TDPoseAngle.set(currentPose.getRotation().getDegrees());
+
+    TDFrontLeftDriveSpeed.set(m_FrontLeft.getLastSpeed());
+    TDFrontRightDriveSpeed.set(m_FrontRight.getLastSpeed());
+    TDBackLeftDriveSpeed.set(m_BackLeft.getLastSpeed());
+    TDBackRightDriveSpeed.set(m_BackRight.getLastSpeed());
 
     m_DLeftFrontCurrentOutput.set(m_FrontLeft.getDriveOutputCurrent());
     m_DRightFrontCurrentOutput.set(m_FrontRight.getDriveOutputCurrent());
