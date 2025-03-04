@@ -30,13 +30,15 @@ public class ShoulderPowerControl extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = -MathUtil.applyDeadband(m_operatorController.getRightY(), Constants.OIConstants.kDriveDeadband);
+    double speed = -MathUtil.applyDeadband(m_operatorController.getLeftY(), Constants.OIConstants.kDriveDeadband);
     m_elevator.spinShoulder(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_elevator.spinShoulder(0);
+  }
 
   // Returns true when the command should end.
   @Override
