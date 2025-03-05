@@ -43,7 +43,10 @@ public class WosFunnelTest extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_wos.spinIn(0);
+    m_funnel.spinIn(0);
+  }
 
   // Returns true when the command should end.
   @Override

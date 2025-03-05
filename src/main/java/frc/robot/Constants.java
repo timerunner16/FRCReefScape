@@ -96,17 +96,18 @@ public final class Constants {
     public static final double kElevatorSpeed = 0.2;
     public static final double kElevatorSpeedRPM = 30;
 
-    public static final double kElevatorEncoderPositionFactor = (2 * Math.PI);
+    //Conversion from motor rotations to elevator linear inches
+    public static final double kElevatorEncoderPositionFactor = (20.0/22.0*0.25); /* (planetary ratio) / (sprocket teeth) * (Inches per tooth) */
 
     public static final double DEGREES_PER_REVOLUTION = 360;
-    public static final double kElevatorLowerLimitDegrees = 0;
-    public static final double kElevatorUpperLimitDegrees = 0;
+    public static final double kElevatorLowerLimitInches = 0;
+    public static final double kElevatorUpperLimitInches = 25.5;
 
     public static final double[] kElevatorLevels = {
       0,
       0,
       0,
-      0
+      kElevatorUpperLimitInches
     };
 
     public static final boolean kEnableShoulderPIDTuning = false;
@@ -182,7 +183,7 @@ public final class Constants {
     );
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
-    public static final double kFrontRightChassisAngularOffset = 0;
+    public static final double kFrontRightChassisAngularOffset = Math.PI;
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
