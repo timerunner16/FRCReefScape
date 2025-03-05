@@ -7,10 +7,12 @@ package frc.robot;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.TestTargetDrive;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
+import frc.robot.commands.elevator.Jesus;
 import frc.robot.commands.elevator.Level1;
 import frc.robot.commands.elevator.Level2;
 import frc.robot.commands.elevator.Level3;
 import frc.robot.commands.elevator.Level4;
+import frc.robot.commands.elevator.Lucifer;
 import frc.robot.commands.elevator.ShoulderPowerControl;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
@@ -98,6 +100,8 @@ public class RobotContainer {
     new Level2();
     new Level3();
     new Level4();
+    new Jesus();
+    new Lucifer();
 
     new ElevatorManualPowerControl();
     new ShoulderPowerControl();
