@@ -78,7 +78,6 @@ public class Elevator extends SubsystemBase {
   TDNumber m_elevatorRightCurrentOutput;
 
   SparkClosedLoopController m_elevatorClosedLoopController;
-  SparkAbsoluteEncoder m_elevatorAbsoluteEncoder;
   RelativeEncoder m_elevatorMotorEncoder;
 
   ElevatorFeedforward m_elevatorFeedForwardController;
@@ -155,13 +154,16 @@ public class Elevator extends SubsystemBase {
 
       m_leftSparkFlexConfig.closedLoop.pid(Constants.ElevatorConstants.kElevatorP, Constants.ElevatorConstants.kElevatorI,
           Constants.ElevatorConstants.kElevatorD);
-      m_leftSparkFlexConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+      m_leftSparkFlexConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
       m_leftSparkFlexConfig.closedLoop.positionWrappingEnabled(false);
 
-      m_leftSparkFlexConfig.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
-      m_leftSparkFlexConfig.absoluteEncoder.inverted(false);
+      m_leftSparkFlexConfig.softLimit.forwardSoftLimit(Constants.ElevatorConstants.kElevatorUpperLimitInches);
+      m_leftSparkFlexConfig.softLimit.reverseSoftLimit(Constants.ElevatorConstants.kElevatorLowerLimitInches);
+      m_leftSparkFlexConfig.softLimit.forwardSoftLimitEnabled(true);
+      m_leftSparkFlexConfig.softLimit.reverseSoftLimitEnabled(true);
       m_leftSparkFlexConfig.encoder.positionConversionFactor(Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
 
+      m_elevatorRightSparkFlex.configure(rightElevatorSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       m_elevatorLeftSparkFlex.configure(m_leftSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
       m_elevatorLowLimit = new DigitalInput(RobotMap.E_LIMITLOW);
@@ -170,16 +172,16 @@ public class Elevator extends SubsystemBase {
       m_TDLowLimitHit = new TDBoolean(this, "Limits", "Low Limit");
 
       m_elevatorClosedLoopController = m_elevatorLeftSparkFlex.getClosedLoopController();
-      m_elevatorAbsoluteEncoder = m_elevatorLeftSparkFlex.getAbsoluteEncoder();
       m_elevatorMotorEncoder = m_elevatorLeftSparkFlex.getEncoder();
+      m_elevatorMotorEncoder.setPosition(0);
 
       m_elevatorFeedForwardController = new ElevatorFeedforward(Constants.ElevatorConstants.kElevatorkS, Constants.ElevatorConstants.kElevatorkG, Constants.ElevatorConstants.kElevatorkV);
       m_elevatorProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
         Constants.ElevatorConstants.kElevatorMaxVelocity,
         Constants.ElevatorConstants.kElevatorMaxAcceleration
       ));
-      m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorAbsoluteEncoder.getPosition(), 0.0);
-      m_elevatorState = new TrapezoidProfile.State(m_elevatorAbsoluteEncoder.getPosition(), 0.0);
+      m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorMotorEncoder.getPosition(), 0.0);
+      m_elevatorState = new TrapezoidProfile.State(m_elevatorMotorEncoder.getPosition(), 0.0);
 
       m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getElevatorAngle());
       m_elevatorEncoderValueRotations = new TDNumber(this, "Elevator Encoder Values", "Rotations", getElevatorAngle() / Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
