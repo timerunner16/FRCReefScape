@@ -185,7 +185,7 @@ public class Elevator extends SubsystemBase {
 
       m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getElevatorAngle());
       m_elevatorEncoderValueRotations = new TDNumber(this, "Elevator Encoder Values", "Rotations", getElevatorAngle() / Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
-      m_elevatorEncoderValueDegrees = new TDNumber(this, "Elevator Encoder Values", "Angle (degrees)", getElevatorAngle());
+      m_elevatorEncoderValueDegrees = new TDNumber(this, "Elevator Encoder Values", "Height (inches)", getElevatorAngle());
       m_elevatorLeftCurrentOutput = new TDNumber(this, "Current", "Left Elevator Output", m_elevatorLeftSparkFlex.getOutputCurrent());
       m_elevatorRightCurrentOutput = new TDNumber(this, "Current", "Right Elevator Output", m_elevatorRightSparkFlex.getOutputCurrent());
 
@@ -286,14 +286,14 @@ public class Elevator extends SubsystemBase {
     return m_elevatorMotorEncoder.getPosition();
   }
 
-  public void setElevatorTargetAngle(double angle) {
-    angle = MathUtil.clamp(angle,
-                              Constants.ElevatorConstants.kElevatorLowerLimitDegrees, 
-                              Constants.ElevatorConstants.kElevatorUpperLimitDegrees);
-    if (angle != m_elevatorLastAngle) {
-      m_targetAngle.set(angle);
-      m_elevatorLastAngle = angle;
-      m_elevatorSetpoint = new TrapezoidProfile.State(angle, 0.0);
+  public void setElevatorTargetAngle(double positionInches) {
+    positionInches = MathUtil.clamp(positionInches,
+                              Constants.ElevatorConstants.kElevatorLowerLimitInches, 
+                              Constants.ElevatorConstants.kElevatorUpperLimitInches);
+    if (positionInches != m_elevatorLastAngle) {
+      m_targetAngle.set(positionInches);
+      m_elevatorLastAngle = positionInches;
+      m_elevatorSetpoint = new TrapezoidProfile.State(positionInches, 0.0);
     }
   }
 
