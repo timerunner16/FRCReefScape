@@ -83,16 +83,16 @@ public final class Constants {
   public static final class ElevatorConstants {
     //Elevator Constants
     public static final boolean kEnableElevatorPIDTuning = false;
-    public static final boolean kEnableElevatorClosedLoopControl = false;
-    public static final double kElevatorP = 0;
+    public static final boolean kEnableElevatorClosedLoopControl = true;
+    public static final double kElevatorP = 0.005000;
     public static final double kElevatorI = 0;
     public static final double kElevatorD = 0;
-    public static final double kElevatorkS = 0;
-    public static final double kElevatorkG = 0;
-    public static final double kElevatorkV = 0;
+    public static final double kElevatorkS = 0.10;
+    public static final double kElevatorkG = 0.15;
+    public static final double kElevatorkV = 0.45;
 
-    public static final double kElevatorMaxVelocity = 0;
-    public static final double kElevatorMaxAcceleration = 0;
+    public static final double kElevatorMaxVelocity = 5;
+    public static final double kElevatorMaxAcceleration = 5;
     public static final double kElevatorSpeed = 0.2;
     public static final double kElevatorSpeedRPM = 30;
 
@@ -122,7 +122,8 @@ public final class Constants {
     public static final double kShoulderSpeed = 0.2;
     public static final double kShoulderSpeedRPM = 30;
     
-    public static final double kShoulderEncoderPositionFactor = 360.0 * 18.0 / (25.0 * 40.0);
+    //ShoulderPositionFactor = (Degress/rev) * (Bottom sprocket Teeth) / (Planetary ratio) * (Top sprocket teeth)
+    public static final double kShoulderEncoderPositionFactor = 360.0 * 18.0 / (25.0 * 40.0); 
     public static final double kShoulderMotorToShoulderRatio = 40/18.0;
 
     public static final double kShoulderLowerLimitDegrees = -5;
