@@ -6,6 +6,7 @@ package frc.robot;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -23,6 +24,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utils.TargetPose;
 import frc.robot.utils.vision.VisionConfig;
 
 /**
@@ -187,6 +189,11 @@ public final class Constants {
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
+    // Drive constants for AutoBuilder configuration
+    // Distance from robot center to furthest module
+    public static final double kBaseRadius = Units.inchesToMeters(RobotMap.R_BASE_RADIUS_INCHES);
+    public static final Translation2d[] m_ModulePositions = new Translation2d[] { m_frontRightLocation, m_frontLeftLocation, m_backRightLocation, m_backLeftLocation };
+
     // SPARK MAX CAN IDs are in RobotMap
 
     public static final boolean kGyroReversed = false;
@@ -230,7 +237,18 @@ public final class Constants {
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-  }
+  
+    // AutoBuilder dynamic robot constriants
+    public static final PIDConstants kPathFollowerTranslationPID = new PIDConstants(5.0, 0.0, 0.0); // Translation PID constants
+    public static final PIDConstants kPathFollowerRotationPID = new PIDConstants(5.0, 0.0, 0.0); // Rotation PID constants    
+
+    public static final double kPathFollowerMaxSpeed = Constants.kMaxSpeedMetersPerSecond; // Max module speed, in m/s
+    public static final double kPathFollowerBaseRadius = DriveConstants.kBaseRadius; // Drive base radius in meters
+    public static final double kPathFollowerMass = 52.1631; // 115 pounds
+    public static final double kPathFollowerMomentOfInertia = 6.2; // Total guess. Rough estimate of l^2 + w^2 * m * 1/12
+    public static final double kPathFollowerWheelCoeficientFriction = 1.2; // Total guess. pathplaner default
+
+}
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
@@ -276,6 +294,10 @@ public final class Constants {
 
     public static final Translation2d kReefLeftScoreTrans = new Translation2d(0, 0);
     public static final Translation2d kReefRightScoreTrans = new Translation2d(0, -0);//Should be the same but with -y
+
+    public static final TargetPose kRedCoralA1Pose = new TargetPose(new Pose2d(15.878, 0.773, new Rotation2d(Units.degreesToRadians(125))), true);
+    public static final TargetPose kRedCoralA2Pose = new TargetPose(new Pose2d(16.858, 1.382, new Rotation2d(Units.degreesToRadians(125))), true);
+
   }
 
   //Driver control rate limits

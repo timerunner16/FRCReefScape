@@ -156,4 +156,12 @@ public class FieldUtils{
     public boolean inAllianceHalf(Pose2d robotPose, Alliance alliance) {
         return (alliance == Alliance.Blue) ^ (robotPose.getX() > Constants.FieldLocationConstants.kMidfieldX);
     }
+
+    public TargetPose getRedCoralA1Pose() {
+        return Constants.FieldLocationConstants.kRedCoralA1Pose;
+    }
+
+    public TargetPose getRedCoralA2Pose() {
+        return Constants.FieldLocationConstants.kRedCoralA2Pose;
+    }
 }

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
+import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.drive.TargetDrive;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Jesus;
@@ -93,6 +94,9 @@ public class OI {
       new TargetDrive(()->{return FieldUtils.getInstance().getTagPose(
         FieldUtils.getInstance().getAllianceAprilTags().middleFrontReef).toPose2d();}, m_driveInputs));
         
+    new JoystickButton(m_DriverXboxController, Button.kY.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA1Pose)); 
+    new JoystickButton(m_DriverXboxController, Button.kX.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA2Pose)); 
+    
     //Operator Cookie Monster Special Abilities(MEGA OP)
     /*new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new FeedingTime());
     new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Level2Score());
@@ -106,13 +110,17 @@ public class OI {
     // new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Explode());
 
    
-    // new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new Consume());
-    // new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
+
+
+
+    new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new Consume());
+    new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
     //new JoystickButton(m_OperatorXboxController, Button.kLeftBumper.value).whileTrue(new Nibble());
     //new JoystickButton(m_OperatorXboxController, Button.kRightBumper.value).whileTrue(new Spit());
   };
   
     
+
   
 
   /**
