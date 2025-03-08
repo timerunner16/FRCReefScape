@@ -92,8 +92,8 @@ public final class Constants {
     public static final double kElevatorkV = 0.435;
     public static final double kElevatorkA = 0.0;
 
-    public static final double kElevatorMaxVelocity = 5;
-    public static final double kElevatorMaxAcceleration = 5;
+    public static final double kElevatorMaxVelocity = 20;
+    public static final double kElevatorMaxAcceleration = 20;
     public static final double kElevatorSpeed = 0.2;
     public static final double kElevatorSpeedRPM = 30;
 
