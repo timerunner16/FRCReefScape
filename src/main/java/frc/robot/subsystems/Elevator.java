@@ -61,6 +61,7 @@ public class Elevator extends SubsystemBase {
   TDNumber m_TDelevatorKs;
   TDNumber m_TDelevatorKg;
   TDNumber m_TDelevatorKv;
+  TDNumber m_TDelevatorKa;
   TDNumber m_TDelevatorFFout;
   double m_elevatorP = Constants.ElevatorConstants.kElevatorP;
   double m_elevatorI = Constants.ElevatorConstants.kElevatorI;
@@ -68,6 +69,7 @@ public class Elevator extends SubsystemBase {
   double m_elevatorkS = Constants.ElevatorConstants.kElevatorkS;
   double m_elevatorkG = Constants.ElevatorConstants.kElevatorkG;
   double m_elevatorkV = Constants.ElevatorConstants.kElevatorkV;
+  double m_elevatorkA = Constants.ElevatorConstants.kElevatorkA;
   private double m_elevatorLastAngle = 0;
 
   SparkFlex m_elevatorLeftSparkFlex;
@@ -166,6 +168,7 @@ public class Elevator extends SubsystemBase {
       m_TDelevatorKg = new TDNumber(this, "Elevator PID", "elevkG", Constants.ElevatorConstants.kElevatorkG);
       m_TDelevatorKs = new TDNumber(this, "Elevator PID", "elevkS", Constants.ElevatorConstants.kElevatorkS);
       m_TDelevatorKv = new TDNumber(this, "Elevator PID", "elevkV", Constants.ElevatorConstants.kElevatorkV);
+      m_TDelevatorKa = new TDNumber(this, "Elevator PID", "elevkA", Constants.ElevatorConstants.kElevatorkA);
       m_TDelevatorFFout = new TDNumber(this, "Elevator PID", "FF Out");
 
       m_leftSparkFlexConfig.closedLoop.pid(Constants.ElevatorConstants.kElevatorP, Constants.ElevatorConstants.kElevatorI,
@@ -191,7 +194,7 @@ public class Elevator extends SubsystemBase {
       m_elevatorMotorEncoder = m_elevatorLeftSparkFlex.getEncoder();
       m_elevatorMotorEncoder.setPosition(0);
 
-      m_elevatorFeedForwardController = new ElevatorFeedforward(Constants.ElevatorConstants.kElevatorkS, Constants.ElevatorConstants.kElevatorkG, Constants.ElevatorConstants.kElevatorkV);
+      m_elevatorFeedForwardController = new ElevatorFeedforward(Constants.ElevatorConstants.kElevatorkS, Constants.ElevatorConstants.kElevatorkG, Constants.ElevatorConstants.kElevatorkV, Constants.ElevatorConstants.kElevatorkA);
       m_elevatorProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
         Constants.ElevatorConstants.kElevatorMaxVelocity,
         Constants.ElevatorConstants.kElevatorMaxAcceleration
@@ -400,11 +403,17 @@ public class Elevator extends SubsystemBase {
         m_elevatorkS = tmp;
         ffchanged = true;
       }
+      tmp = m_TDelevatorKa.get();
+      if(tmp != m_elevatorkA)
+      {
+        m_elevatorkA = tmp;
+        ffchanged = true;
+      }
       if(ffchanged) {
-        m_elevatorFeedForwardController = new ElevatorFeedforward(m_elevatorkS, m_elevatorkG, m_elevatorkV);
+        m_elevatorFeedForwardController = new ElevatorFeedforward(m_elevatorkS, m_elevatorkG, m_elevatorkV, m_elevatorkA);
       }
       tmp = m_targetAngle.get();
-      if(tmp != m_shoulderLastAngle)
+      if(tmp != m_elevatorLastAngle)
       {
         setElevatorTargetAngle(tmp);
       }
