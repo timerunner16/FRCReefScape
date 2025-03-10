@@ -40,6 +40,7 @@ import frc.robot.utils.vision.VisionConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final String robotName = "robot1";
   public static final class AlgaeIntakeConstants {
     //AlgaeIntake constants
     public static final boolean kEnableAnglePIDTuning = false;
@@ -256,7 +257,7 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     
     // The standard deviations of our vision estimated poses, which affect correction rate
     // TODO: (Fake values. Experiment and determine estimation noise on an actual robot.)
@@ -265,9 +266,8 @@ public final class Constants {
     
     // Maximum ambiguity accepted as a valid result from the vision systems
     public static final double kMaxValidAmbiguity = 0.2;
-
     // TODO: These values are from Mania! Must be determined for new robot...
-    public static final VisionConfig[] kVisionSystems = {
+    public static final VisionConfig[] kManiaVisionSystems = {
         new VisionConfig("Arducam_OV9281_USB_Camera",
                          new Transform3d(new Translation3d(Units.inchesToMeters(15.5), Units.inchesToMeters(0.0), Units.inchesToMeters(21.5)), 
                                 new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0))),
@@ -279,7 +279,54 @@ public final class Constants {
                          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                          PoseStrategy.LOWEST_AMBIGUITY)
     };
-  }
+
+    // Camera height from floor in inches
+    public static final double kCameraHeight = 7.5;
+    // Camera Width (Y) and Length (x) offsets in inches
+    public static final double kCameraWidthOffset = 25.5/2;
+    public static final double kCameraLengthOffset = 25.5/2;
+    // Camera mount angle in degrees
+    public static final double kCameraMountAngleYaw = 45;
+       
+    public static final VisionConfig[] kTwigVisionSystems = {
+      // Left rear camera, facing front left corner
+      new VisionConfig("Arducam_OV2311_A",
+              new Transform3d(new Translation3d(
+                        Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
+                        , Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraWidthOffset)
+                        , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
+              new Rotation3d(0, 0, Units.degreesToRadians(Constants.VisionConstants.kCameraMountAngleYaw))),
+                       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                       PoseStrategy.LOWEST_AMBIGUITY),
+      // Left front camera, facing front right corner
+      new VisionConfig("Arducam_OV9782_B",
+              new Transform3d(new Translation3d(
+                        Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
+                        , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
+                        , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
+              new Rotation3d(0, 0, Units.degreesToRadians(-1 * Constants.VisionConstants.kCameraMountAngleYaw))),
+                       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                       PoseStrategy.LOWEST_AMBIGUITY),
+      // Right front camera, facing rear right corner
+      new VisionConfig("Arducam_OV9782_C",
+              new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraLengthOffset)
+                        , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
+                        , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
+              new Rotation3d(0, 0, Units.degreesToRadians(-90 + -1 * Constants.VisionConstants.kCameraMountAngleYaw))),
+                       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                       PoseStrategy.LOWEST_AMBIGUITY),
+      // Right rear camera, facing rear left
+      new VisionConfig("Arducam_OV9782_D",
+              new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraLengthOffset)
+                        , Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraWidthOffset)
+                        , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
+              new Rotation3d(0, 0, Units.degreesToRadians(90 + Constants.VisionConstants.kCameraMountAngleYaw))),
+                       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                       PoseStrategy.LOWEST_AMBIGUITY),
+  };
+}
 
   public static final class ClimberConstants {
     public static final double kWinchP = 0;

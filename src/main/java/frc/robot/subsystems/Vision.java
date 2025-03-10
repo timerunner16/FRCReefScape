@@ -26,14 +26,20 @@ public class Vision extends SubsystemBase {
   private TDNumber m_estY;
   private TDNumber m_estRot;
   private TDBoolean m_poseUpdatesEnabled;
+  private VisionConfig[] m_visionConfig;
 
   /** Creates a new Vision. */
   private Vision() {
     super("Vision");
     m_visionSystems = new ArrayList<VisionSystem>();
     if(RobotMap.V_ENABLED){
-      m_visionSystems.ensureCapacity(Constants.VisionConstants.kVisionSystems.length);
-      for(VisionConfig config : Constants.VisionConstants.kVisionSystems) {
+      if (Constants.robotName.equalsIgnoreCase("mania")) {
+        m_visionConfig = Constants.VisionConstants.kManiaVisionSystems;
+      } else {
+        m_visionConfig = Constants.VisionConstants.kTwigVisionSystems;
+      }
+      m_visionSystems.ensureCapacity(m_visionConfig.length);
+      for(VisionConfig config : m_visionConfig) {
         VisionSystem system = new VisionSystem(config);
         m_visionSystems.add(system);
       }

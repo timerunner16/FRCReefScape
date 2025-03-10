@@ -26,7 +26,6 @@ public class VisionSystem {
 
     private PhotonCamera m_camera;
     private PhotonPoseEstimator m_photonEstimator;
-    private EstimatedRobotPose m_lastResult;
     private double m_lastEstTime;
 
     public VisionSystem(VisionConfig config) {
@@ -64,7 +63,6 @@ public class VisionSystem {
                 boolean newResult = Math.abs(latestTimestamp - m_lastEstTime) > 1e-5;
                 if (newResult) {
                     m_lastEstTime = latestTimestamp;
-                    m_lastResult = est;
                 }
 
                 if(valid) {
