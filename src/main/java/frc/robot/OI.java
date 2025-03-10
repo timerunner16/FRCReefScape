@@ -26,13 +26,11 @@ import frc.robot.commands.drive.TargetDrive;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Jesus;
 import frc.robot.commands.elevator.Lucifer;
+import frc.robot.commands.elevator.SetElevatorLevel;
 import frc.robot.commands.elevator.ShoulderPowerControl;
 import frc.robot.commands.funnel.Explode;
 import frc.robot.commands.funnel.Implode;
 import frc.robot.commands.FeedingTime;
-import frc.robot.commands.Level2Score;
-import frc.robot.commands.Level3Score;
-import frc.robot.commands.Level4Score;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
 import frc.robot.commands.WoS.*;
@@ -104,16 +102,17 @@ public class OI {
     new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new Level4Score());
    */
     // new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Jesus());
-    new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new ElevatorManualPowerControl());
-    new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new ShoulderPowerControl());
-    new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new WosFunnelTest());
+    new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new SetElevatorLevel(4));
+    new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new SetElevatorLevel(3));
+    new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new SetElevatorLevel(2));
+    new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new SetElevatorLevel(1));
     // new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Explode());
 
    
 
 
 
-    new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new Consume());
+    new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new FeedingTime());
     new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
     //new JoystickButton(m_OperatorXboxController, Button.kLeftBumper.value).whileTrue(new Nibble());
     //new JoystickButton(m_OperatorXboxController, Button.kRightBumper.value).whileTrue(new Spit());

@@ -111,7 +111,8 @@ public final class Constants {
       0,
       0,
       0,
-      kElevatorUpperLimitInches
+      0,
+      kElevatorUpperLimitInches,
     };
 
     public static final double kElevatorEatHeight = 0;
@@ -138,6 +139,7 @@ public final class Constants {
     public static final double kShoulderUpperLimitDegrees = 365;
 
     public static final double[] kShoulderLevels = {
+      0,
       0,
       0,
       0,
