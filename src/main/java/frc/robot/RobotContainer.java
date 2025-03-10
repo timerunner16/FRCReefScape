@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.TestTargetDrive;
+import frc.robot.commands.elevator.ElevatorJoystickControl;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Jesus;
 import frc.robot.commands.elevator.Level1;
@@ -71,7 +72,8 @@ public class RobotContainer {
 
     // Robot subsystems initialized and configured here
     WoS.getInstance();
-    Elevator.getInstance();
+    Elevator elev = Elevator.getInstance();
+    elev.setDefaultCommand(new ElevatorJoystickControl());
     Funnel.getInstance();
     RoutineManager.getInstance();
     m_robotDrive = Drive.getInstance();

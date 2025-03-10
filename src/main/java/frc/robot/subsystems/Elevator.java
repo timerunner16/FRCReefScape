@@ -302,9 +302,11 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getElevatorAngle() {
-    //Temporarily get measurement from built in encoder
-    //Switch to external encoder when it works
     return m_elevatorMotorEncoder.getPosition();
+  }
+
+  public boolean isElevatorAtGoal() {
+    return MathUtil.isNear(m_elevatorLastAngle, getElevatorAngle(), Constants.ElevatorConstants.kElevatorToleranceInches);
   }
 
   public void setElevatorTargetAngle(double positionInches) {
@@ -319,12 +321,17 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorTargetLevel(int level) {
-    if (level < 1 || level > 4) return;
+    int maxIndex = Constants.ElevatorConstants.kShoulderLevels.length;
+    if (level < 0 || level > maxIndex) return;
     setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorLevels[level]);
   }
 
   public double getShoulderAngle() { 
     return m_shoulderEncoder.getPosition();
+  }
+
+  public boolean isShoulderAtGoal() {
+    return MathUtil.isNear(m_shoulderLastAngle, getShoulderAngle(), Constants.ElevatorConstants.kShoulderToleranceDegrees);
   }
 
   public void setShoulderTargetAngle(double angle) {
@@ -339,7 +346,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setShoulderTargetLevel(int level) {
-    if (level < 1 || level > 4) return;
+    int maxIndex = Constants.ElevatorConstants.kShoulderLevels.length;
+    if (level < 0 || level > maxIndex) return;
     setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderLevels[level]);
   }
 
@@ -357,6 +365,10 @@ public class Elevator extends SubsystemBase {
     if (m_shoulderSparkMax != null) {
       m_shoulderSparkMax.set(0);
     }
+  }
+
+  public boolean inGoalPosition() {
+    return isElevatorAtGoal() && isShoulderAtGoal();
   }
 
   @Override
