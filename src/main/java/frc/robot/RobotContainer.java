@@ -9,10 +9,7 @@ import frc.robot.commands.drive.TestTargetDrive;
 import frc.robot.commands.elevator.ElevatorJoystickControl;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Jesus;
-import frc.robot.commands.elevator.Level1;
-import frc.robot.commands.elevator.Level2;
-import frc.robot.commands.elevator.Level3;
-import frc.robot.commands.elevator.Level4;
+import frc.robot.commands.elevator.SetElevatorLevel;
 import frc.robot.commands.elevator.Lucifer;
 import frc.robot.commands.elevator.ShoulderPowerControl;
 import frc.robot.subsystems.Drive;
@@ -50,7 +47,7 @@ public class RobotContainer {
 
   // The robot's subsystems are defined here.
   private final Drive m_robotDrive;
-  // private final SendableChooser<Command> m_autoChooser;
+  private final SendableChooser<Command> m_autoChooser;
   private PowerDistribution m_pdBoard;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -80,15 +77,15 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new SwerveDrive(m_oi.getDriveInputs()));
 
     // Build the auto commands and add them to the chooser
-    // m_autoChooser = AutoBuilder.buildAutoChooser("closeAutoTop_startMid");
-    // new TDSendable(Drive.getInstance(), "Auto Commands", "Chooser", m_autoChooser);
+    m_autoChooser = AutoBuilder.buildAutoChooser("closeAutoTop_startMid");
+    new TDSendable(Drive.getInstance(), "Auto Commands", "Chooser", m_autoChooser);
     
     // Configure the trigger/button bindings
     configureBindings();
 
     // Create Testing Dashboard
     TestingDashboard.getInstance().createTestingDashboard();
-    // SmartDashboard.putData(m_autoChooser);
+    SmartDashboard.putData(m_autoChooser);
   }
 
   private void registerCommands() {
@@ -98,10 +95,6 @@ public class RobotContainer {
     new Spit();
     new Nibble();
     new TestTargetDrive();
-    new Level1();
-    new Level2();
-    new Level3();
-    new Level4();
     new Jesus();
     new Lucifer();
 
@@ -130,6 +123,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null; //m_autoChooser.getSelected();
+    m_autoChooser.getSelected();
+    return null;
   }
 }
