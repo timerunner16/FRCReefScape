@@ -301,6 +301,10 @@ public class Elevator extends SubsystemBase {
     }
   }
 
+  public double getElevatorTargetAngle() {
+    return m_elevatorLastAngle;
+  }
+
   public double getElevatorAngle() {
     return m_elevatorMotorEncoder.getPosition();
   }
@@ -324,6 +328,10 @@ public class Elevator extends SubsystemBase {
     int maxIndex = Constants.ElevatorConstants.kShoulderLevels.length;
     if (level < 0 || level > maxIndex) return;
     setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorLevels[level]);
+  }
+
+  public double getShoulderTargetAngle() {
+    return m_shoulderLastAngle;
   }
 
   public double getShoulderAngle() { 
