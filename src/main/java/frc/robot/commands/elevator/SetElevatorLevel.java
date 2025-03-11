@@ -35,7 +35,7 @@ public class SetElevatorLevel extends Command {
   public void execute() {
     if (!m_set) {
       m_Elevator.setElevatorTargetLevel(m_level);
-      m_Elevator.setShoulderTargetAngle(m_level);
+      m_Elevator.setShoulderTargetLevel(m_level);
       m_set = true;
     }
     if (m_Elevator.inGoalPosition()) {

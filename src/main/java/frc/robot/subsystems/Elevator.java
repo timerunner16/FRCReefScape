@@ -224,6 +224,12 @@ public class Elevator extends SubsystemBase {
       m_shoulderSparkMaxConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(50, 80, 100);
+      
+      m_shoulderSparkMaxConfig.softLimit
+                          .forwardSoftLimit(Constants.ElevatorConstants.kShoulderUpperLimitDegrees)
+                          .forwardSoftLimitEnabled(true)
+                          .reverseSoftLimit(Constants.ElevatorConstants.kShoulderLowerLimitDegrees)
+                          .reverseSoftLimitEnabled(true);
 
       m_shoulderSparkMaxConfig.closedLoop.pid(Constants.ElevatorConstants.kShoulderP, Constants.ElevatorConstants.kShoulderI,
           Constants.ElevatorConstants.kShoulderD);
@@ -325,7 +331,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorTargetLevel(int level) {
-    int maxIndex = Constants.ElevatorConstants.kShoulderLevels.length;
+    int maxIndex = (Constants.ElevatorConstants.kShoulderLevels.length - 1);
     if (level < 0 || level > maxIndex) return;
     setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorLevels[level]);
   }
@@ -354,7 +360,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setShoulderTargetLevel(int level) {
-    int maxIndex = Constants.ElevatorConstants.kShoulderLevels.length;
+    int maxIndex = (Constants.ElevatorConstants.kShoulderLevels.length - 1);
     if (level < 0 || level > maxIndex) return;
     setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderLevels[level]);
   }
@@ -514,18 +520,6 @@ public class Elevator extends SubsystemBase {
       m_elevatorMech2d.setLength(m_elevatorSim.getPositionMeters() * 20);
       m_TDHighLimitHit.set(m_elevatorHighLimit.get());
       m_TDLowLimitHit.set(m_elevatorLowLimit.get());
-      if(!m_elevatorHighLimit.get() && m_elevatorLeftSparkFlex.get() > 0)
-      {
-        m_elevatorLeftSparkFlex.set(0);
-      }
-      if(!m_elevatorLowLimit.get() && m_elevatorLeftSparkFlex.get() < 0)
-      {
-        if(getElevatorAngle() != 0)
-        {
-          m_elevatorMotorEncoder.setPosition(0);
-        }
-        m_elevatorLeftSparkFlex.set(0);
-      }
     }
 
     super.periodic();
