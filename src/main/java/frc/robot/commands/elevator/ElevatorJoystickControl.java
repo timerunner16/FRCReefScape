@@ -31,12 +31,12 @@ public class ElevatorJoystickControl extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double shldrAngle = m_elevator.getShoulderAngle();
+    double shldrAngle = m_elevator.getShoulderTargetAngle();
     double shldrInput = -MathUtil.applyDeadband(m_operatorController.getRightY(), Constants.ElevatorConstants.kShoulderDeadband);
     shldrAngle += shldrInput * Constants.ElevatorConstants.SHOULDER_ANGLE_INCREMENT_DEGREES;
     m_elevator.setShoulderTargetAngle(shldrAngle);
 
-    double elvHeight = m_elevator.getElevatorAngle();
+    double elvHeight = m_elevator.getElevatorTargetAngle();
     double elvInput = -MathUtil.applyDeadband(m_operatorController.getLeftY(), Constants.ElevatorConstants.kShoulderDeadband);
     double tgtHeight = elvHeight + (elvInput * Constants.ElevatorConstants.kElevatorHeightIncrementInches);
     m_elevator.setElevatorTargetAngle(tgtHeight);

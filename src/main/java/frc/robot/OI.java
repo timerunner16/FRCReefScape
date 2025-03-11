@@ -106,6 +106,7 @@ public class OI {
     new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new SetElevatorLevel(3));
     new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new SetElevatorLevel(2));
     new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new SetElevatorLevel(1));
+    new JoystickButton(m_OperatorXboxController, Button.kLeftBumper.value).whileTrue(new Consume());
     // new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Explode());
 
    
