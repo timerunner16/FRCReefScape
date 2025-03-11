@@ -281,7 +281,7 @@ public final class Constants {
     };
 
     // Camera height from floor in inches
-    public static final double kCameraHeight = 7.5;
+    public static final double kCameraHeight = 9;
     // Camera Width (Y) and Length (x) offsets in inches
     public static final double kCameraWidthOffset = 25.5/2;
     public static final double kCameraLengthOffset = 25.5/2;
