@@ -86,7 +86,7 @@ public final class Constants {
     //Elevator Constants
     public static final boolean kEnableElevatorPIDTuning = false;
     public static final boolean kEnableElevatorClosedLoopControl = true;
-    public static final double kElevatorP = 0;
+    public static final double kElevatorP = 0.3;
     public static final double kElevatorI = 0;
     public static final double kElevatorD = 0;
     public static final double kElevatorkS = 0.20;
