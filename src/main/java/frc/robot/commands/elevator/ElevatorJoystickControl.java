@@ -9,17 +9,22 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.subsystems.Elevator;
-import frc.robot.testingdashboard.Command;;
+import frc.robot.testingdashboard.Command;
+import frc.robot.testingdashboard.TDNumber;
 
 public class ElevatorJoystickControl extends Command {
   Elevator m_elevator;
   XboxController m_operatorController;
+
+  TDNumber m_operatorLeftIn;
 
   /** Creates a new PivotRelativeAngleControl. */
   public ElevatorJoystickControl() {
     super(Elevator.getInstance(), "Basic", "ShoulderRelativeAngleControl");
     m_elevator = Elevator.getInstance();
     m_operatorController = OI.getInstance().getOperatorXboxController();
+
+    m_operatorLeftIn = new TDNumber(m_elevator, "Basic", "Operator Left In");
     
     addRequirements(m_elevator);
   }
@@ -33,6 +38,7 @@ public class ElevatorJoystickControl extends Command {
   public void execute() {
     double shldrAngle = m_elevator.getShoulderTargetAngle();
     double shldrInput = -MathUtil.applyDeadband(m_operatorController.getRightY(), Constants.ElevatorConstants.kShoulderDeadband);
+    m_operatorLeftIn.set(shldrInput);
     shldrAngle += shldrInput * Constants.ElevatorConstants.SHOULDER_ANGLE_INCREMENT_DEGREES;
     m_elevator.setShoulderTargetAngle(shldrAngle);
 

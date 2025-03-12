@@ -86,7 +86,7 @@ public final class Constants {
     //Elevator Constants
     public static final boolean kEnableElevatorPIDTuning = false;
     public static final boolean kEnableElevatorClosedLoopControl = true;
-    public static final double kElevatorP = 0;
+    public static final double kElevatorP = 0.3;
     public static final double kElevatorI = 0;
     public static final double kElevatorD = 0;
     public static final double kElevatorkS = 0.20;
@@ -114,6 +114,9 @@ public final class Constants {
       7.5,
       kElevatorUpperLimitInches,
     };
+    public static final double kElevatorLowAlgaeRemove = 3.2;
+    public static final double kElevatorHighAlgaeRemove = 15.5;
+    public static final double kElevatorDelayHeight = 4.0;
 
     public static final double kElevatorEatHeight = 0;
     public static final double kElevatorHeightIncrementInches = 0.25;
@@ -141,10 +144,11 @@ public final class Constants {
     public static final double[] kShoulderLevels = {
       0,
       0,
-      236.5,
+      228,
       204.5,
-      194
+      200
     };
+    public static final double kShoulderAlgaeRemove = 258;
 
     public static final double kShoulderEatAngle = 0;
     public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 2;

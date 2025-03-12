@@ -9,42 +9,34 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SetElevatorLevel extends Command {
+public class SetElevatorAlgaeRemoveLow extends Command {
   /** Creates a new Level1. */
 
   Elevator m_Elevator;
-  boolean m_elevatorSet;
-  boolean m_shoulderSet;
+  boolean m_set;
   boolean m_finished;
   int m_level;
 
-  public SetElevatorLevel(int level) {
-    super(Elevator.getInstance(), "Elevator", "Level1");
+  public SetElevatorAlgaeRemoveLow() {
+    super(Elevator.getInstance(), "Elevator", "AlgaeRemoveLow");
     m_Elevator = Elevator.getInstance();
     addRequirements(m_Elevator);
-    m_level = level;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_elevatorSet = false;
-    m_shoulderSet = false;
+    m_set = false;
     m_finished = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!m_elevatorSet) {
-      m_Elevator.setElevatorTargetLevel(m_level);
-      m_elevatorSet = true;
+    if (!m_set) {
+      m_Elevator.setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorLowAlgaeRemove);
+      m_Elevator.setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderAlgaeRemove);
     }
-    if(!m_shoulderSet && (m_level <= 2 || m_Elevator.getElevatorAngle() > Constants.ElevatorConstants.kElevatorDelayHeight)) {
-      m_Elevator.setShoulderTargetLevel(m_level);
-      m_shoulderSet = true;
-    }
-
     if (m_Elevator.inGoalPosition()) {
       m_finished = true;
     }
