@@ -6,8 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.WoS.Consume;
-import frc.robot.commands.elevator.EatPosition;
-import frc.robot.commands.elevator.Level1;
+import frc.robot.commands.elevator.SetElevatorLevel;
 import frc.robot.commands.funnel.Implode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -18,6 +17,6 @@ public class FeedingTime extends ParallelCommandGroup {
   public FeedingTime() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new Level1(), new EatPosition(), new Implode(), new Consume());
+    addCommands(new SetElevatorLevel(0), new Implode(), new Consume());
   }
 }

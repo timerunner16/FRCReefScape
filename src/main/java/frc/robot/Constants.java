@@ -40,7 +40,18 @@ import frc.robot.utils.vision.VisionConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
   public static final String robotName = "robot1";
+
+  public static final class Color {
+    public static final int red = 0;
+    public static final int orange = 15;
+    public static final int yellow = 30;
+    public static final int green = 60;
+    public static final int blue = 125;
+    public static final int purple = 145; // maybe?
+  }
+  
   public static final class AlgaeIntakeConstants {
     //AlgaeIntake constants
     public static final boolean kEnableAnglePIDTuning = false;
@@ -77,7 +88,7 @@ public final class Constants {
     public static final double kWoSI = 0;
     public static final double kWoSD = 0;
 
-    public static final double kWoSSpeed = 0.2;
+    public static final double kWoSSpeed = 0.4;
     public static final double kWoSSpeedRPM = 30;
 
     public static final double kWoSRPMSurfaceSpeedRatio = 1.5;
@@ -85,15 +96,16 @@ public final class Constants {
 
   public static final class ElevatorConstants {
     //Elevator Constants
-    public static final boolean kEnableElevatorPIDTuning = true;
+    public static final boolean kEnableElevatorPIDTuning = false;
     public static final boolean kEnableElevatorClosedLoopControl = true;
-    public static final double kElevatorP = 0;
+    public static final double kElevatorP = 0.3;
     public static final double kElevatorI = 0;
     public static final double kElevatorD = 0;
     public static final double kElevatorkS = 0.20;
     public static final double kElevatorkG = 0.07;
     public static final double kElevatorkV = 0.435;
     public static final double kElevatorkA = 0.0;
+    public static final double kElevatorToleranceInches = 0.3;
 
     public static final double kElevatorMaxVelocity = 35;
     public static final double kElevatorMaxAcceleration = 35;
@@ -105,14 +117,21 @@ public final class Constants {
 
     public static final double DEGREES_PER_REVOLUTION = 360;
     public static final double kElevatorLowerLimitInches = 0;
-    public static final double kElevatorUpperLimitInches = 25.5;
+    public static final double kElevatorUpperLimitInches = 26.5;
 
     public static final double[] kElevatorLevels = {
       0,
       0,
-      0,
-      kElevatorUpperLimitInches
+      1.6,
+      7.5,
+      kElevatorUpperLimitInches,
     };
+    public static final double kElevatorLowAlgaeRemove = 3.2;
+    public static final double kElevatorHighAlgaeRemove = 15.5;
+    public static final double kElevatorDelayHeight = 4.0;
+
+    public static final double kElevatorEatHeight = 0;
+    public static final double kElevatorHeightIncrementInches = 0.25;
 
     public static final boolean kEnableShoulderPIDTuning = false;
     public static final boolean kEnableShoulderClosedLoopControl = true;
@@ -122,6 +141,7 @@ public final class Constants {
     public static final double kShoulderkS = 0;
     public static final double kShoulderkG = -0.200000;
     public static final double kShoulderkV = 0;
+    public static final double kShoulderToleranceDegrees = 2;
 
     public static final double kShoulderSpeed = 0.2;
     public static final double kShoulderSpeedRPM = 30;
@@ -131,17 +151,19 @@ public final class Constants {
     public static final double kShoulderMotorToShoulderRatio = 40/18.0;
 
     public static final double kShoulderLowerLimitDegrees = -5;
-    public static final double kShoulderUpperLimitDegrees = 365;
+    public static final double kShoulderUpperLimitDegrees = 290;
 
     public static final double[] kShoulderLevels = {
       0,
       0,
-      0,
-      0
+      228,
+      204.5,
+      200
     };
+    public static final double kShoulderAlgaeRemove = 258;
 
     public static final double kShoulderEatAngle = 0;
-    public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 0.5;
+    public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 2;
     public static final double kShoulderDeadband = 0.05;
   }
 
@@ -159,7 +181,8 @@ public final class Constants {
 
   public static final class LightsConstants {
     // Defines Lights constants
-    public static final int LED_LENGTH = 42; // number of LEDs
+    public static final int LED_LENGTH = 49; // number of LEDs
+    public static final double kBlinkDelay = 0.35;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

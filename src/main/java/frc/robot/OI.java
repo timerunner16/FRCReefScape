@@ -26,13 +26,13 @@ import frc.robot.commands.drive.TargetDrive;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Jesus;
 import frc.robot.commands.elevator.Lucifer;
+import frc.robot.commands.elevator.SetElevatorAlgaeRemoveHigh;
+import frc.robot.commands.elevator.SetElevatorAlgaeRemoveLow;
+import frc.robot.commands.elevator.SetElevatorLevel;
 import frc.robot.commands.elevator.ShoulderPowerControl;
 import frc.robot.commands.funnel.Explode;
 import frc.robot.commands.funnel.Implode;
 import frc.robot.commands.FeedingTime;
-import frc.robot.commands.Level2Score;
-import frc.robot.commands.Level3Score;
-import frc.robot.commands.Level4Score;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
 import frc.robot.commands.WoS.*;
@@ -98,25 +98,16 @@ public class OI {
     new JoystickButton(m_DriverXboxController, Button.kX.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA2Pose)); 
     
     //Operator Cookie Monster Special Abilities(MEGA OP)
-    /*new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new FeedingTime());
-    new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Level2Score());
-    new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new Level3Score());
-    new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new Level4Score());
-   */
-    // new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new Jesus());
-    new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new ElevatorManualPowerControl());
-    new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new ShoulderPowerControl());
-    new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new WosFunnelTest());
-    // new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new Explode());
+    new JoystickButton(m_OperatorXboxController, Button.kX.value).onTrue(new SetElevatorLevel(4));
+    new JoystickButton(m_OperatorXboxController, Button.kY.value).onTrue(new SetElevatorLevel(3));
+    new JoystickButton(m_OperatorXboxController, Button.kB.value).onTrue(new SetElevatorLevel(2));
+    new JoystickButton(m_OperatorXboxController, Button.kA.value).onTrue(new SetElevatorLevel(1));
+    new JoystickButton(m_OperatorXboxController, Button.kLeftBumper.value).whileTrue(new Consume());
 
-   
-
-
-
-    new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new Consume());
+    new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new FeedingTime());
     new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
-    //new JoystickButton(m_OperatorXboxController, Button.kLeftBumper.value).whileTrue(new Nibble());
-    //new JoystickButton(m_OperatorXboxController, Button.kRightBumper.value).whileTrue(new Spit());
+    new Trigger(m_OperatorXboxController.povUp(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new SetElevatorAlgaeRemoveHigh());
+    new Trigger(m_OperatorXboxController.povDown(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new SetElevatorAlgaeRemoveLow());
   };
   
     

@@ -5,17 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.elevator.Level4ShoulderPosition;
-import frc.robot.commands.elevator.Level4;
+import frc.robot.commands.elevator.SetElevatorLevel;
+
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Level4Score extends ParallelCommandGroup {
-  /** Creates a new Level4Score. */
-  public Level4Score() {
+public class Level4 extends ParallelCommandGroup {
+  /** Creates a new Level4. */
+  public Level4() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new Level4(), new Level4ShoulderPosition());
+    addCommands(new SetElevatorLevel(4));
   }
 }

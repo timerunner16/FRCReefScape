@@ -77,9 +77,6 @@ public class Elevator extends SubsystemBase {
 
   SparkFlexConfig m_leftSparkFlexConfig;
 
-  DigitalInput m_elevatorHighLimit;
-  DigitalInput m_elevatorLowLimit;
-
   TDBoolean m_TDHighLimitHit;
   TDBoolean m_TDLowLimitHit;
 
@@ -93,7 +90,7 @@ public class Elevator extends SubsystemBase {
   TrapezoidProfile m_elevatorProfile;
   TrapezoidProfile.State m_elevatorState;
   TrapezoidProfile.State m_elevatorSetpoint;
-  TDNumber m_TDelevatorProfiledVelocity;
+  TDNumber m_TDelevatorProfilePosition;
 
   TDNumber m_targetShoulderAngle;
   TDNumber m_shoulderEncoderValueRotations;
@@ -176,17 +173,25 @@ public class Elevator extends SubsystemBase {
       m_leftSparkFlexConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
       m_leftSparkFlexConfig.closedLoop.positionWrappingEnabled(false);
 
-      m_leftSparkFlexConfig.softLimit.forwardSoftLimit(Constants.ElevatorConstants.kElevatorUpperLimitInches);
-      m_leftSparkFlexConfig.softLimit.reverseSoftLimit(Constants.ElevatorConstants.kElevatorLowerLimitInches);
-      m_leftSparkFlexConfig.softLimit.forwardSoftLimitEnabled(true);
-      m_leftSparkFlexConfig.softLimit.reverseSoftLimitEnabled(true);
+      m_leftSparkFlexConfig.softLimit
+        .forwardSoftLimit(Constants.ElevatorConstants.kElevatorUpperLimitInches)
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimit(Constants.ElevatorConstants.kElevatorLowerLimitInches)
+        .reverseSoftLimitEnabled(true);
+
       m_leftSparkFlexConfig.encoder.positionConversionFactor(Constants.ElevatorConstants.kElevatorEncoderPositionFactor);
+
+      m_leftSparkFlexConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(50, 80, 100);
+
+      m_leftSparkFlexConfig.limitSwitch
+        .forwardLimitSwitchEnabled(true)
+        .reverseLimitSwitchEnabled(true);
 
       m_elevatorRightSparkFlex.configure(rightElevatorSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       m_elevatorLeftSparkFlex.configure(m_leftSparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-      m_elevatorLowLimit = new DigitalInput(RobotMap.E_LIMITLOW);
-      m_elevatorHighLimit = new DigitalInput(RobotMap.E_LIMITHIGH);
       m_TDHighLimitHit = new TDBoolean(this , "Limits", "High Limit");
       m_TDLowLimitHit = new TDBoolean(this, "Limits", "Low Limit");
 
@@ -201,7 +206,7 @@ public class Elevator extends SubsystemBase {
       ));
       m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorMotorEncoder.getPosition(), 0.0);
       m_elevatorState = new TrapezoidProfile.State(m_elevatorMotorEncoder.getPosition(), 0.0);
-      m_TDelevatorProfiledVelocity = new TDNumber(this, "Elevator PID", "Profile Velocity");
+      m_TDelevatorProfilePosition = new TDNumber(this, "Elevator PID", "Profile Position");
 
       m_targetAngle = new TDNumber(this, "Elevator Encoder Values", "Target Angle", getElevatorAngle());
       m_elevatorEncoderValueInches = new TDNumber(this, "Elevator Encoder Values", "Height (inches)", getElevatorAngle());
@@ -224,6 +229,12 @@ public class Elevator extends SubsystemBase {
       m_shoulderSparkMaxConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(50, 80, 100);
+      
+      m_shoulderSparkMaxConfig.softLimit
+                          .forwardSoftLimit(Constants.ElevatorConstants.kShoulderUpperLimitDegrees)
+                          .forwardSoftLimitEnabled(true)
+                          .reverseSoftLimit(Constants.ElevatorConstants.kShoulderLowerLimitDegrees)
+                          .reverseSoftLimitEnabled(true);
 
       m_shoulderSparkMaxConfig.closedLoop.pid(Constants.ElevatorConstants.kShoulderP, Constants.ElevatorConstants.kShoulderI,
           Constants.ElevatorConstants.kShoulderD);
@@ -268,14 +279,6 @@ public class Elevator extends SubsystemBase {
 
     double speed = commandedSpeed;
     if(m_elevatorLeftSparkFlex != null) {
-      if(!m_elevatorHighLimit.get() && speed > 0)
-      {
-        speed = 0;
-      }
-      if(!m_elevatorLowLimit.get() && speed < 0)
-      {
-        speed = 0;
-      }
       m_elevatorLeftSparkFlex.set(speed);
     }
   }
@@ -301,10 +304,16 @@ public class Elevator extends SubsystemBase {
     }
   }
 
+  public double getElevatorTargetAngle() {
+    return m_elevatorLastAngle;
+  }
+
   public double getElevatorAngle() {
-    //Temporarily get measurement from built in encoder
-    //Switch to external encoder when it works
     return m_elevatorMotorEncoder.getPosition();
+  }
+
+  public boolean isElevatorAtGoal() {
+    return MathUtil.isNear(m_elevatorLastAngle, getElevatorAngle(), Constants.ElevatorConstants.kElevatorToleranceInches);
   }
 
   public void setElevatorTargetAngle(double positionInches) {
@@ -319,12 +328,21 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorTargetLevel(int level) {
-    if (level < 1 || level > 4) return;
+    int maxIndex = (Constants.ElevatorConstants.kShoulderLevels.length - 1);
+    if (level < 0 || level > maxIndex) return;
     setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorLevels[level]);
+  }
+
+  public double getShoulderTargetAngle() {
+    return m_shoulderLastAngle;
   }
 
   public double getShoulderAngle() { 
     return m_shoulderEncoder.getPosition();
+  }
+
+  public boolean isShoulderAtGoal() {
+    return MathUtil.isNear(m_shoulderLastAngle, getShoulderAngle(), Constants.ElevatorConstants.kShoulderToleranceDegrees);
   }
 
   public void setShoulderTargetAngle(double angle) {
@@ -339,7 +357,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setShoulderTargetLevel(int level) {
-    if (level < 1 || level > 4) return;
+    int maxIndex = (Constants.ElevatorConstants.kShoulderLevels.length - 1);
+    if (level < 0 || level > maxIndex) return;
     setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderLevels[level]);
   }
 
@@ -357,6 +376,10 @@ public class Elevator extends SubsystemBase {
     if (m_shoulderSparkMax != null) {
       m_shoulderSparkMax.set(0);
     }
+  }
+
+  public boolean inGoalPosition() {
+    return isElevatorAtGoal() && isShoulderAtGoal();
   }
 
   @Override
@@ -485,27 +508,15 @@ public class Elevator extends SubsystemBase {
       }
       if(Constants.ElevatorConstants.kEnableElevatorClosedLoopControl){
         m_elevatorState = m_elevatorProfile.calculate(periodTime, m_elevatorState, m_elevatorSetpoint);
-        m_TDelevatorProfiledVelocity.set(m_elevatorState.position);
+        m_TDelevatorProfilePosition.set(m_elevatorState.position);
         double elevatorArbFeedforward = m_elevatorFeedForwardController.calculate(m_elevatorState.velocity);
         m_TDelevatorFFout.set(elevatorArbFeedforward);
-        m_elevatorClosedLoopController.setReference(m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, elevatorArbFeedforward);
+        m_elevatorClosedLoopController.setReference(m_elevatorState.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, elevatorArbFeedforward);
       }
 
       m_elevatorMech2d.setLength(m_elevatorSim.getPositionMeters() * 20);
-      m_TDHighLimitHit.set(m_elevatorHighLimit.get());
-      m_TDLowLimitHit.set(m_elevatorLowLimit.get());
-      if(!m_elevatorHighLimit.get() && m_elevatorLeftSparkFlex.get() > 0)
-      {
-        m_elevatorLeftSparkFlex.set(0);
-      }
-      if(!m_elevatorLowLimit.get() && m_elevatorLeftSparkFlex.get() < 0)
-      {
-        if(getElevatorAngle() != 0)
-        {
-          m_elevatorMotorEncoder.setPosition(0);
-        }
-        m_elevatorLeftSparkFlex.set(0);
-      }
+      m_TDHighLimitHit.set(m_elevatorLeftSparkFlex.getForwardLimitSwitch().isPressed());
+      m_TDLowLimitHit.set(m_elevatorLeftSparkFlex.getReverseLimitSwitch().isPressed());
     }
 
     super.periodic();

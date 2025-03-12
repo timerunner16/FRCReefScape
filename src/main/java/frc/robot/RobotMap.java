@@ -114,7 +114,7 @@ public class RobotMap {
   public static boolean V_ENABLED = false;
 
   //[W]oS
-  public static boolean W_ENABLED = false;
+  public static boolean W_ENABLED = true;
   public static int W_MOTOR = RoboRioMap.CAN_10;
 
   //[A]lgae Intake

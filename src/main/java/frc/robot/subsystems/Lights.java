@@ -20,6 +20,7 @@ public class Lights extends SubsystemBase {
 
   private int m_rainbowFirstPixelHue;
   private int m_firstPixelValue;
+  private boolean m_blinkState;
   private Timer m_timer;
 
   /** Creates a new lights. */
@@ -36,6 +37,7 @@ public class Lights extends SubsystemBase {
 
     m_rainbowFirstPixelHue = 0;
     m_firstPixelValue = 0;
+    m_blinkState = true;
     
     m_timer = new Timer();
     m_timer.start();
@@ -113,7 +115,11 @@ public class Lights extends SubsystemBase {
 
   public void blinkLights(int hue) {
     for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
-      m_LEDBuffer.setHSV(i, hue, 255, m_firstPixelValue);
+      m_LEDBuffer.setHSV(i, hue, 255, m_blinkState ? 255 : 0);
+    }
+    if (m_timer.hasElapsed(Constants.LightsConstants.kBlinkDelay)) {
+      m_blinkState = !m_blinkState;
+      m_timer.reset();
     }
   }
   public void disableLights() {
