@@ -5,6 +5,7 @@
 package frc.robot.commands.elevator;
 
 import frc.robot.testingdashboard.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -12,7 +13,8 @@ public class SetElevatorLevel extends Command {
   /** Creates a new Level1. */
 
   Elevator m_Elevator;
-  boolean m_set;
+  boolean m_elevatorSet;
+  boolean m_shoulderSet;
   boolean m_finished;
   int m_level;
 
@@ -26,18 +28,23 @@ public class SetElevatorLevel extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_set = false;
+    m_elevatorSet = false;
+    m_shoulderSet = false;
     m_finished = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!m_set) {
+    if (!m_elevatorSet) {
       m_Elevator.setElevatorTargetLevel(m_level);
-      m_Elevator.setShoulderTargetLevel(m_level);
-      m_set = true;
+      m_elevatorSet = true;
     }
+    if(!m_shoulderSet && (m_level <= 2 || m_Elevator.getElevatorAngle() > Constants.ElevatorConstants.kElevatorDelayHeight)) {
+      m_Elevator.setShoulderTargetLevel(m_level);
+      m_shoulderSet = true;
+    }
+
     if (m_Elevator.inGoalPosition()) {
       m_finished = true;
     }

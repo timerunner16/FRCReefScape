@@ -116,6 +116,7 @@ public final class Constants {
     };
     public static final double kElevatorLowAlgaeRemove = 3.2;
     public static final double kElevatorHighAlgaeRemove = 15.5;
+    public static final double kElevatorDelayHeight = 4.0;
 
     public static final double kElevatorEatHeight = 0;
     public static final double kElevatorHeightIncrementInches = 0.25;
