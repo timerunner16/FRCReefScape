@@ -98,10 +98,10 @@ public class OI {
     new JoystickButton(m_DriverXboxController, Button.kX.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA2Pose)); 
     
     //Operator Cookie Monster Special Abilities(MEGA OP)
-    new JoystickButton(m_OperatorXboxController, Button.kX.value).whileTrue(new SetElevatorLevel(4));
-    new JoystickButton(m_OperatorXboxController, Button.kY.value).whileTrue(new SetElevatorLevel(3));
-    new JoystickButton(m_OperatorXboxController, Button.kB.value).whileTrue(new SetElevatorLevel(2));
-    new JoystickButton(m_OperatorXboxController, Button.kA.value).whileTrue(new SetElevatorLevel(1));
+    new JoystickButton(m_OperatorXboxController, Button.kX.value).onTrue(new SetElevatorLevel(4));
+    new JoystickButton(m_OperatorXboxController, Button.kY.value).onTrue(new SetElevatorLevel(3));
+    new JoystickButton(m_OperatorXboxController, Button.kB.value).onTrue(new SetElevatorLevel(2));
+    new JoystickButton(m_OperatorXboxController, Button.kA.value).onTrue(new SetElevatorLevel(1));
     new JoystickButton(m_OperatorXboxController, Button.kLeftBumper.value).whileTrue(new Consume());
 
     new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new FeedingTime());
