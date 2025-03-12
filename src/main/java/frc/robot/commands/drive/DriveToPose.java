@@ -13,19 +13,22 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
+import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.subsystems.Drive;
 import frc.robot.testingdashboard.Command;
 import frc.robot.testingdashboard.TDNumber;
 import frc.robot.utils.TargetPose;
 
 public class DriveToPose extends Command {
-    private Drive m_drive;
-    private edu.wpi.first.wpilibj2.command.Command m_currentPathCommand;
-    private TargetPose m_currentTarget;
+  private Drive m_drive;
+  private edu.wpi.first.wpilibj2.command.Command m_currentPathCommand;
+  private TargetPose m_currentTarget;
 
-    TDNumber TDCurrentTargetX;
-    TDNumber TDCurrentTargetY;
-    TDNumber TDCurrentTargetAngle;
+  TDNumber TDCurrentTargetX;
+  TDNumber TDCurrentTargetY;
+  TDNumber TDCurrentTargetAngle;
+
+  BlinkLights m_blinkLights;
 
   /** Creates a new TargetDrive. */
   public DriveToPose(Supplier<TargetPose> targetSupplier) {
@@ -41,6 +44,8 @@ public class DriveToPose extends Command {
     TDCurrentTargetAngle.set(m_currentTarget.getPose().getRotation().getDegrees());
 
     addRequirements(m_drive);
+
+    m_blinkLights = new BlinkLights(Constants.Color.red);
   }
 
   // Called when the command is initially scheduled.
@@ -50,6 +55,8 @@ public class DriveToPose extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_blinkLights.schedule();
+
     if (m_currentPathCommand == null || m_currentTarget == null)
     {
       m_currentPathCommand = AutoBuilder.pathfindToPose(m_currentTarget.getPose(),
@@ -66,6 +73,8 @@ public class DriveToPose extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_blinkLights.cancel();
+    
     if (m_currentPathCommand != null) {
       m_currentPathCommand.end(interrupted);
       m_currentPathCommand = null;

@@ -6,6 +6,7 @@
 package frc.robot.commands.WoS;
 
 import frc.robot.Constants;
+import frc.robot.commands.Lights.SolidLights;
 import frc.robot.subsystems.WoS;
 import frc.robot.testingdashboard.Command;
 import frc.robot.testingdashboard.TDNumber;
@@ -18,6 +19,8 @@ public class Expel extends Command {
 
   TDNumber m_WoSSpeed;
 
+  SolidLights m_solidLights;
+
   /** Creates a new Expel. */
   public Expel() {
     super(WoS.getInstance(), "WoS", "Expel");
@@ -29,6 +32,8 @@ public class Expel extends Command {
     m_WoSSpeed = new TDNumber(m_WoS, "WoS Speed (Power)", "Speed", Constants.WoSConstants.kWoSSpeed);
 
     addRequirements(m_WoS);
+
+    m_solidLights = new SolidLights(Constants.Color.yellow);
   }
 
   // Called when the command is initially scheduled.
@@ -38,6 +43,7 @@ public class Expel extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_solidLights.schedule();
     if (m_enablePID.get() == 1) {
       m_WoS.setSpeeds(m_RPM.get(), true);
     }
@@ -49,6 +55,7 @@ public class Expel extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_solidLights.cancel();
     m_WoS.noSpin(0);
   }
 

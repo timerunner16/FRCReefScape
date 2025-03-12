@@ -7,36 +7,35 @@ package frc.robot.commands.Lights;
 import frc.robot.testingdashboard.Command;
 import frc.robot.subsystems.Lights;
 
-public class MoveLightsYellow extends Command {
+public class SolidLights extends Command {
   Lights m_lights;
-  int hue;
+  int m_hue;
 
-  /** Creates a new MoveLightsYellow. */
-  public MoveLightsYellow() {
-    super(Lights.getInstance(), "Basic", "MoveLightsYellow");
+  /** Creates a new SolidLights. */
+  public SolidLights(int hue) {
+    super(Lights.getInstance(), "Basic", "SolidLights");
     m_lights = Lights.getInstance();
 
-    hue = 30; // Dandelion
+    m_hue = hue;
 
     addRequirements(m_lights);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-
   @Override
-public boolean runsWhenDisabled() {
-  return true;
-}
+  public boolean runsWhenDisabled() {
+    return true;
+  }
+
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_lights.enableLights(m_hue);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    m_lights.moveLights(hue);
-    m_lights.setData();
-  }
+  public void execute() {}
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
@@ -44,6 +43,6 @@ public boolean runsWhenDisabled() {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

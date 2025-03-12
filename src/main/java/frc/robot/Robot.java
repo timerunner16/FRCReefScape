@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.SysId.RoutineManager;
+import frc.robot.commands.Lights.MakeCool;
+import frc.robot.commands.Lights.MakeRainbow;
+import frc.robot.commands.Lights.MoveLights;
 import frc.robot.subsystems.Vision;
 
 /**
@@ -22,6 +25,9 @@ public class Robot extends TimedRobot {
   private Vision m_vision;
   private RoutineManager m_sysIDManager;
 
+  private MakeRainbow m_makeRainbow;
+  private MoveLights m_moveLightsAuto;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -31,6 +37,9 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_vision = Vision.getInstance();
+
+    m_makeRainbow = new MakeRainbow();
+    m_moveLightsAuto = new MoveLights(Constants.Color.green);
   }
 
   /**
@@ -51,7 +60,13 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    if (m_moveLightsAuto != null) {
+      m_moveLightsAuto.cancel();
+    }
+
+    m_makeRainbow.schedule();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -63,8 +78,13 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+      //m_autonomousCommand.schedule();
     }
+
+    if (m_makeRainbow != null) {
+      m_makeRainbow.cancel();
+    }
+    m_moveLightsAuto.schedule();
     
     if (RobotMap.V_ENABLED) {
       m_vision.enablePoseUpdates();
@@ -83,6 +103,14 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
+    }
+
+    if (m_makeRainbow != null) {
+      m_makeRainbow.cancel();
+    }
+
+    if (m_moveLightsAuto != null) {
+      m_moveLightsAuto.cancel();
     }
 
     if (RobotMap.V_ENABLED) {
