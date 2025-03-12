@@ -40,6 +40,15 @@ import frc.robot.utils.vision.VisionConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class Color {
+    public static final int red = 0;
+    public static final int orange = 15;
+    public static final int yellow = 30;
+    public static final int green = 60;
+    public static final int blue = 125;
+    public static final int purple = 145; // maybe?
+  }
+
   public static final class AlgaeIntakeConstants {
     //AlgaeIntake constants
     public static final boolean kEnableAnglePIDTuning = false;
@@ -169,7 +178,8 @@ public final class Constants {
 
   public static final class LightsConstants {
     // Defines Lights constants
-    public static final int LED_LENGTH = 42; // number of LEDs
+    public static final int LED_LENGTH = 49; // number of LEDs
+    public static final double kBlinkDelay = 0.35;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

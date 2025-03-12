@@ -5,6 +5,8 @@
 package frc.robot.commands.WoS;
 
 import frc.robot.Constants;
+import frc.robot.commands.Lights.BlinkLights;
+import frc.robot.commands.Lights.SolidLights;
 import frc.robot.testingdashboard.Command;
 import frc.robot.testingdashboard.TDNumber;
 import frc.robot.subsystems.WoS;
@@ -19,6 +21,9 @@ public class Consume extends Command {
 
   TDNumber m_WoSSpeed;
 
+  BlinkLights m_blinkLights;
+  SolidLights m_solidLights;
+
   /** Creates a new Consume. */
   public Consume() {
     super(WoS.getInstance(),"WoS","Consume");
@@ -30,6 +35,9 @@ public class Consume extends Command {
     m_WoSSpeed = new TDNumber(m_WoS, "WoS Speed (Power)", "Speed", Constants.WoSConstants.kWoSSpeed);
 
     addRequirements(m_WoS);
+
+    m_blinkLights = new BlinkLights(50);
+    m_solidLights = new SolidLights(50);
   }
 
   // Called when the command is initially scheduled.
@@ -45,12 +53,22 @@ public class Consume extends Command {
     else {
       m_WoS.spinIn(m_WoSSpeed.get());
     }
+
+    if (m_WoS.getCoralDetected()) {
+      m_blinkLights.cancel();
+      m_solidLights.schedule();
+    } else {
+      m_solidLights.cancel();
+      m_blinkLights.schedule();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_WoS.noSpin(0);
+    m_blinkLights.cancel();
+      m_solidLights.cancel();
   }
 
   // Returns true when the command should end.

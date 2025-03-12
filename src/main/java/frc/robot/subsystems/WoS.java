@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -41,6 +42,7 @@ public class WoS extends SubsystemBase {
 
   SparkMax m_WoSSparkMax;
   SparkMaxConfig m_SparkMaxConfig;
+  SparkLimitSwitch m_WoSCoralLimitSwitch;
 
   /** Creates a new ExampleSubsystem. */
   private WoS() {
@@ -58,7 +60,9 @@ public class WoS extends SubsystemBase {
 
       WoSSparkMaxConfig.closedLoop.pid(Constants.WoSConstants.kWoSP, Constants.WoSConstants.kWoSI,
           Constants.WoSConstants.kWoSD);
+      WoSSparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(true);
       m_WoSSparkMax.configure(WoSSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      m_WoSCoralLimitSwitch = m_WoSSparkMax.getForwardLimitSwitch();
 
       m_WoSCurrentOutput = new TDNumber(this, "WoS", "Motor Current");
     }
@@ -95,6 +99,10 @@ public class WoS extends SubsystemBase {
     if (m_WoSSparkMax != null) {
       m_WoSSparkMax.set(0);
     }
+  }
+
+  public boolean getCoralDetected() {
+    return m_WoSCoralLimitSwitch.isPressed();
   }
 
   @Override

@@ -7,18 +7,18 @@ package frc.robot.commands.Lights;
 import frc.robot.testingdashboard.Command;
 import frc.robot.subsystems.Lights;
 
-public class MoveLightsMagenta extends Command {
+public class MoveLights extends Command {
   Lights m_lights;
-  int hue;
-  /** Creates a new MoveLightsMagenta. */
-  public MoveLightsMagenta() {
-    super(Lights.getInstance(), "Basic", "MoveLightsMagenta");
+  int m_hue;
+
+  /** Creates a new MoveLights. */
+  public MoveLights(int hue) {
+    super(Lights.getInstance(), "Basic", "MoveLights");
     m_lights = Lights.getInstance();
 
-    hue = 160; // Magenta
+    m_hue = hue;
 
     addRequirements(m_lights);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   @Override
@@ -33,7 +33,7 @@ public class MoveLightsMagenta extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_lights.moveLights(hue);
+    m_lights.moveLights(m_hue);
     m_lights.setData();
   }
 

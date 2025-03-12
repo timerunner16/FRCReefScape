@@ -16,11 +16,16 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Funnel;
+import frc.robot.subsystems.Lights;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
 import frc.robot.SysId.RoutineManager;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
+import frc.robot.commands.Lights.BlinkLights;
+import frc.robot.commands.Lights.MakeRainbow;
+import frc.robot.commands.Lights.MoveLights;
+import frc.robot.commands.Lights.SolidLights;
 import frc.robot.commands.WoS.WosFunnelTest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -43,6 +48,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   // Handle to Operator Inputs
   private OI m_oi;
+  private Lights m_Lights;
   private Vision m_Vision;
 
   // The robot's subsystems are defined here.
@@ -69,6 +75,8 @@ public class RobotContainer {
 
     // Robot subsystems initialized and configured here
     WoS.getInstance();
+    Lights lights = Lights.getInstance();
+    lights.setDefaultCommand(new SolidLights(Constants.Color.blue));
     Elevator elev = Elevator.getInstance();
     elev.setDefaultCommand(new ElevatorJoystickControl());
     Funnel.getInstance();
@@ -102,6 +110,11 @@ public class RobotContainer {
     new ShoulderPowerControl();
     new WosFunnelTest();
 
+    new BlinkLights(0);
+    new SolidLights(0);
+    new MoveLights(0);
+
+    new MakeRainbow();
   }
 
   /**
