@@ -36,8 +36,8 @@ public class Consume extends Command {
 
     addRequirements(m_WoS);
 
-    m_blinkLights = new BlinkLights(50);
-    m_solidLights = new SolidLights(50);
+    m_blinkLights = new BlinkLights(Constants.Color.green);
+    m_solidLights = new SolidLights(Constants.Color.green);
   }
 
   // Called when the command is initially scheduled.

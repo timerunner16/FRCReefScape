@@ -110,9 +110,9 @@ public class RobotContainer {
     new ShoulderPowerControl();
     new WosFunnelTest();
 
-    new BlinkLights(0);
-    new SolidLights(0);
-    new MoveLights(0);
+    new BlinkLights(Constants.Color.red);
+    new SolidLights(Constants.Color.red);
+    new MoveLights(Constants.Color.red);
 
     new MakeRainbow();
   }
