@@ -76,7 +76,7 @@ public final class Constants {
     public static final double kWoSI = 0;
     public static final double kWoSD = 0;
 
-    public static final double kWoSSpeed = 0.2;
+    public static final double kWoSSpeed = 0.4;
     public static final double kWoSSpeedRPM = 30;
 
     public static final double kWoSRPMSurfaceSpeedRatio = 1.5;
@@ -105,13 +105,13 @@ public final class Constants {
 
     public static final double DEGREES_PER_REVOLUTION = 360;
     public static final double kElevatorLowerLimitInches = 0;
-    public static final double kElevatorUpperLimitInches = 25.5;
+    public static final double kElevatorUpperLimitInches = 26.5;
 
     public static final double[] kElevatorLevels = {
       0,
       0,
-      0,
-      0,
+      1.6,
+      7.5,
       kElevatorUpperLimitInches,
     };
 
@@ -136,18 +136,18 @@ public final class Constants {
     public static final double kShoulderMotorToShoulderRatio = 40/18.0;
 
     public static final double kShoulderLowerLimitDegrees = -5;
-    public static final double kShoulderUpperLimitDegrees = 365;
+    public static final double kShoulderUpperLimitDegrees = 290;
 
     public static final double[] kShoulderLevels = {
       0,
       0,
-      0,
-      0,
-      0
+      236.5,
+      204.5,
+      194
     };
 
     public static final double kShoulderEatAngle = 0;
-    public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 0.5;
+    public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 2;
     public static final double kShoulderDeadband = 0.05;
   }
 
