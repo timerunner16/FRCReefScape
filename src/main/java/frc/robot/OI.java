@@ -35,6 +35,8 @@ import frc.robot.commands.funnel.Implode;
 import frc.robot.commands.FeedingTime;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
+import frc.robot.commands.Climb.ClimberIn;
+import frc.robot.commands.Climb.ClimberOut;
 import frc.robot.commands.WoS.*;
 import frc.robot.testingdashboard.TDNumber;
 import frc.robot.utils.FieldUtils;
@@ -108,6 +110,8 @@ public class OI {
     new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
     new Trigger(m_OperatorXboxController.povUp(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new SetElevatorAlgaeRemoveHigh());
     new Trigger(m_OperatorXboxController.povDown(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new SetElevatorAlgaeRemoveLow());
+    new Trigger(m_OperatorXboxController.povLeft(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new ClimberIn());
+    new Trigger(m_OperatorXboxController.povRight(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new ClimberOut());
   };
   
     
