@@ -22,7 +22,7 @@ import frc.robot.utils.TargetPose;
 public class DriveToPose extends Command {
   private Drive m_drive;
   private edu.wpi.first.wpilibj2.command.Command m_currentPathCommand;
-  private TargetPose m_currentTarget;
+  private Supplier<TargetPose> m_targetSupplier;
 
   TDNumber TDCurrentTargetX;
   TDNumber TDCurrentTargetY;
@@ -34,15 +34,12 @@ public class DriveToPose extends Command {
   public DriveToPose(Supplier<TargetPose> targetSupplier) {
     super(Drive.getInstance(), "Drive", "DriveToPose");
     m_drive = Drive.getInstance();
-    m_currentTarget = targetSupplier.get();
+    m_targetSupplier = targetSupplier;
 
     TDCurrentTargetX = new TDNumber(m_drive, "Test Outputs", "Current Target X");
-    TDCurrentTargetX.set(m_currentTarget.getPose().getX());
     TDCurrentTargetY = new TDNumber(m_drive, "Test Outputs", "Current Target Y");
-    TDCurrentTargetY.set(m_currentTarget.getPose().getY());
     TDCurrentTargetAngle = new TDNumber(m_drive, "Test Outputs", "Current Target Angle");
-    TDCurrentTargetAngle.set(m_currentTarget.getPose().getRotation().getDegrees());
-
+  
     addRequirements(m_drive);
 
     m_blinkLights = new BlinkLights(Constants.Color.red);
@@ -50,24 +47,30 @@ public class DriveToPose extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
+  public void initialize() {
     m_blinkLights.schedule();
-
-    if (m_currentPathCommand == null || m_currentTarget == null)
+    TargetPose target = m_targetSupplier.get();
+    if (m_currentPathCommand == null && target != null && target.getPose() != null)
     {
-      m_currentPathCommand = AutoBuilder.pathfindToPose(m_currentTarget.getPose(),
+      TDCurrentTargetX.set(target.getPose().getX());
+      TDCurrentTargetY.set(target.getPose().getY());
+      TDCurrentTargetAngle.set(target.getPose().getRotation().getDegrees());
+      Pose2d targetPose = target.getReversedApproach()? 
+          new Pose2d(target.getPose().getX(), target.getPose().getY(), target.getPose().getRotation().plus(Rotation2d.k180deg)) 
+          : target.getPose();
+      m_currentPathCommand = AutoBuilder.pathfindToPose(targetPose,
                                                         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                                                         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, 
                                                         Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond,
                                                         Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared),
                                                         0);
-      m_currentPathCommand.initialize();
+      m_currentPathCommand.schedule();
     }
-    m_currentPathCommand.execute();
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
   }
 
   // Called once the command ends or is interrupted.
@@ -76,7 +79,7 @@ public class DriveToPose extends Command {
     m_blinkLights.cancel();
     
     if (m_currentPathCommand != null) {
-      m_currentPathCommand.end(interrupted);
+      m_currentPathCommand.cancel();
       m_currentPathCommand = null;
     }
   }
@@ -87,6 +90,6 @@ public class DriveToPose extends Command {
     if (m_currentPathCommand != null) {
       return m_currentPathCommand.isFinished();
     }
-    return true;
+    return false;
   }
 }
