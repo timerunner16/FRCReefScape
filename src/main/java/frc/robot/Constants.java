@@ -356,6 +356,8 @@ public final class Constants {
     public static final double kWinchI = 0;
     public static final double kWinchD = 0;
     public static final boolean kEnableWinchPIDTuning = false;
+
+    public static final double kWinchSpeed = 1;
   }
 
   public static final class FieldLocationConstants {

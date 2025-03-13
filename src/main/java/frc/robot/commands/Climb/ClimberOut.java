@@ -12,12 +12,12 @@ import frc.robot.OI;
 import frc.robot.subsystems.Climber;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ClimberPowerControl extends Command {
+public class ClimberOut extends Command {
   Climber m_climber;
   XboxController m_operatorController;
   /** Creates a new ClimberPowerControl. */
-  public ClimberPowerControl() {
-    super(Climber.getInstance(), "Climber", "Climber Power Control");
+  public ClimberOut() {
+    super(Climber.getInstance(), "Climber", "Climber Release");
     m_climber = Climber.getInstance();
     m_operatorController = OI.getInstance().getOperatorXboxController();
     addRequirements(m_climber);
@@ -30,8 +30,7 @@ public class ClimberPowerControl extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = -MathUtil.applyDeadband(m_operatorController.getRightY(), Constants.OIConstants.kDriveDeadband);
-    m_climber.winchIn(speed);
+    m_climber.winchIn(-Constants.ClimberConstants.kWinchSpeed);
   }
 
   // Called once the command ends or is interrupted.

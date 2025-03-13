@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.robot.testingdashboard.SubsystemBase;
@@ -40,6 +41,9 @@ public class Climber extends SubsystemBase {
       m_WinchMotor = new SparkMax(RobotMap.C_WINCHMOTOR, MotorType.kBrushless);
 
       m_WinchMotorConfig = new SparkMaxConfig();
+      m_WinchMotorConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(40, 60);
 
       m_TDwinchP = new TDNumber(this, "PID", "P", Constants.ClimberConstants.kWinchP);
       m_TDwinchI = new TDNumber(this, "PID", "I", Constants.ClimberConstants.kWinchI);

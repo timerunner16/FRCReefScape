@@ -19,8 +19,32 @@ import frc.robot.Constants;
 public class FieldUtils{
     private static FieldUtils m_fieldUtils;
 
-    public static final AllianceAprilTags RedTags = new AllianceAprilTags(1, 2, 3, 4, 5, 8, 7, 6, 11, 10, 9);
-    public static final AllianceAprilTags BlueTags = new AllianceAprilTags(12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
+    public static final AllianceAprilTags RedTags =
+        new AllianceAprilTags(
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            11,
+            10,
+            9);
+    public static final AllianceAprilTags BlueTags = 
+        new AllianceAprilTags(
+            12,
+            13,
+            14,
+            15,
+            16,
+            19,
+            18,
+            17,
+            20, 
+            21, 
+            22);
 
     public static FieldUtils getInstance(){
         if(m_fieldUtils == null){
@@ -66,7 +90,7 @@ public class FieldUtils{
         return toTarget.getAngle();
     }
 
-    enum ReefFaceOffset {
+    public enum ReefFaceOffset {
         kLeft,
         kRight
     }
@@ -93,10 +117,9 @@ public class FieldUtils{
                 break;
         }
 
-        Rotation2d tranlationRotate = new Rotation2d(Units.degreesToRadians(sextant * 60));
         Translation2d scoreTranslation = ((offsetDirection==ReefFaceOffset.kLeft)? 
                                             Constants.FieldLocationConstants.kReefLeftScoreTrans :
-                                            Constants.FieldLocationConstants.kReefRightScoreTrans).rotateBy(tranlationRotate);
+                                            Constants.FieldLocationConstants.kReefRightScoreTrans);
         Transform2d scoreTransform = new Transform2d(scoreTranslation, Rotation2d.k180deg);
         Pose2d scoringPose = faceTagPose.transformBy(scoreTransform);
 
