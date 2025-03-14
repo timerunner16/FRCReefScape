@@ -111,7 +111,7 @@ public class RobotMap {
 	public static int U_OPERATOR_XBOX_CONTROLLER = 1;
 
   //[V]ision
-  public static boolean V_ENABLED = false;
+  public static boolean V_ENABLED = true;
 
   //[W]oS
   public static boolean W_ENABLED = true;

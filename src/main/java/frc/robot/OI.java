@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -41,6 +43,8 @@ import frc.robot.commands.WoS.*;
 import frc.robot.testingdashboard.TDNumber;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.SwerveDriveInputs;
+import frc.robot.utils.TargetPose;
+import frc.robot.utils.FieldUtils.ReefFaceOffset;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -97,7 +101,23 @@ public class OI {
         FieldUtils.getInstance().getAllianceAprilTags().middleFrontReef).toPose2d();}, m_driveInputs));
         
     new JoystickButton(m_DriverXboxController, Button.kY.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA1Pose)); 
-    new JoystickButton(m_DriverXboxController, Button.kX.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA2Pose)); 
+    new JoystickButton(m_DriverXboxController, Button.kX.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA2Pose));
+    new JoystickButton(m_DriverXboxController, Button.kLeftBumper.value).whileTrue(new DriveToPose(
+      ()->{
+          Alliance alliance = DriverStation.getAlliance().isPresent()?DriverStation.getAlliance().get() : Alliance.Blue;
+          return new TargetPose(FieldUtils.getInstance().getClosestReefScoringPosition(
+            Drive.getInstance().getPose(), ReefFaceOffset.kLeft, alliance),
+            true);
+        }
+      ));
+    new JoystickButton(m_DriverXboxController, Button.kRightBumper.value).whileTrue(new DriveToPose(
+      ()->{
+          Alliance alliance = DriverStation.getAlliance().isPresent()?DriverStation.getAlliance().get() : Alliance.Blue;
+          return new TargetPose(FieldUtils.getInstance().getClosestReefScoringPosition(
+            Drive.getInstance().getPose(), ReefFaceOffset.kRight, alliance),
+            true);
+        }
+      ));
     
     //Operator Cookie Monster Special Abilities(MEGA OP)
     new JoystickButton(m_OperatorXboxController, Button.kX.value).onTrue(new SetElevatorLevel(4));

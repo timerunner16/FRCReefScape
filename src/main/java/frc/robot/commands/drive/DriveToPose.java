@@ -50,7 +50,7 @@ public class DriveToPose extends Command {
   public void initialize() {
     m_blinkLights.schedule();
     TargetPose target = m_targetSupplier.get();
-    if (m_currentPathCommand == null && target != null && target.getPose() != null)
+    if (target != null && target.getPose() != null)
     {
       TDCurrentTargetX.set(target.getPose().getX());
       TDCurrentTargetY.set(target.getPose().getY());
@@ -64,13 +64,16 @@ public class DriveToPose extends Command {
                                                         Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond,
                                                         Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared),
                                                         0);
-      m_currentPathCommand.schedule();
+      m_currentPathCommand.initialize();
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(m_currentPathCommand != null){
+      m_currentPathCommand.execute();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -79,7 +82,7 @@ public class DriveToPose extends Command {
     m_blinkLights.cancel();
     
     if (m_currentPathCommand != null) {
-      m_currentPathCommand.cancel();
+      m_currentPathCommand.end(interrupted);
       m_currentPathCommand = null;
     }
   }
@@ -90,6 +93,6 @@ public class DriveToPose extends Command {
     if (m_currentPathCommand != null) {
       return m_currentPathCommand.isFinished();
     }
-    return false;
+    return true;
   }
 }
