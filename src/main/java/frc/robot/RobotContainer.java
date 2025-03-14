@@ -20,12 +20,15 @@ import frc.robot.subsystems.Lights;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
 import frc.robot.SysId.RoutineManager;
+import frc.robot.commands.FeedingTime;
+import frc.robot.commands.Level4;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
 import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.commands.Lights.MakeRainbow;
 import frc.robot.commands.Lights.MoveLights;
 import frc.robot.commands.Lights.SolidLights;
+import frc.robot.commands.WoS.Expel;
 import frc.robot.commands.WoS.WosFunnelTest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -85,7 +88,7 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new SwerveDrive(m_oi.getDriveInputs()));
 
     // Build the auto commands and add them to the chooser
-    m_autoChooser = AutoBuilder.buildAutoChooser("closeAutoTop_startMid");
+    m_autoChooser = AutoBuilder.buildAutoChooser("Middle_twoPiece4");
     new TDSendable(Drive.getInstance(), "Auto Commands", "Chooser", m_autoChooser);
     
     // Configure the trigger/button bindings
@@ -105,6 +108,9 @@ public class RobotContainer {
     new TestTargetDrive();
     new Jesus();
     new Lucifer();
+    new Level4();
+    new Expel();
+    new FeedingTime();
 
     new ElevatorManualPowerControl();
     new ShoulderPowerControl();
@@ -136,7 +142,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    m_autoChooser.getSelected();
-    return null;
+    return m_autoChooser.getSelected();
   }
 }
