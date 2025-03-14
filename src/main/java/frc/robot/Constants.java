@@ -313,16 +313,16 @@ public final class Constants {
        
     public static final VisionConfig[] kTwigVisionSystems = {
       // Left rear camera, facing front left corner
-      new VisionConfig("Arducam_OV2311_A",
+      new VisionConfig("Arducam_OV9782_C",
               new Transform3d(new Translation3d(
-                        Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
-                        , Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraWidthOffset)
+                        Units.inchesToMeters(-Constants.VisionConstants.kCameraLengthOffset)
+                        , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
                         , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
-              new Rotation3d(0, 0, Units.degreesToRadians(Constants.VisionConstants.kCameraMountAngleYaw))),
+              new Rotation3d(0, 0, Units.degreesToRadians(-90 + -1 * Constants.VisionConstants.kCameraMountAngleYaw))),
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Left front camera, facing front right corner
-      new VisionConfig("Arducam_OV9782_B",
+      new VisionConfig("Arducam_OV9782_D",
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
@@ -331,16 +331,16 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right front camera, facing rear right corner
-      new VisionConfig("Arducam_OV9782_C",
+      new VisionConfig("Arducam_OV2311_A",
               new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraLengthOffset)
-                        , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
+                        Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
+                        , Units.inchesToMeters(-Constants.VisionConstants.kCameraWidthOffset)
                         , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
               new Rotation3d(0, 0, Units.degreesToRadians(-90 + -1 * Constants.VisionConstants.kCameraMountAngleYaw))),
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right rear camera, facing rear left
-      new VisionConfig("Arducam_OV9782_D",
+      new VisionConfig("Arducam_OV9782_B",
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraWidthOffset)
@@ -365,8 +365,8 @@ public final class Constants {
     public static final Pose2d kBlueReefCenter = new Pose2d(4.5, 4, Rotation2d.kZero);
     public static final Pose2d kRedReefCenter = new Pose2d(13, 4, Rotation2d.kZero);
 
-    public static final Translation2d kReefLeftScoreTrans = new Translation2d(0, 0);
-    public static final Translation2d kReefRightScoreTrans = new Translation2d(0, -0);//Should be the same but with -y
+    public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2), -0.2);
+    public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2), 0.2);//Should be the same but with -y
 
     public static final TargetPose kRedCoralA1Pose = new TargetPose(new Pose2d(15.878, 0.773, new Rotation2d(Units.degreesToRadians(125))), true);
     public static final TargetPose kRedCoralA2Pose = new TargetPose(new Pose2d(16.858, 1.382, new Rotation2d(Units.degreesToRadians(125))), true);
