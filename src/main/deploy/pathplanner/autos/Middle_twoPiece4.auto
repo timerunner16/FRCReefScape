@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Level4Score"
+                  "name": "Level4"
                 }
               }
             ]
@@ -87,7 +87,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Level4Score"
+                  "name": "Level4"
                 }
               }
             ]
