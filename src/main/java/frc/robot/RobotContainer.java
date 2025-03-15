@@ -28,6 +28,8 @@ import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.commands.Lights.MakeRainbow;
 import frc.robot.commands.Lights.MoveLights;
 import frc.robot.commands.Lights.SolidLights;
+import frc.robot.commands.Vision.DisablePoseUpdates;
+import frc.robot.commands.Vision.EnablePoseUpdates;
 import frc.robot.commands.WoS.Expel;
 import frc.robot.commands.WoS.WosFunnelTest;
 
@@ -121,6 +123,9 @@ public class RobotContainer {
     new MoveLights(Constants.Color.red);
 
     new MakeRainbow();
+
+    new DisablePoseUpdates();
+    new EnablePoseUpdates();
   }
 
   /**
