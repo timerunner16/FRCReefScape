@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "DisablePoseUpdates"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MarchOnward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EnablePoseUpdates"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
