@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle_TopRight"
+                  "pathName": "Bottom_BottomRight"
                 }
               },
               {
@@ -24,7 +24,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -49,14 +49,14 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TopRight_TopStationRight"
+                  "pathName": "BottomRight_BottomStationLeft"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -81,20 +81,20 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TopStationRight_TopLeft"
+                  "pathName": "BottomStationLeft_BottomLeft"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Level4"
+                  "name": "Level4Score"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -119,14 +119,14 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TopLeft_TopStationRight"
+                  "pathName": "BottomLeft_BottomStationLeft"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
