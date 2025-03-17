@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.commands.drive.BasicestAuto;
+import frc.robot.commands.drive.DriveForward;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.TestTargetDrive;
 import frc.robot.commands.elevator.ElevatorJoystickControl;
@@ -91,6 +93,7 @@ public class RobotContainer {
 
     // Build the auto commands and add them to the chooser
     m_autoChooser = AutoBuilder.buildAutoChooser("Middle_twoPiece4");
+    m_autoChooser.addOption("BasicestAuto", new BasicestAuto());
     new TDSendable(Drive.getInstance(), "Auto Commands", "Chooser", m_autoChooser);
     
     // Configure the trigger/button bindings
@@ -110,9 +113,10 @@ public class RobotContainer {
     new TestTargetDrive();
     new Jesus();
     new Lucifer();
-    new Level4();
-    new Expel();
-    new FeedingTime();
+    //new Level4();
+    //new Expel();
+    //new FeedingTime();
+    new DriveForward();
 
     new ElevatorManualPowerControl();
     new ShoulderPowerControl();
