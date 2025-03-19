@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -85,9 +86,13 @@ public class Drive extends SubsystemBase {
   TDNumber TDrotSpeedCommanded;
 
   TDNumber TDFrontLeftDriveSpeed;
+  TDNumber TDFrontLeftAngle;
   TDNumber TDFrontRightDriveSpeed;
+  TDNumber TDFrontRightAngle;
   TDNumber TDBackLeftDriveSpeed;
+  TDNumber TDBackLeftAngle;
   TDNumber TDBackRightDriveSpeed;
+  TDNumber TDBackRightAngle;
 
   TDNumber TDxSpeedMeasured;
   TDNumber TDySpeedMeasured;
@@ -96,6 +101,7 @@ public class Drive extends SubsystemBase {
   TDNumber TDPoseX;
   TDNumber TDPoseY;
   TDNumber TDPoseAngle;
+  TDNumber TDGyroAngle;
 
   ChassisSpeeds m_requestSpeeds = new ChassisSpeeds();
   ChassisSpeeds m_limitSpeeds = new ChassisSpeeds();
@@ -136,13 +142,18 @@ public class Drive extends SubsystemBase {
     TDrotSpeedMeasured = new TDNumber(this, "Drive Speed", "RotMeasuredSpeed");
 
     TDFrontLeftDriveSpeed = new TDNumber(this, "Drive Speed", "Front Left Speed");
+    TDFrontLeftAngle = new TDNumber(this, "Drive Speed", "Front Left Angle");
     TDFrontRightDriveSpeed = new TDNumber(this, "Drive Speed", "Front Right Speed");
+    TDFrontRightAngle = new TDNumber(this, "Drive Speed", "Front Right Angle");
     TDBackLeftDriveSpeed = new TDNumber(this, "Drive Speed", "Back Left Speed");
+    TDBackLeftAngle = new TDNumber(this, "Drive Speed", "Back Left Angle");
     TDBackRightDriveSpeed = new TDNumber(this, "Drive Speed", "Back Right Speed");
+    TDBackRightAngle = new TDNumber(this, "Drive Speed", "Back Right Angle");
     
     TDPoseX = new TDNumber(this, "Drive Pose", "PoseX");
     TDPoseY = new TDNumber(this, "Drive Pose", "PoseY");
     TDPoseAngle = new TDNumber(this, "Drive Pose", "PoseAngle");
+    TDGyroAngle = new TDNumber(this, "Drive Pose", "GyroAngle");
 
     m_DLeftFrontCurrentOutput = new TDNumber(this, "Current", "Drive Front Left Output");
     m_DRightFrontCurrentOutput = new TDNumber(this, "Current", "Drive Front Right Output");
@@ -162,7 +173,7 @@ public class Drive extends SubsystemBase {
       this::getPose, // Robot pose supplier
       this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
       this::getMeasuredSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      (speeds, feedforwards) -> this.drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+      this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
       new PPHolonomicDriveController(AutoConstants.kPathFollowerTranslationPID, AutoConstants.kPathFollowerRotationPID),
       new RobotConfig(AutoConstants.kPathFollowerMass, AutoConstants.kPathFollowerMomentOfInertia, kSwerveModuleConfig, DriveConstants.m_ModulePositions),
       () -> {
@@ -178,6 +189,15 @@ public class Drive extends SubsystemBase {
       },
       this // Reference to this subsystem to set requirements
     );
+    PathPlannerLogging.setLogCurrentPoseCallback((pose)->{
+      m_field.getObject("AutoCurrent").setPose(pose);
+    });
+    PathPlannerLogging.setLogTargetPoseCallback((pose)->{
+      m_field.getObject("AutoTarget").setPose(pose);
+    });
+    PathPlannerLogging.setLogActivePathCallback((poses)->{
+      m_field.getObject("Auto Active Path").setPoses(poses);
+    });
   }
 
   public static Drive getInstance() {
@@ -431,11 +451,20 @@ public class Drive extends SubsystemBase {
     TDPoseX.set(currentPose.getX());
     TDPoseY.set(currentPose.getY());
     TDPoseAngle.set(currentPose.getRotation().getDegrees());
+    TDGyroAngle.set(getGyroAngle());
 
-    TDFrontLeftDriveSpeed.set(m_FrontLeft.getLastSpeed());
-    TDFrontRightDriveSpeed.set(m_FrontRight.getLastSpeed());
-    TDBackLeftDriveSpeed.set(m_BackLeft.getLastSpeed());
-    TDBackRightDriveSpeed.set(m_BackRight.getLastSpeed());
+    SwerveModuleState fl = m_FrontLeft.getState();
+    TDFrontLeftDriveSpeed.set(fl.speedMetersPerSecond);
+    TDFrontLeftAngle.set(fl.angle.getDegrees());
+    SwerveModuleState fr = m_FrontRight.getState();
+    TDFrontRightDriveSpeed.set(fr.speedMetersPerSecond);
+    TDFrontRightAngle.set(fr.angle.getDegrees());
+    SwerveModuleState bl = m_BackLeft.getState();
+    TDBackLeftDriveSpeed.set(bl.speedMetersPerSecond);
+    TDBackLeftAngle.set(bl.angle.getDegrees());
+    SwerveModuleState br = m_BackRight.getState();
+    TDBackRightDriveSpeed.set(br.speedMetersPerSecond);
+    TDBackRightAngle.set(br.angle.getDegrees());
 
     m_DLeftFrontCurrentOutput.set(m_FrontLeft.getDriveOutputCurrent());
     m_DRightFrontCurrentOutput.set(m_FrontRight.getDriveOutputCurrent());

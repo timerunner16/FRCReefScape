@@ -9,9 +9,11 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.robot.Constants;
 import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.subsystems.Drive;
@@ -21,8 +23,12 @@ import frc.robot.utils.TargetPose;
 
 public class DriveToPose extends Command {
   private Drive m_drive;
-  private edu.wpi.first.wpilibj2.command.Command m_currentPathCommand;
   private Supplier<TargetPose> m_targetSupplier;
+  private Pose2d m_targetPose;
+
+  private ProfiledPIDController m_thetaController;
+  private ProfiledPIDController m_driveXController;
+  private ProfiledPIDController m_driveYController;
 
   TDNumber TDCurrentTargetX;
   TDNumber TDCurrentTargetY;
@@ -39,6 +45,11 @@ public class DriveToPose extends Command {
     TDCurrentTargetX = new TDNumber(m_drive, "Test Outputs", "Current Target X");
     TDCurrentTargetY = new TDNumber(m_drive, "Test Outputs", "Current Target Y");
     TDCurrentTargetAngle = new TDNumber(m_drive, "Test Outputs", "Current Target Angle");
+
+    m_thetaController = new ProfiledPIDController(5.0, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
+    m_thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    m_driveXController = new ProfiledPIDController(5, 0, 0, new Constraints(4.8, 4.8));
+    m_driveYController = new ProfiledPIDController(5, 0, 0, new Constraints(4.8, 4.8));
   
     addRequirements(m_drive);
 
@@ -55,24 +66,26 @@ public class DriveToPose extends Command {
       TDCurrentTargetX.set(target.getPose().getX());
       TDCurrentTargetY.set(target.getPose().getY());
       TDCurrentTargetAngle.set(target.getPose().getRotation().getDegrees());
-      Pose2d targetPose = target.getReversedApproach()? 
+      m_targetPose = target.getReversedApproach()? 
           new Pose2d(target.getPose().getX(), target.getPose().getY(), target.getPose().getRotation().plus(Rotation2d.k180deg)) 
           : target.getPose();
-      m_currentPathCommand = AutoBuilder.pathfindToPose(targetPose,
-                                                        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-                                                        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, 
-                                                        Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond,
-                                                        Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared),
-                                                        0);
-      m_currentPathCommand.initialize();
+      m_thetaController.reset(m_drive.getPose().getRotation().getRadians());
+      m_driveXController.reset(m_drive.getPose().getX());
+      m_driveYController.reset(m_drive.getPose().getY());
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_currentPathCommand != null){
-      m_currentPathCommand.execute();
+    if(m_targetPose != null)
+    {
+      double omega = m_thetaController.calculate(m_drive.getPose().getRotation().getRadians(), m_targetPose.getRotation().getRadians());
+      double xVel = m_driveXController.calculate(m_drive.getPose().getX(), m_targetPose.getX());
+      double yVel = m_driveYController.calculate(m_drive.getPose().getY(), m_targetPose.getY());
+
+      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVel, yVel, omega,  m_drive.getPose().getRotation());
+      m_drive.drive(speeds);
     }
   }
 
@@ -80,19 +93,13 @@ public class DriveToPose extends Command {
   @Override
   public void end(boolean interrupted) {
     m_blinkLights.cancel();
-    
-    if (m_currentPathCommand != null) {
-      m_currentPathCommand.end(interrupted);
-      m_currentPathCommand = null;
-    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_currentPathCommand != null) {
-      return m_currentPathCommand.isFinished();
-    }
-    return true;
+    return (m_targetPose == null) ||
+      (m_drive.getPose().getTranslation().getDistance(m_targetPose.getTranslation()) < Constants.AutoConstants.kTranslationTolerance) &&
+      (Math.abs(m_drive.getPose().getRotation().minus(m_targetPose.getRotation()).getRadians()) < Constants.AutoConstants.kThetaTolerance);
   }
 }
