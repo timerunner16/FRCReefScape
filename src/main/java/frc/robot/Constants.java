@@ -187,7 +187,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 4.92;
     public static final double kSlowDrive = 0.1;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
@@ -248,8 +248,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    public static final double kMaxSpeedMetersPerSecond = 4.92;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 4.92;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -258,7 +258,8 @@ public final class Constants {
     public static final double kPThetaController = 10;
     public static final double kIThetaController = 0.1;
     public static final double kDThetaController = 0.05;
-    public static final double kThetaTolerance = 0.1;//radians
+    public static final double kThetaTolerance = 0.02;//radians
+    public static final double kTranslationTolerance = 0.025;//meters
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -378,7 +379,7 @@ public final class Constants {
   public static final double kMaxAccelerationMetersPerSecondSquared = 10;
   public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
   public static final double kMaxAngularSpeedRadiansPerSecondSquared = 4*Math.PI;
-  public static final double kMaxSpeedMetersPerSecond = 4.8;
+  public static final double kMaxSpeedMetersPerSecond = 4.92;
   public static final double kMaxAngularSpeed = 2 * Math.PI;
   public static final double kWheelDiameterMeters = 0.0762;
   public static final double D_ANGLE_TOLERANCE_DEGREES = 2.5;

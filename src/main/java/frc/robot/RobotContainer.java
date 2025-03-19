@@ -8,6 +8,7 @@ import frc.robot.commands.drive.BasicestAuto;
 import frc.robot.commands.drive.DriveForward;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.TestTargetDrive;
+import frc.robot.commands.drive.YoureUnderArrest;
 import frc.robot.commands.elevator.ElevatorJoystickControl;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Jesus;
@@ -113,10 +114,11 @@ public class RobotContainer {
     new TestTargetDrive();
     new Jesus();
     new Lucifer();
-    //new Level4();
-    //new Expel();
-    //new FeedingTime();
+    new Level4();
+    new Expel();
+    new FeedingTime();
     new DriveForward();
+    new YoureUnderArrest();
 
     new ElevatorManualPowerControl();
     new ShoulderPowerControl();

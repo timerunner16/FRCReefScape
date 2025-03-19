@@ -7,11 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.SysId.RoutineManager;
 import frc.robot.commands.Lights.MakeCool;
 import frc.robot.commands.Lights.MakeRainbow;
 import frc.robot.commands.Lights.MoveLights;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Drive;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -27,6 +29,7 @@ public class Robot extends TimedRobot {
 
   private MakeRainbow m_makeRainbow;
   private MoveLights m_moveLightsAuto;
+  private InstantCommand m_resetHeading = new InstantCommand(()->Drive.getInstance().zeroHeading());
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -78,6 +81,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
+      m_resetHeading.schedule();
       m_autonomousCommand.schedule();
     }
 

@@ -328,7 +328,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorTargetLevel(int level) {
-    int maxIndex = (Constants.ElevatorConstants.kShoulderLevels.length - 1);
+    int maxIndex = (Constants.ElevatorConstants.kElevatorLevels.length - 1);
     if (level < 0 || level > maxIndex) return;
     setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorLevels[level]);
   }
