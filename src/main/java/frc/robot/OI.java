@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
 import frc.robot.commands.drive.DriveToPose;
+import frc.robot.commands.drive.SlowSwerveDrive;
 import frc.robot.commands.drive.TargetDrive;
 import frc.robot.commands.elevator.ElevatorManualPowerControl;
 import frc.robot.commands.elevator.Jesus;
@@ -35,6 +36,7 @@ import frc.robot.commands.elevator.ShoulderPowerControl;
 import frc.robot.commands.funnel.Explode;
 import frc.robot.commands.funnel.Implode;
 import frc.robot.commands.FeedingTime;
+import frc.robot.commands.Hurl;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
 import frc.robot.commands.Climb.ClimberIn;
@@ -118,6 +120,7 @@ public class OI {
             true);
         }
       ));
+      new Trigger(()->{return (m_DriverXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new SlowSwerveDrive(m_driveInputs));
     
     //Operator Cookie Monster Special Abilities(MEGA OP)
     new JoystickButton(m_OperatorXboxController, Button.kX.value).onTrue(new SetElevatorLevel(4));
@@ -127,7 +130,7 @@ public class OI {
     new JoystickButton(m_OperatorXboxController, Button.kLeftBumper.value).whileTrue(new Consume());
 
     new Trigger(()->{return (m_OperatorXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new FeedingTime());
-    new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Expel());
+    new Trigger(()->{return (m_OperatorXboxController.getRightTriggerAxis() > 0.5);}).whileTrue(new Hurl());
     new Trigger(m_OperatorXboxController.povUp(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new SetElevatorAlgaeRemoveHigh());
     new Trigger(m_OperatorXboxController.povDown(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new SetElevatorAlgaeRemoveLow());
     new Trigger(m_OperatorXboxController.povLeft(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new ClimberIn());
