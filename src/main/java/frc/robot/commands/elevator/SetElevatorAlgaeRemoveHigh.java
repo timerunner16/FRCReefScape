@@ -35,7 +35,7 @@ public class SetElevatorAlgaeRemoveHigh extends Command {
   public void execute() {
     if (!m_set) {
       m_Elevator.setElevatorTargetAngle(Constants.ElevatorConstants.kElevatorHighAlgaeRemove);
-      m_Elevator.setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderAlgaeRemove);
+      m_Elevator.setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderHighAlgaeRemove);
     }
     if (m_Elevator.inGoalPosition()) {
       m_finished = true;

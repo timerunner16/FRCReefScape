@@ -126,7 +126,7 @@ public final class Constants {
       7.5,
       kElevatorUpperLimitInches,
     };
-    public static final double kElevatorLowAlgaeRemove = 1.6;
+    public static final double kElevatorLowAlgaeRemove = 1.5;
     public static final double kElevatorHighAlgaeRemove = 10.0;
     public static final double kElevatorDelayHeight = 4.0;
 
@@ -160,7 +160,8 @@ public final class Constants {
       204.5,
       200
     };
-    public static final double kShoulderAlgaeRemove = 222;
+    public static final double kShoulderHighAlgaeRemove = 222;
+    public static final double kShoulderLowAlgaeRemove = 236;
 
     public static final double kShoulderEatAngle = 0;
     public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 2;
