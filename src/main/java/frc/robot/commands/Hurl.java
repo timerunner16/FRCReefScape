@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.WoS.Expel;
-import frc.robot.commands.funnel.Implode;
+import frc.robot.commands.funnel.Explode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -16,6 +16,6 @@ public class Hurl extends ParallelCommandGroup {
   public Hurl() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new Implode(), new Expel());
+    addCommands(new Explode(), new Expel());
   }
 }
