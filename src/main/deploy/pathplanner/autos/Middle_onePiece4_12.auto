@@ -38,12 +38,6 @@
                 "data": {
                   "name": "Expel"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "YoureUnderArrest"
-                }
               }
             ]
           }
