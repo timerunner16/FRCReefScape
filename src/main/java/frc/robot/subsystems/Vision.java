@@ -48,7 +48,7 @@ public class Vision extends SubsystemBase {
       m_estY = new TDNumber(this, "Est Pose", "Est Y");
       m_estRot = new TDNumber(this, "Est Pose", "Est Rot");
 
-      m_poseUpdatesEnabled = new TDBoolean(this, "", "Pose Updates Enabled");
+      m_poseUpdatesEnabled = new TDBoolean(this, "", "Pose Updates Enabled", true);
     }
   }
 
@@ -77,33 +77,35 @@ public class Vision extends SubsystemBase {
       if(getPoseUpdatesEnabled()){
         Drive robotDrive = Drive.getInstance();
 
-        var newest = getEstimatedGlobalPose();
-        newest.ifPresent(
-          est -> {
-            Pose2d estPose = est.estimatedPose.toPose2d();
+        for(var system : m_visionSystems) {
+          var newest = system.getEstimatedPose();
+          newest.ifPresent(
+            est -> {
+              Pose2d estPose = est.estimatedPose.toPose2d();
 
-            robotDrive.addVisionMeasurement(estPose, est.timestamp, est.stdDevs);
+              robotDrive.addVisionMeasurement(estPose, est.timestamp, est.stdDevs);
 
-            m_estX.set(estPose.getX());
-            m_estY.set(estPose.getY());
-            m_estRot.set(estPose.getRotation().getDegrees());
-          }
-        );
+              m_estX.set(estPose.getX());
+              m_estY.set(estPose.getY());
+              m_estRot.set(estPose.getRotation().getDegrees());
+            }
+          );
+        }
       }
       super.periodic();
     }
   }
 
-  public Optional<VisionEstimationResult> getEstimatedGlobalPose() {
-    Optional<VisionEstimationResult> estimate = Optional.empty();
-    double lowestAmb = Double.MAX_VALUE;
-    for(var system : m_visionSystems) {
-      Optional<VisionEstimationResult> sysEst = system.getEstimatedPose();
-      if(sysEst.isPresent() && (sysEst.get().ambiguity < lowestAmb)) {
-        estimate = sysEst;
-        lowestAmb = sysEst.get().ambiguity;
-      }
-    }
-    return estimate;
-  }
+  // public Optional<VisionEstimationResult> getEstimatedGlobalPose() {
+  //   Optional<VisionEstimationResult> estimate = Optional.empty();
+  //   double lowestAmb = Double.MAX_VALUE;
+  //   for(var system : m_visionSystems) {
+  //     Optional<VisionEstimationResult> sysEst = system.getEstimatedPose();
+  //     if(sysEst.isPresent() && (sysEst.get().ambiguity < lowestAmb)) {
+  //       estimate = sysEst;
+  //       lowestAmb = sysEst.get().ambiguity;
+  //     }
+  //   }
+  //   return estimate;
+  // }
 }
