@@ -291,6 +291,10 @@ public final class Constants {
     
     // Maximum ambiguity accepted as a valid result from the vision systems
     public static final double kMaxValidAmbiguity = 0.2;
+    public static final double kMaxZError = 0.75;
+    public static final double kMaxRollError = 0.5;
+    public static final double kMaxPitchError = 0.5;
+
     // TODO: These values are from Mania! Must be determined for new robot...
     public static final VisionConfig[] kManiaVisionSystems = {
         new VisionConfig("Arducam_OV9281_USB_Camera",
