@@ -132,14 +132,23 @@ public class VisionSystem {
         if(ambiguity > Constants.VisionConstants.kMaxValidAmbiguity) {
             return false;
         }
-        
-        // double timeSinceLastEstimate = estPose.timestampSeconds - m_lastEstTime;
-        // double maxPossibleMovement = timeSinceLastEstimate * Constants.kMaxSpeedMetersPerSecond;
 
-        // double distanceFromLastEstimate = estPose.estimatedPose.getTranslation().getDistance(m_lastResult.estimatedPose.getTranslation());
-        // if(distanceFromLastEstimate > maxPossibleMovement) {
-        //     return false;
-        // }
+        //Reject any poses that are outside the field
+        if(estPose.estimatedPose.getX() < 0 ||
+           estPose.estimatedPose.getX() > Constants.VisionConstants.kTagLayout.getFieldLength() ||
+           estPose.estimatedPose.getY() < 0 ||
+           estPose.estimatedPose.getY() > Constants.VisionConstants.kTagLayout.getFieldWidth()) {
+            return false;
+        }
+        //Reject if robot is too too far from ground level
+        if(Math.abs(estPose.estimatedPose.getZ()) > Constants.VisionConstants.kMaxZError) {
+            return false;
+        }
+        //Reject if robot is tilted too much
+        if(Math.abs(estPose.estimatedPose.getRotation().getX()) > Constants.VisionConstants.kMaxRollError ||
+           Math.abs(estPose.estimatedPose.getRotation().getY()) > Constants.VisionConstants.kMaxPitchError) {
+            return false;
+        }
 
         return true;
     }
