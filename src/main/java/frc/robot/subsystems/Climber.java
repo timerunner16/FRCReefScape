@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -27,7 +28,10 @@ public class Climber extends SubsystemBase {
   double m_winchI = Constants.ClimberConstants.kWinchI;
   double m_winchD = Constants.ClimberConstants.kWinchD;
   
+  TDNumber m_TDWinchPosition;
+
   SparkMax m_WinchMotor;
+  RelativeEncoder m_Encoder;
 
   SparkMaxConfig m_WinchMotorConfig;
 
@@ -44,6 +48,7 @@ public class Climber extends SubsystemBase {
       m_WinchMotorConfig
           .idleMode(IdleMode.kBrake)
           .smartCurrentLimit(40, 60);
+      m_WinchMotorConfig.encoder.positionConversionFactor(Constants.ClimberConstants.kPositionConversionFactor);
 
       m_TDwinchP = new TDNumber(this, "PID", "P", Constants.ClimberConstants.kWinchP);
       m_TDwinchI = new TDNumber(this, "PID", "I", Constants.ClimberConstants.kWinchI);
@@ -52,8 +57,10 @@ public class Climber extends SubsystemBase {
       m_WinchMotorConfig.closedLoop.pid(Constants.ClimberConstants.kWinchP, Constants.ClimberConstants.kWinchI, 
         Constants.ClimberConstants.kWinchD);
       m_WinchMotor.configure(m_WinchMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      m_Encoder = m_WinchMotor.getEncoder();
    
       m_ClimberCurrentOutput = new TDNumber(this, "Climber", "Motor Current");
+      m_TDWinchPosition = new TDNumber(this, "Climber", "Position");
     }
   }
 
@@ -90,6 +97,15 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public double getPosition() {
+    if(m_Encoder != null) {
+      return m_Encoder.getPosition();
+    }
+    else {
+      return 0;
+    }
+  }
+
   @Override
   public void periodic() {
     if (Constants.ClimberConstants.kEnableWinchPIDTuning && m_WinchMotor != null) {
@@ -118,6 +134,7 @@ public class Climber extends SubsystemBase {
     }
     if (RobotMap.C_ENABLED) {
       m_ClimberCurrentOutput.set(m_WinchMotor.getOutputCurrent());
+      m_TDWinchPosition.set(getPosition());
     }
 
     super.periodic();

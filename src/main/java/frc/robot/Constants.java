@@ -360,6 +360,9 @@ public final class Constants {
     public static final boolean kEnableWinchPIDTuning = false;
 
     public static final double kWinchSpeed = 1;
+    public static final double kPositionConversionFactor = 1.0/100.0;
+    public static final double kReleasedPosition = 5;//This is a wild guess, needs to be actually found
+    public static final double kPositionTolerance = 0.05;
   }
 
   public static final class FieldLocationConstants {
