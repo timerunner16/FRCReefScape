@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -126,7 +127,7 @@ public final class Constants {
       7.5,
       kElevatorUpperLimitInches,
     };
-    public static final double kElevatorLowAlgaeRemove = 1.6;
+    public static final double kElevatorLowAlgaeRemove = 1.5;
     public static final double kElevatorHighAlgaeRemove = 10.0;
     public static final double kElevatorDelayHeight = 4.0;
 
@@ -160,7 +161,8 @@ public final class Constants {
       204.5,
       200
     };
-    public static final double kShoulderAlgaeRemove = 222;
+    public static final double kShoulderHighAlgaeRemove = 222;
+    public static final double kShoulderLowAlgaeRemove = 236;
 
     public static final double kShoulderEatAngle = 0;
     public static final double SHOULDER_ANGLE_INCREMENT_DEGREES = 2;
@@ -225,25 +227,7 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
   }
 
-  public static final class ModuleConstants {
-    // The MAXSwerve module can be configured with one of three pinion gears: 12T,
-    // 13T, or 14T. This changes the drive speed of the module (a pinion gear with
-    // more teeth will result in a robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 14;
-
-    // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0762;
-    public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
-    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
-    // teeth on the bevel pinion
-    public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
-    public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
-        / kDrivingMotorReduction;
-  }
-
   public static final class OIConstants {
-    public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
   }
 
@@ -276,10 +260,6 @@ public final class Constants {
     public static final double kPathFollowerWheelCoeficientFriction = 1.2; // Total guess. pathplaner default
 
 }
-
-  public static final class NeoMotorConstants {
-    public static final double kFreeSpeedRpm = 5676;
-  }
 
   public static final class VisionConstants {
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
@@ -374,8 +354,8 @@ public final class Constants {
     public static final Pose2d kBlueReefCenter = new Pose2d(4.5, 4, Rotation2d.kZero);
     public static final Pose2d kRedReefCenter = new Pose2d(13, 4, Rotation2d.kZero);
 
-    public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2), -0.2);
-    public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2), 0.2);//Should be the same but with -y
+    public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(4), -0.2);
+    public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(4), 0.2);//Should be the same but with -y
 
     public static final TargetPose kRedCoralA1Pose = new TargetPose(new Pose2d(15.878, 0.773, new Rotation2d(Units.degreesToRadians(125))), true);
     public static final TargetPose kRedCoralA2Pose = new TargetPose(new Pose2d(16.858, 1.382, new Rotation2d(Units.degreesToRadians(125))), true);
@@ -390,7 +370,7 @@ public final class Constants {
   public static final double kMaxAngularSpeed = 2 * Math.PI;
   public static final double kWheelDiameterMeters = 0.0762;
   public static final double D_ANGLE_TOLERANCE_DEGREES = 2.5;
-  public static final int kDrivingMotorPinionTeeth = 14;
+  public static final int kDrivingMotorPinionTeeth = 12;
   public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
 
   public static final double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI)
@@ -405,13 +385,13 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
     
     // Defines Neo Motor constant
-    public static final double kFreeSpeedRpm = 5676;
+    public static final double kVortexFreeSpeedRpm = 6784;
 
      // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
     public static final boolean kTurningEncoderInverted = true;
     // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = kFreeSpeedRpm / 60;
+    public static final double kDrivingMotorFreeSpeedRps = kVortexFreeSpeedRpm / 60;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
    
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)

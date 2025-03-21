@@ -12,6 +12,6 @@ import frc.robot.testingdashboard.ParallelDeadlineGroup;
 public class BasicestAuto extends ParallelDeadlineGroup {
   /** Creates a new BasicestAuto. */
   public BasicestAuto() {
-    super(Drive.getInstance(), "Auto Commands", "Basicest_Auto", new WaitCommand(2), new DriveForward());
+    super(Drive.getInstance(), "Auto Commands", "Basicest_Auto", new WaitCommand(1.5), new DriveForward());
   }
 }
