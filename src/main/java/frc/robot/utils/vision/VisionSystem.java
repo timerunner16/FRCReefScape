@@ -27,6 +27,7 @@ public class VisionSystem {
     private PhotonCamera m_camera;
     private PhotonPoseEstimator m_photonEstimator;
     private double m_lastEstTime;
+    private Optional<VisionEstimationResult> m_latestResult;
 
     public VisionSystem(VisionConfig config) {
         m_camera = new PhotonCamera(config.cameraName);
@@ -35,9 +36,14 @@ public class VisionSystem {
             (config.primaryStrategy == PoseStrategy.MULTI_TAG_PNP_ON_RIO)) {
             m_photonEstimator.setMultiTagFallbackStrategy(config.fallBackStrategy);
         }
+        m_latestResult = Optional.empty();
     }
 
     public String getName() { return m_camera.getName(); }
+
+    public Optional<VisionEstimationResult> getLatestEstimate() {
+        return m_latestResult;
+    }
 
     public PhotonPipelineResult getLatestResult() {
         if(m_camera != null){
@@ -50,7 +56,8 @@ public class VisionSystem {
         return new PhotonPipelineResult();
     }
 
-    public Optional<VisionEstimationResult> getEstimatedPose() {
+    public Optional<VisionEstimationResult> updateAndGetEstimatedPose() {
+        Optional<VisionEstimationResult> result = Optional.empty();
         if(m_photonEstimator != null && m_camera != null){
             PhotonPipelineResult latestResult = getLatestResult();
             Optional<EstimatedRobotPose> visionEst = m_photonEstimator.update(latestResult);
@@ -69,11 +76,12 @@ public class VisionSystem {
 
                 if(valid) {
                     Matrix<N3,N1> stdDevs = getEstimationStdDevs(est.estimatedPose.toPose2d());
-                    return Optional.of(new VisionEstimationResult(est.estimatedPose, latestTimestamp, ambiguity, stdDevs));
+                    result = Optional.of(new VisionEstimationResult(est.estimatedPose, latestTimestamp, ambiguity, stdDevs, latestResult));
                 }
             }
         }
-        return Optional.empty();
+        m_latestResult = result;
+        return m_latestResult;
     }
 
     public Matrix<N3, N1> getEstimationStdDevs(Pose2d estimatedPose) {

@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 import frc.robot.Constants;
@@ -23,7 +23,7 @@ import frc.robot.utils.vision.VisionSystem;
 public class Vision extends SubsystemBase {
 
   private static Vision m_vision;
-  private ArrayList<VisionSystem> m_visionSystems;
+  private HashMap<String, VisionSystem> m_visionSystems;
 
   private TDNumber m_estX;
   private TDNumber m_estY;
@@ -35,17 +35,17 @@ public class Vision extends SubsystemBase {
   /** Creates a new Vision. */
   private Vision() {
     super("Vision");
-    m_visionSystems = new ArrayList<VisionSystem>();
+    m_visionSystems = new HashMap<String, VisionSystem>();
     if(RobotMap.V_ENABLED){
       if (Constants.robotName.equalsIgnoreCase("mania")) {
         m_visionConfig = Constants.VisionConstants.kManiaVisionSystems;
       } else {
         m_visionConfig = Constants.VisionConstants.kTwigVisionSystems;
       }
-      m_visionSystems.ensureCapacity(m_visionConfig.length);
+      // m_visionSystems.ensureCapacity(m_visionConfig.length);
       for(VisionConfig config : m_visionConfig) {
         VisionSystem system = new VisionSystem(config);
-        m_visionSystems.add(system);
+        m_visionSystems.put(config.cameraName, system);
       }
 
       m_estX = new TDNumber(this, "Est Pose", "Est X");
@@ -79,14 +79,25 @@ public class Vision extends SubsystemBase {
     return m_poseUpdatesEnabled.get();
   }
 
+  public Optional<VisionEstimationResult> getLatestFromCamera(String cameraName)
+  {
+    Optional<VisionEstimationResult> result = Optional.empty();
+    if(m_visionSystems.containsKey(cameraName)) {
+      var system = m_visionSystems.get(cameraName);
+      result = system.getLatestEstimate();
+    }
+    return result;
+  }
+
   @Override
   public void periodic() {
     if (RobotMap.V_ENABLED) {
       if(getPoseUpdatesEnabled()){
         Drive robotDrive = Drive.getInstance();
 
-        for(var system : m_visionSystems) {
-          var newest = system.getEstimatedPose();
+        for(var entry : m_visionSystems.entrySet()) {
+          var system = entry.getValue();
+          var newest = system.updateAndGetEstimatedPose();
           newest.ifPresent(
             est -> {
               Pose2d estPose = est.estimatedPose.toPose2d();

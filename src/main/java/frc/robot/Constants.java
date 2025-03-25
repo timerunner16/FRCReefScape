@@ -296,10 +296,14 @@ public final class Constants {
     public static final double kCameraLengthOffset = 25.5/2;
     // Camera mount angle in degrees
     public static final double kCameraMountAngleYaw = 45;
-       
+    
+    public static final String kFrontLeftCameraName = "Arducam_OV9782_D";
+    public static final String kFrontRightCameraName = "Arducam_OV2311_A";
+    public static final String kRearLeftCameraName = "Arducam_OV9782_C";
+    public static final String kRearRightCamerName = "Arducam_OV9782_B";
     public static final VisionConfig[] kTwigVisionSystems = {
-      // Left rear camera, facing front left corner
-      new VisionConfig("Arducam_OV9782_C",
+      // Left rear camera, facing rear right corner
+      new VisionConfig(kRearLeftCameraName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(-Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
@@ -308,7 +312,7 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Left front camera, facing front right corner
-      new VisionConfig("Arducam_OV9782_D",
+      new VisionConfig(kFrontLeftCameraName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
@@ -317,7 +321,7 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right front camera, facing rear right corner
-      new VisionConfig("Arducam_OV2311_A",
+      new VisionConfig(kFrontRightCameraName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(-Constants.VisionConstants.kCameraWidthOffset)
@@ -326,7 +330,7 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right rear camera, facing rear left
-      new VisionConfig("Arducam_OV9782_B",
+      new VisionConfig(kRearRightCamerName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraWidthOffset)
