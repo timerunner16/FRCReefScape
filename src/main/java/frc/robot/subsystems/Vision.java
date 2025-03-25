@@ -10,9 +10,12 @@ import java.util.Optional;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDBoolean;
 import frc.robot.testingdashboard.TDNumber;
+import frc.robot.testingdashboard.TDSendable;
 import frc.robot.utils.vision.VisionConfig;
 import frc.robot.utils.vision.VisionEstimationResult;
 import frc.robot.utils.vision.VisionSystem;
@@ -27,6 +30,7 @@ public class Vision extends SubsystemBase {
   private TDNumber m_estRot;
   private TDBoolean m_poseUpdatesEnabled;
   private VisionConfig[] m_visionConfig;
+  private Field2d m_field;
 
   /** Creates a new Vision. */
   private Vision() {
@@ -47,6 +51,10 @@ public class Vision extends SubsystemBase {
       m_estX = new TDNumber(this, "Est Pose", "Est X");
       m_estY = new TDNumber(this, "Est Pose", "Est Y");
       m_estRot = new TDNumber(this, "Est Pose", "Est Rot");
+      m_field = new Field2d();
+      //We don't care about the default robot object on this field, throw it into the abyss
+      m_field.setRobotPose(-10, 0, Rotation2d.kZero);
+      new TDSendable(this, "Field", "Vision Field", m_field);
 
       m_poseUpdatesEnabled = new TDBoolean(this, "", "Pose Updates Enabled", true);
     }
@@ -85,6 +93,7 @@ public class Vision extends SubsystemBase {
 
               robotDrive.addVisionMeasurement(estPose, est.timestamp, est.stdDevs);
 
+              m_field.getObject(system.getName()).setPose(estPose);
               m_estX.set(estPose.getX());
               m_estY.set(estPose.getY());
               m_estRot.set(estPose.getRotation().getDegrees());

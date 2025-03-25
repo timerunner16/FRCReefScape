@@ -37,6 +37,8 @@ public class VisionSystem {
         }
     }
 
+    public String getName() { return m_camera.getName(); }
+
     public PhotonPipelineResult getLatestResult() {
         if(m_camera != null){
             List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
