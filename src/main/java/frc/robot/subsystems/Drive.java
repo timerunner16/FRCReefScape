@@ -165,7 +165,7 @@ public class Drive extends SubsystemBase {
     m_TLeftBackCurrentOutput = new TDNumber(this, "Current", "Steering Back Left Output");
     m_TRightBackCurrentOutput = new TDNumber(this, "Current", "Steering Back Right Output");  
   
-    DCMotor neovortex = DCMotor.getNeoVortex(1);
+    DCMotor neovortex = DCMotor.getNeoVortex(1).withReduction(Constants.kDrivingMotorReduction);
     
     ModuleConfig kSwerveModuleConfig = new ModuleConfig(Constants.kWheelDiameterMeters/2, Constants.kMaxSpeedMetersPerSecond, 
     AutoConstants.kPathFollowerWheelCoeficientFriction, neovortex, Constants.kDrivingMotorCurrentLimit, 4);

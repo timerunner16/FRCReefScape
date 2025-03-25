@@ -414,7 +414,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
+    public static final int kDrivingMotorCurrentLimit = 65; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
 
     //Enables SysID Characterization Mode. !!Should be false during competitions. Can cause the Operator controller to be remapped!!
