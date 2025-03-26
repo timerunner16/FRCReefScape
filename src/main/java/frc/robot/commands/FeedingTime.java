@@ -4,21 +4,65 @@
 
 package frc.robot.commands;
 
-import frc.robot.testingdashboard.ParallelCommandGroup;
 import frc.robot.commands.WoS.Consume;
-import frc.robot.commands.elevator.SetElevatorLevel;
 import frc.robot.commands.funnel.Implode;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Funnel;
+import frc.robot.subsystems.WoS;
+import frc.robot.testingdashboard.Command;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class FeedingTime extends ParallelCommandGroup {
-  /** Creates a new Level4Score. */
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class FeedingTime extends Command {
+  /** Creates a new FeedingTime. */
+  private Elevator m_elevator;
+  private WoS m_WoS;
+  private Implode m_implode;
+  private Consume m_consume;
+
+  private boolean m_hungry;
+  private boolean m_set;
+
   public FeedingTime() {
-    super(Elevator.getInstance(), "Levels", "FeedingTime");
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new SetElevatorLevel(0), new Implode(), new Consume());
+    super(Elevator.getInstance(), "Level", "FeedingTime");
+    m_elevator = Elevator.getInstance();
+    m_WoS = WoS.getInstance();
+    addRequirements(m_elevator);
+
+    m_implode = new Implode();
+    m_consume = new Consume();
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    m_elevator.setElevatorTargetLevel(0);
+    m_elevator.setShoulderTargetLevel(0);
+
+    m_hungry = false;
+    m_set = false;
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    m_hungry = m_elevator.inGoalPosition();
+    if (m_hungry && !m_set) {
+      m_implode.schedule();
+      m_consume.schedule();
+      m_set = true;
+    }
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    m_implode.cancel();
+    m_consume.cancel();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return m_elevator.inGoalPosition() && m_WoS.getCoralDetected();
   }
 }
