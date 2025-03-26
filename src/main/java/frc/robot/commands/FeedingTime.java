@@ -15,6 +15,7 @@ import frc.robot.testingdashboard.Command;
 public class FeedingTime extends Command {
   /** Creates a new FeedingTime. */
   private Elevator m_elevator;
+  private WoS m_WoS;
   private Implode m_implode;
   private Consume m_consume;
 
@@ -24,6 +25,7 @@ public class FeedingTime extends Command {
   public FeedingTime() {
     super(Elevator.getInstance(), "Level", "FeedingTime");
     m_elevator = Elevator.getInstance();
+    m_WoS = WoS.getInstance();
     addRequirements(m_elevator);
 
     m_implode = new Implode();
@@ -61,6 +63,6 @@ public class FeedingTime extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_elevator.inGoalPosition() && m_WoS.getCoralDetected();
   }
 }
