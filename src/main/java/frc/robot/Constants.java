@@ -185,6 +185,9 @@ public final class Constants {
     // Defines Lights constants
     public static final int LED_LENGTH = 49; // number of LEDs
     public static final double kBlinkDelay = 0.35;
+    public static final int kNumFlashes = 10;
+    public static final double kFlashDelayMinimum = 0.3;
+    public static final double kFlashDelayMaximum = 0.5;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

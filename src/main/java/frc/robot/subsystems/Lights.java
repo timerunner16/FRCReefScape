@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Random;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
@@ -21,7 +23,12 @@ public class Lights extends SubsystemBase {
   private int m_rainbowFirstPixelHue;
   private int m_firstPixelValue;
   private boolean m_blinkState;
+  private int[] m_flashIndexQueue;
+  private double[] m_flashTimerQueue;
+  private double[] m_flashStartQueue;
   private Timer m_timer;
+
+  private Random m_random;
 
   /** Creates a new lights. */
   public Lights() {
@@ -38,10 +45,23 @@ public class Lights extends SubsystemBase {
     m_rainbowFirstPixelHue = 0;
     m_firstPixelValue = 0;
     m_blinkState = true;
-    
+
     m_timer = new Timer();
     m_timer.start();
     m_timer.reset();
+    
+    m_random = new Random();
+    m_flashIndexQueue = new int[Constants.LightsConstants.kNumFlashes];
+    m_flashTimerQueue = new double[Constants.LightsConstants.kNumFlashes];
+    m_flashStartQueue = new double[Constants.LightsConstants.kNumFlashes];
+    for (int i = 0; i < Constants.LightsConstants.kNumFlashes; i++) {
+      m_flashIndexQueue[i] = m_random.nextInt(Constants.LightsConstants.LED_LENGTH);
+      m_flashTimerQueue[i] = m_timer.get() + m_random.nextDouble(
+        Constants.LightsConstants.kFlashDelayMinimum,
+        Constants.LightsConstants.kFlashDelayMaximum
+      );
+      m_flashStartQueue[i] = m_timer.get();
+    }
   }
 
   public static Lights getInstance() {
@@ -64,13 +84,42 @@ public class Lights extends SubsystemBase {
   }
 
   public void makeRainbow() {
+    // Reassign blinks that are past their timer
+    for (int i = 0; i < Constants.LightsConstants.kNumFlashes; i++) {
+      if (m_timer.get() > m_flashTimerQueue[i]) {
+        m_flashIndexQueue[i] = m_random.nextInt(Constants.LightsConstants.LED_LENGTH);
+        m_flashTimerQueue[i] = m_timer.get() + m_random.nextDouble(
+          Constants.LightsConstants.kFlashDelayMinimum,
+          Constants.LightsConstants.kFlashDelayMaximum
+        );
+        m_flashStartQueue[i] = m_timer.get();
+      }
+    }
     // For every pixel
     for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
       // Calculate the hue - hue is easier for rainbows because the color
       // shape is a circle so only one value needs to process
       final var hue = (m_rainbowFirstPixelHue + (i * 180 / Constants.LightsConstants.LED_LENGTH)) % 180;
       // Set the value
-      m_LEDBuffer.setHSV(i, hue, 255, 128);
+      boolean isFlash = false;
+      double start = 0.0;
+      double end = 0.0;
+      for (int j = 0; j < Constants.LightsConstants.kNumFlashes; j++) {
+        if (i == m_flashIndexQueue[j]) {
+          isFlash = true;
+          start = m_flashStartQueue[j];
+          end = m_flashTimerQueue[j];
+        }
+      }
+      if (isFlash) {
+        Color color = Color.fromHSV(hue, 255, 128);
+        Color interp = Color.lerpRGB(
+          color,
+          new Color(255,255,255),
+          1.0-Math.abs(2.0*((m_timer.get()-start)/(end-start)-0.5))
+        );
+        m_LEDBuffer.setRGB(i, (int)(interp.red*255), (int)(interp.green*255), (int)(interp.blue*255));
+      } else m_LEDBuffer.setHSV(i, hue, 255, 128);
     }
     // Increase by to make the rainbow "move"
     m_rainbowFirstPixelHue += 3;
