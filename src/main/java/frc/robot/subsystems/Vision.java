@@ -4,15 +4,18 @@
 
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.testingdashboard.SubsystemBase;
 import frc.robot.testingdashboard.TDBoolean;
 import frc.robot.testingdashboard.TDNumber;
+import frc.robot.testingdashboard.TDSendable;
 import frc.robot.utils.vision.VisionConfig;
 import frc.robot.utils.vision.VisionEstimationResult;
 import frc.robot.utils.vision.VisionSystem;
@@ -20,33 +23,38 @@ import frc.robot.utils.vision.VisionSystem;
 public class Vision extends SubsystemBase {
 
   private static Vision m_vision;
-  private ArrayList<VisionSystem> m_visionSystems;
+  private HashMap<String, VisionSystem> m_visionSystems;
 
   private TDNumber m_estX;
   private TDNumber m_estY;
   private TDNumber m_estRot;
   private TDBoolean m_poseUpdatesEnabled;
   private VisionConfig[] m_visionConfig;
+  private Field2d m_field;
 
   /** Creates a new Vision. */
   private Vision() {
     super("Vision");
-    m_visionSystems = new ArrayList<VisionSystem>();
+    m_visionSystems = new HashMap<String, VisionSystem>();
     if(RobotMap.V_ENABLED){
       if (Constants.robotName.equalsIgnoreCase("mania")) {
         m_visionConfig = Constants.VisionConstants.kManiaVisionSystems;
       } else {
         m_visionConfig = Constants.VisionConstants.kTwigVisionSystems;
       }
-      m_visionSystems.ensureCapacity(m_visionConfig.length);
+      // m_visionSystems.ensureCapacity(m_visionConfig.length);
       for(VisionConfig config : m_visionConfig) {
         VisionSystem system = new VisionSystem(config);
-        m_visionSystems.add(system);
+        m_visionSystems.put(config.cameraName, system);
       }
 
       m_estX = new TDNumber(this, "Est Pose", "Est X");
       m_estY = new TDNumber(this, "Est Pose", "Est Y");
       m_estRot = new TDNumber(this, "Est Pose", "Est Rot");
+      m_field = new Field2d();
+      //We don't care about the default robot object on this field, throw it into the abyss
+      m_field.setRobotPose(-10, 0, Rotation2d.kZero);
+      new TDSendable(this, "Field", "Vision Field", m_field);
 
       m_poseUpdatesEnabled = new TDBoolean(this, "", "Pose Updates Enabled", true);
     }
@@ -71,20 +79,32 @@ public class Vision extends SubsystemBase {
     return m_poseUpdatesEnabled.get();
   }
 
+  public Optional<VisionEstimationResult> getLatestFromCamera(String cameraName)
+  {
+    Optional<VisionEstimationResult> result = Optional.empty();
+    if(m_visionSystems.containsKey(cameraName)) {
+      var system = m_visionSystems.get(cameraName);
+      result = system.getLatestEstimate();
+    }
+    return result;
+  }
+
   @Override
   public void periodic() {
     if (RobotMap.V_ENABLED) {
       if(getPoseUpdatesEnabled()){
         Drive robotDrive = Drive.getInstance();
 
-        for(var system : m_visionSystems) {
-          var newest = system.getEstimatedPose();
+        for(var entry : m_visionSystems.entrySet()) {
+          var system = entry.getValue();
+          var newest = system.updateAndGetEstimatedPose();
           newest.ifPresent(
             est -> {
               Pose2d estPose = est.estimatedPose.toPose2d();
 
               robotDrive.addVisionMeasurement(estPose, est.timestamp, est.stdDevs);
 
+              m_field.getObject(system.getName()).setPose(estPose);
               m_estX.set(estPose.getX());
               m_estY.set(estPose.getY());
               m_estRot.set(estPose.getRotation().getDegrees());

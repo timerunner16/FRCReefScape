@@ -296,19 +296,23 @@ public final class Constants {
     public static final double kCameraLengthOffset = 25.5/2;
     // Camera mount angle in degrees
     public static final double kCameraMountAngleYaw = 45;
-       
+    
+    public static final String kFrontLeftCameraName = "Arducam_OV9782_D";
+    public static final String kFrontRightCameraName = "Arducam_OV2311_A";
+    public static final String kReefCameraName = "Arducam_OV9782_C";
+    public static final String kRearRightCameraName = "Arducam_OV9782_B";
     public static final VisionConfig[] kTwigVisionSystems = {
-      // Left rear camera, facing front left corner
-      new VisionConfig("Arducam_OV9782_C",
-              new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-Constants.VisionConstants.kCameraLengthOffset)
-                        , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
-                        , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
-              new Rotation3d(0, 0, Units.degreesToRadians(-90 + -1 * Constants.VisionConstants.kCameraMountAngleYaw))),
-                       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
-                       PoseStrategy.LOWEST_AMBIGUITY),
+      // Left rear camera, facing rear right corner
+      new VisionConfig(kReefCameraName,
+        new Transform3d(new Translation3d(
+                  Units.inchesToMeters(-9.5)
+                  , Units.inchesToMeters(0)
+                  , Units.inchesToMeters(35)), 
+        new Rotation3d(0, Units.degreesToRadians(55), Units.degreesToRadians(180))),
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                PoseStrategy.LOWEST_AMBIGUITY),
       // Left front camera, facing front right corner
-      new VisionConfig("Arducam_OV9782_D",
+      new VisionConfig(kFrontLeftCameraName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
@@ -317,7 +321,7 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right front camera, facing rear right corner
-      new VisionConfig("Arducam_OV2311_A",
+      new VisionConfig(kFrontRightCameraName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(-Constants.VisionConstants.kCameraWidthOffset)
@@ -326,7 +330,7 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right rear camera, facing rear left
-      new VisionConfig("Arducam_OV9782_B",
+      new VisionConfig(kRearRightCameraName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraWidthOffset)
@@ -414,7 +418,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
+    public static final int kDrivingMotorCurrentLimit = 65; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
 
     //Enables SysID Characterization Mode. !!Should be false during competitions. Can cause the Operator controller to be remapped!!

@@ -6,9 +6,6 @@ package frc.robot.commands.drive;
 
 import java.util.function.Supplier;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +21,7 @@ import frc.robot.utils.TargetPose;
 public class DriveToPose extends Command {
   private Drive m_drive;
   private Supplier<TargetPose> m_targetSupplier;
+  private Supplier<Pose2d> m_feedbackSupplier;
   private Pose2d m_targetPose;
 
   private ProfiledPIDController m_thetaController;
@@ -36,11 +34,15 @@ public class DriveToPose extends Command {
 
   BlinkLights m_blinkLights;
 
-  /** Creates a new TargetDrive. */
   public DriveToPose(Supplier<TargetPose> targetSupplier) {
+    this(targetSupplier, Drive.getInstance()::getPose);
+  }
+  /** Creates a new TargetDrive. */
+  public DriveToPose(Supplier<TargetPose> targetSupplier, Supplier<Pose2d> feedBackPoseSupplier) {
     super(Drive.getInstance(), "Drive", "DriveToPose");
     m_drive = Drive.getInstance();
     m_targetSupplier = targetSupplier;
+    m_feedbackSupplier = feedBackPoseSupplier;
 
     TDCurrentTargetX = new TDNumber(m_drive, "Test Outputs", "Current Target X");
     TDCurrentTargetY = new TDNumber(m_drive, "Test Outputs", "Current Target Y");
@@ -69,9 +71,10 @@ public class DriveToPose extends Command {
       m_targetPose = target.getReversedApproach()? 
           new Pose2d(target.getPose().getX(), target.getPose().getY(), target.getPose().getRotation().plus(Rotation2d.k180deg)) 
           : target.getPose();
-      m_thetaController.reset(m_drive.getPose().getRotation().getRadians());
-      m_driveXController.reset(m_drive.getPose().getX());
-      m_driveYController.reset(m_drive.getPose().getY());
+      Pose2d currentPose = m_feedbackSupplier.get();
+      m_thetaController.reset(currentPose.getRotation().getRadians());
+      m_driveXController.reset(currentPose.getX());
+      m_driveYController.reset(currentPose.getY());
     }
   }
 
@@ -80,11 +83,12 @@ public class DriveToPose extends Command {
   public void execute() {
     if(m_targetPose != null)
     {
-      double omega = m_thetaController.calculate(m_drive.getPose().getRotation().getRadians(), m_targetPose.getRotation().getRadians());
-      double xVel = m_driveXController.calculate(m_drive.getPose().getX(), m_targetPose.getX());
-      double yVel = m_driveYController.calculate(m_drive.getPose().getY(), m_targetPose.getY());
+      Pose2d currentPose = m_feedbackSupplier.get();
+      double omega = m_thetaController.calculate(currentPose.getRotation().getRadians(), m_targetPose.getRotation().getRadians());
+      double xVel = m_driveXController.calculate(currentPose.getX(), m_targetPose.getX());
+      double yVel = m_driveYController.calculate(currentPose.getY(), m_targetPose.getY());
 
-      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVel, yVel, omega,  m_drive.getPose().getRotation());
+      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVel, yVel, omega,  currentPose.getRotation());
       m_drive.drive(speeds);
     }
   }
@@ -98,8 +102,9 @@ public class DriveToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (m_targetPose == null) ||
-      (m_drive.getPose().getTranslation().getDistance(m_targetPose.getTranslation()) < Constants.AutoConstants.kTranslationTolerance) &&
-      (Math.abs(m_drive.getPose().getRotation().minus(m_targetPose.getRotation()).getRadians()) < Constants.AutoConstants.kThetaTolerance);
+    return false;
+    // return (m_targetPose == null) ||
+    //   (m_feedbackSupplier.get().getTranslation().getDistance(m_targetPose.getTranslation()) < Constants.AutoConstants.kTranslationTolerance) &&
+    //   (Math.abs(m_feedbackSupplier.get().getRotation().minus(m_targetPose.getRotation()).getRadians()) < Constants.AutoConstants.kThetaTolerance);
   }
 }

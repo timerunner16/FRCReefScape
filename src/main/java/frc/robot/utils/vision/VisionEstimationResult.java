@@ -5,6 +5,9 @@
 package frc.robot.utils.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
+
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -16,8 +19,9 @@ public class VisionEstimationResult
     public double ambiguity;
     public double timestamp;
     public Matrix<N3, N1> stdDevs;
+    public PhotonPipelineResult result;
 
-    public VisionEstimationResult(Pose3d poseEstimate, double timestamp, double ambiguity, Matrix<N3,N1> stdDevs) {
+    public VisionEstimationResult(Pose3d poseEstimate, double timestamp, double ambiguity, Matrix<N3,N1> stdDevs, PhotonPipelineResult result) {
         this.estimatedPose = poseEstimate;
         this.timestamp = timestamp;
         this.ambiguity = ambiguity;

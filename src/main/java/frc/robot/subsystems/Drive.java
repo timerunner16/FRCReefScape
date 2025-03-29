@@ -165,7 +165,7 @@ public class Drive extends SubsystemBase {
     m_TLeftBackCurrentOutput = new TDNumber(this, "Current", "Steering Back Left Output");
     m_TRightBackCurrentOutput = new TDNumber(this, "Current", "Steering Back Right Output");  
   
-    DCMotor neovortex = DCMotor.getNeoVortex(1);
+    DCMotor neovortex = DCMotor.getNeoVortex(1).withReduction(Constants.kDrivingMotorReduction);
     
     ModuleConfig kSwerveModuleConfig = new ModuleConfig(Constants.kWheelDiameterMeters/2, Constants.kMaxSpeedMetersPerSecond, 
     AutoConstants.kPathFollowerWheelCoeficientFriction, neovortex, Constants.kDrivingMotorCurrentLimit, 4);
@@ -253,6 +253,15 @@ public class Drive extends SubsystemBase {
     return m_DrivePoseEstimator.getEstimatedPosition();
   }
 
+  public SwerveModulePosition[] getModulePositions() {
+    return new SwerveModulePosition[] {
+      m_FrontLeft.getPosition(),
+      m_FrontRight.getPosition(),
+      m_BackLeft.getPosition(),
+      m_BackRight.getPosition()
+    };
+  }
+
   public ChassisSpeeds getMeasuredSpeeds(){
     if(RobotBase.isReal()) {
       SwerveModuleState[] moduleStates = new SwerveModuleState[4];
@@ -285,7 +294,7 @@ public class Drive extends SubsystemBase {
    * @param pose The pose to which to set the odometry
    */
   public void resetOdometry(Pose2d pose) {
-    m_DrivePoseEstimator.resetPosition(Rotation2d.fromRadians(m_gyro.getAngle(IMUAxis.kZ)), 
+    m_DrivePoseEstimator.resetPosition(Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)), 
     new SwerveModulePosition[] {
       m_FrontLeft.getPosition(),
       m_FrontRight.getPosition(),
