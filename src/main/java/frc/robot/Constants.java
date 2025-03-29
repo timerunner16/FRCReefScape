@@ -299,18 +299,18 @@ public final class Constants {
     
     public static final String kFrontLeftCameraName = "Arducam_OV9782_D";
     public static final String kFrontRightCameraName = "Arducam_OV2311_A";
-    public static final String kRearLeftCameraName = "Arducam_OV9782_C";
-    public static final String kRearRightCamerName = "Arducam_OV9782_B";
+    public static final String kReefCameraName = "Arducam_OV9782_C";
+    public static final String kRearRightCameraName = "Arducam_OV9782_B";
     public static final VisionConfig[] kTwigVisionSystems = {
       // Left rear camera, facing rear right corner
-      new VisionConfig(kRearLeftCameraName,
-              new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-Constants.VisionConstants.kCameraLengthOffset)
-                        , Units.inchesToMeters(Constants.VisionConstants.kCameraWidthOffset)
-                        , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
-              new Rotation3d(0, 0, Units.degreesToRadians(-90 + -1 * Constants.VisionConstants.kCameraMountAngleYaw))),
-                       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
-                       PoseStrategy.LOWEST_AMBIGUITY),
+      new VisionConfig(kReefCameraName,
+        new Transform3d(new Translation3d(
+                  Units.inchesToMeters(-9.5)
+                  , Units.inchesToMeters(0)
+                  , Units.inchesToMeters(35)), 
+        new Rotation3d(0, Units.degreesToRadians(55), Units.degreesToRadians(180))),
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                PoseStrategy.LOWEST_AMBIGUITY),
       // Left front camera, facing front right corner
       new VisionConfig(kFrontLeftCameraName,
               new Transform3d(new Translation3d(
@@ -330,7 +330,7 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right rear camera, facing rear left
-      new VisionConfig(kRearRightCamerName,
+      new VisionConfig(kRearRightCameraName,
               new Transform3d(new Translation3d(
                         Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraLengthOffset)
                         , Units.inchesToMeters(-1 * Constants.VisionConstants.kCameraWidthOffset)
