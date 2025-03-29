@@ -6,19 +6,26 @@ package frc.robot.commands.Lights;
 
 import frc.robot.testingdashboard.Command;
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Lights.LightSection;
 
 public class BlinkLights extends Command {
   Lights m_lights;
+  LightSection m_section;
   int m_hue;
 
   /** Creates a new BlinkLights. */
   public BlinkLights(int hue) {
+    this(hue, LightSection.ALL);
+  }
+
+  public BlinkLights(int hue, LightSection section) {
     super(Lights.getInstance(), "Basic", "BlinkLights");
     m_lights = Lights.getInstance();
 
     addRequirements(m_lights);
 
     m_hue = hue;
+    m_section = section;
   }
   
   @Override
@@ -33,7 +40,7 @@ public class BlinkLights extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_lights.blinkLights(m_hue);
+    m_lights.blinkLights(m_hue, m_section);
     m_lights.setData();
   }
 

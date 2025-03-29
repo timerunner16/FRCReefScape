@@ -188,6 +188,8 @@ public final class Constants {
     public static final int kNumFlashes = 10;
     public static final double kFlashDelayMinimum = 0.3;
     public static final double kFlashDelayMaximum = 0.5;
+    public static final int kPositionSplitIndex = 10;
+    public static final boolean kInversePolarity = true;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

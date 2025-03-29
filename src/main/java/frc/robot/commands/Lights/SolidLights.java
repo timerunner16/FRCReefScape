@@ -6,19 +6,26 @@ package frc.robot.commands.Lights;
 
 import frc.robot.testingdashboard.Command;
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Lights.LightSection;
 
 public class SolidLights extends Command {
   Lights m_lights;
+  LightSection m_section;
   int m_hue;
 
   /** Creates a new SolidLights. */
   public SolidLights(int hue) {
+    this(hue, LightSection.ALL);
+  }
+
+  public SolidLights(int hue, LightSection section) {
     super(Lights.getInstance(), "Basic", "SolidLights");
     m_lights = Lights.getInstance();
 
-    m_hue = hue;
-
     addRequirements(m_lights);
+
+    m_hue = hue;
+    m_section = section;
   }
 
   @Override
@@ -29,7 +36,7 @@ public class SolidLights extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_lights.enableLights(m_hue);
+    m_lights.enableLights(m_hue, m_section);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -9,6 +9,7 @@ import frc.robot.Constants;
 import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Lights.LightSection;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SetElevatorLevel extends Command {
@@ -28,7 +29,7 @@ public class SetElevatorLevel extends Command {
     addRequirements(m_Elevator);
     m_level = level;
 
-    m_blinkLights = new BlinkLights(Constants.Color.red);
+    m_blinkLights = new BlinkLights(Constants.Color.red, LightSection.ACTIVE);
   }
 
   // Called when the command is initially scheduled.

@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.robot.Constants;
 import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Lights.LightSection;
 import frc.robot.testingdashboard.Command;
 import frc.robot.testingdashboard.TDNumber;
 import frc.robot.utils.TargetPose;
@@ -55,7 +56,7 @@ public class DriveToPose extends Command {
   
     addRequirements(m_drive);
 
-    m_blinkLights = new BlinkLights(Constants.Color.red);
+    m_blinkLights = new BlinkLights(Constants.Color.red, LightSection.ACTIVE);
   }
 
   // Called when the command is initially scheduled.

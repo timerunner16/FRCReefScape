@@ -10,6 +10,7 @@ import frc.robot.commands.Lights.SolidLights;
 import frc.robot.testingdashboard.Command;
 import frc.robot.testingdashboard.TDNumber;
 import frc.robot.subsystems.WoS;
+import frc.robot.subsystems.Lights.LightSection;
 
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -36,8 +37,8 @@ public class Consume extends Command {
 
     addRequirements(m_WoS);
 
-    m_blinkLights = new BlinkLights(Constants.Color.green);
-    m_solidLights = new SolidLights(Constants.Color.green);
+    m_blinkLights = new BlinkLights(Constants.Color.green, LightSection.ACTIVE);
+    m_solidLights = new SolidLights(Constants.Color.green, LightSection.ACTIVE);
   }
 
   // Called when the command is initially scheduled.

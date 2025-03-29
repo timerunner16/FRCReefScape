@@ -8,6 +8,7 @@ package frc.robot.commands.WoS;
 import frc.robot.Constants;
 import frc.robot.commands.Lights.SolidLights;
 import frc.robot.subsystems.WoS;
+import frc.robot.subsystems.Lights.LightSection;
 import frc.robot.testingdashboard.Command;
 import frc.robot.testingdashboard.TDNumber;
 
@@ -33,7 +34,7 @@ public class Expel extends Command {
 
     addRequirements(m_WoS);
 
-    m_solidLights = new SolidLights(Constants.Color.yellow);
+    m_solidLights = new SolidLights(Constants.Color.yellow, LightSection.ACTIVE);
   }
 
   // Called when the command is initially scheduled.

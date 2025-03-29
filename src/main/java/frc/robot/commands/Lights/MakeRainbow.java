@@ -5,16 +5,24 @@
 package frc.robot.commands.Lights;
 
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Lights.LightSection;
 import frc.robot.testingdashboard.Command;
 
 public class MakeRainbow extends Command {
   Lights m_lights;
+  LightSection m_section;
 
   /** Creates a new MakeRainbow. */
   public MakeRainbow() {
+    this(LightSection.ALL);
+  }
+  
+  public MakeRainbow(LightSection section) {
     super(Lights.getInstance(), "Basic", "MakeRainbow");
     m_lights = Lights.getInstance();
     addRequirements(m_lights);
+
+    m_section = section;
   }
 
   @Override
@@ -29,7 +37,7 @@ public class MakeRainbow extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_lights.makeRainbow();
+    m_lights.makeRainbow(m_section);
     m_lights.setData();
   }
 
