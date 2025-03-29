@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
+import frc.robot.commands.drive.AdjustToReef;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.drive.SlowSwerveDrive;
 import frc.robot.commands.drive.TargetDrive;
@@ -104,22 +105,8 @@ public class OI {
         
     new JoystickButton(m_DriverXboxController, Button.kY.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA1Pose)); 
     new JoystickButton(m_DriverXboxController, Button.kX.value).whileTrue(new DriveToPose(FieldUtils.getInstance()::getRedCoralA2Pose));
-    new JoystickButton(m_DriverXboxController, Button.kLeftBumper.value).whileTrue(new DriveToPose(
-      ()->{
-          Alliance alliance = DriverStation.getAlliance().isPresent()?DriverStation.getAlliance().get() : Alliance.Blue;
-          return new TargetPose(FieldUtils.getInstance().getClosestReefScoringPosition(
-            Drive.getInstance().getPose(), ReefFaceOffset.kLeft, alliance),
-            true);
-        }
-      ));
-    new JoystickButton(m_DriverXboxController, Button.kRightBumper.value).whileTrue(new DriveToPose(
-      ()->{
-          Alliance alliance = DriverStation.getAlliance().isPresent()?DriverStation.getAlliance().get() : Alliance.Blue;
-          return new TargetPose(FieldUtils.getInstance().getClosestReefScoringPosition(
-            Drive.getInstance().getPose(), ReefFaceOffset.kRight, alliance),
-            true);
-        }
-      ));
+    new JoystickButton(m_DriverXboxController, Button.kLeftBumper.value).whileTrue(new AdjustToReef(this::reefLeftPoseSupplier));
+    new JoystickButton(m_DriverXboxController, Button.kRightBumper.value).whileTrue(new AdjustToReef(this::reefRightPoseSupplier));
       new Trigger(()->{return (m_DriverXboxController.getLeftTriggerAxis() > 0.5);}).whileTrue(new SlowSwerveDrive(m_driveInputs));
     
     //Operator Cookie Monster Special Abilities(MEGA OP)
@@ -138,7 +125,19 @@ public class OI {
   };
   
     
+  private TargetPose reefLeftPoseSupplier() {
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    return new TargetPose(FieldUtils.getInstance().getClosestReefScoringPosition(
+      Drive.getInstance().getPose(), ReefFaceOffset.kLeft, alliance),
+      true);
+  }
 
+  private TargetPose reefRightPoseSupplier() {
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    return new TargetPose(FieldUtils.getInstance().getClosestReefScoringPosition(
+      Drive.getInstance().getPose(), ReefFaceOffset.kRight, alliance),
+      true);
+  }
   
 
   /**
