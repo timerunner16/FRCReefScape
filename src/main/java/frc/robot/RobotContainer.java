@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.commands.drive.AlignToClosestReefLeft;
+import frc.robot.commands.drive.AlignToClosestReefRight;
 import frc.robot.commands.drive.BasicestAuto;
 import frc.robot.commands.drive.DriveForward;
 import frc.robot.commands.drive.SwerveDrive;
@@ -17,6 +19,7 @@ import frc.robot.commands.elevator.Lucifer;
 import frc.robot.commands.elevator.ShoulderPowerControl;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.WoS;
+import frc.robot.subsystems.Lights.LightSection;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Funnel;
 import frc.robot.subsystems.Lights;
@@ -90,7 +93,7 @@ public class RobotContainer {
     m_Vision.setDefaultCommand(new DisplayStatusIndicator());
     WoS.getInstance();
     Lights lights = Lights.getInstance();
-    lights.setDefaultCommand(new SolidLights(Constants.Color.blue));
+    lights.setDefaultCommand(new SolidLights(Constants.Color.blue, LightSection.ACTIVE));
     Elevator elev = Elevator.getInstance();
     elev.setDefaultCommand(new ElevatorJoystickControl());
     Funnel.getInstance();
@@ -129,6 +132,8 @@ public class RobotContainer {
     new FeedingTime();
     new DriveForward();
     new YoureUnderArrest();
+    new AlignToClosestReefLeft();
+    new AlignToClosestReefRight();
 
     new ElevatorManualPowerControl();
     new ShoulderPowerControl();

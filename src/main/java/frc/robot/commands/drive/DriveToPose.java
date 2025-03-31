@@ -35,6 +35,8 @@ public class DriveToPose extends Command {
 
   BlinkLights m_blinkLights;
 
+  int m_periodicsAtGoal;
+
   public DriveToPose(Supplier<TargetPose> targetSupplier) {
     this(targetSupplier, Drive.getInstance()::getPose);
   }
@@ -62,6 +64,8 @@ public class DriveToPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_periodicsAtGoal = 0;
+
     m_blinkLights.schedule();
     TargetPose target = m_targetSupplier.get();
     if (target != null && target.getPose() != null)
@@ -91,21 +95,24 @@ public class DriveToPose extends Command {
 
       ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVel, yVel, omega,  currentPose.getRotation());
       m_drive.drive(speeds);
+
+      if ((m_feedbackSupplier.get().getTranslation().getDistance(m_targetPose.getTranslation()) < Constants.AutoConstants.kTranslationTolerance) &&
+      (Math.abs(m_feedbackSupplier.get().getRotation().minus(m_targetPose.getRotation()).getRadians()) < Constants.AutoConstants.kThetaTolerance))
+        m_periodicsAtGoal++;
+      else m_periodicsAtGoal = 0;
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_drive.drive(new ChassisSpeeds());
     m_blinkLights.cancel();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-    // return (m_targetPose == null) ||
-    //   (m_feedbackSupplier.get().getTranslation().getDistance(m_targetPose.getTranslation()) < Constants.AutoConstants.kTranslationTolerance) &&
-    //   (Math.abs(m_feedbackSupplier.get().getRotation().minus(m_targetPose.getRotation()).getRadians()) < Constants.AutoConstants.kThetaTolerance);
+    return (m_periodicsAtGoal >= Constants.AutoConstants.kReefFinishedPeriodics);
   }
 }

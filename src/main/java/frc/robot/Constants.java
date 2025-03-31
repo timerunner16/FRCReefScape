@@ -249,6 +249,7 @@ public final class Constants {
     public static final double kDThetaController = 0.05;
     public static final double kThetaTolerance = 0.02;//radians
     public static final double kTranslationTolerance = 0.025;//meters
+    public static final int kReefFinishedPeriodics = 25;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -363,8 +364,8 @@ public final class Constants {
     public static final Pose2d kBlueReefCenter = new Pose2d(4.5, 4, Rotation2d.kZero);
     public static final Pose2d kRedReefCenter = new Pose2d(13, 4, Rotation2d.kZero);
 
-    public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(4), -0.2);
-    public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(4), 0.2);//Should be the same but with -y
+    public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), -0.2);
+    public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), 0.2);//Should be the same but with -y
 
     public static final TargetPose kRedCoralA1Pose = new TargetPose(new Pose2d(15.878, 0.773, new Rotation2d(Units.degreesToRadians(125))), true);
     public static final TargetPose kRedCoralA2Pose = new TargetPose(new Pose2d(16.858, 1.382, new Rotation2d(Units.degreesToRadians(125))), true);
