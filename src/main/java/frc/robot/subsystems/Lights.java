@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
+import frc.robot.Constants.LightsConstants;
 import frc.robot.RobotMap;
 import frc.robot.testingdashboard.SubsystemBase;
 
@@ -29,6 +30,19 @@ public class Lights extends SubsystemBase {
   private Timer m_timer;
 
   private Random m_random;
+
+  class LightRange {
+    int start;
+    int end;
+
+    public LightRange(int start, int end) {this.start = start; this.end = end;}
+  }
+
+  public enum LightSection {
+    ALL,
+    ACTIVE,
+    STATUS
+  };
 
   /** Creates a new lights. */
   public Lights() {
@@ -51,14 +65,14 @@ public class Lights extends SubsystemBase {
     m_timer.reset();
     
     m_random = new Random();
-    m_flashIndexQueue = new int[Constants.LightsConstants.kNumFlashes];
-    m_flashTimerQueue = new double[Constants.LightsConstants.kNumFlashes];
-    m_flashStartQueue = new double[Constants.LightsConstants.kNumFlashes];
-    for (int i = 0; i < Constants.LightsConstants.kNumFlashes; i++) {
-      m_flashIndexQueue[i] = m_random.nextInt(Constants.LightsConstants.LED_LENGTH);
+    m_flashIndexQueue = new int[LightsConstants.kNumFlashes];
+    m_flashTimerQueue = new double[LightsConstants.kNumFlashes];
+    m_flashStartQueue = new double[LightsConstants.kNumFlashes];
+    for (int i = 0; i < LightsConstants.kNumFlashes; i++) {
+      m_flashIndexQueue[i] = m_random.nextInt(LightsConstants.LED_LENGTH);
       m_flashTimerQueue[i] = m_timer.get() + m_random.nextDouble(
-        Constants.LightsConstants.kFlashDelayMinimum,
-        Constants.LightsConstants.kFlashDelayMaximum
+        LightsConstants.kFlashDelayMinimum,
+        LightsConstants.kFlashDelayMaximum
       );
       m_flashStartQueue[i] = m_timer.get();
     }
@@ -71,19 +85,41 @@ public class Lights extends SubsystemBase {
     return m_lights;
   }
 
+  public LightRange getLightRange(LightSection section) {
+    switch (section) {
+      case ACTIVE: {
+        return new LightRange(
+          LightsConstants.kInversePolarity ? 0 : LightsConstants.kPositionSplitIndex,
+          LightsConstants.kInversePolarity ? LightsConstants.LED_LENGTH-LightsConstants.kPositionSplitIndex : LightsConstants.LED_LENGTH
+        );
+      }
+      case STATUS: {
+        return new LightRange(
+          LightsConstants.kInversePolarity ? LightsConstants.LED_LENGTH-LightsConstants.kPositionSplitIndex : 0,
+          LightsConstants.kInversePolarity ? LightsConstants.LED_LENGTH : LightsConstants.kPositionSplitIndex
+        );
+      }
+      case ALL:
+      default: {
+        return new LightRange(0,Constants.LightsConstants.LED_LENGTH);
+      }
+    }
+  }
+
   public void setData() {
     m_LED.setData(m_LEDBuffer);
   }
 
-  public void enableLights(int hue) {
-    for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
+  public void enableLights(int hue, LightSection section) {
+    LightRange range = getLightRange(section);
+    for (var i = range.start; i < range.end; i++) {
       m_LEDBuffer.setHSV(i, hue, 255, 122);
     }
 
     setData();
   }
 
-  public void makeRainbow() {
+  public void makeRainbow(LightSection section) {
     // Reassign blinks that are past their timer
     for (int i = 0; i < Constants.LightsConstants.kNumFlashes; i++) {
       if (m_timer.get() > m_flashTimerQueue[i]) {
@@ -96,7 +132,8 @@ public class Lights extends SubsystemBase {
       }
     }
     // For every pixel
-    for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
+    LightRange range = getLightRange(section);
+    for (var i = range.start; i < range.end; i++) {
       // Calculate the hue - hue is easier for rainbows because the color
       // shape is a circle so only one value needs to process
       final var hue = (m_rainbowFirstPixelHue + (i * 180 / Constants.LightsConstants.LED_LENGTH)) % 180;
@@ -127,8 +164,9 @@ public class Lights extends SubsystemBase {
     m_rainbowFirstPixelHue %= 180;
   }
 
-  public void cool() {
-    for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
+  public void cool(LightSection section) {
+    LightRange range = getLightRange(section);
+    for (var i = range.start; i < range.end; i++) {
       final var hue = (m_rainbowFirstPixelHue + (i * 130 / Constants.LightsConstants.LED_LENGTH)) % 180;
       m_LEDBuffer.setHSV(i, hue, 255, 128);
     }
@@ -136,9 +174,10 @@ public class Lights extends SubsystemBase {
     m_rainbowFirstPixelHue %= 90;
   }
 
-  public void warm() {
+  public void warm(LightSection section) {
     // For every pixel
-    for (var i = 0; i < m_LEDBuffer.getLength(); i++) {
+    LightRange range = getLightRange(section);
+    for (var i = range.start; i < range.end; i++) {
       // Calculate the hue - hue is easier for rainbows because the color
       // shape is a circle so only one value needs to precess
       final var hue = 170 + (m_rainbowFirstPixelHue + (i * 120 / m_LEDBuffer.getLength())) % 40;
@@ -151,8 +190,9 @@ public class Lights extends SubsystemBase {
     m_rainbowFirstPixelHue %= 60;
   }
 
-  public void moveLights(int hue) {
-    for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
+  public void moveLights(int hue, LightSection section) {
+    LightRange range = getLightRange(section);
+    for (var i = range.start; i < range.end; i++) {
       final var value = (m_firstPixelValue + (i * 255 / Constants.LightsConstants.LED_LENGTH)) % 255;
       m_LEDBuffer.setHSV(i, hue, 255, value);
     }
@@ -162,8 +202,9 @@ public class Lights extends SubsystemBase {
     m_firstPixelValue %= 255;
   }
 
-  public void blinkLights(int hue) {
-    for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
+  public void blinkLights(int hue, LightSection section) {
+    LightRange range = getLightRange(section);
+    for (var i = range.start; i < range.end; i++) {
       m_LEDBuffer.setHSV(i, hue, 255, m_blinkState ? 255 : 0);
     }
     if (m_timer.hasElapsed(Constants.LightsConstants.kBlinkDelay)) {
@@ -171,8 +212,9 @@ public class Lights extends SubsystemBase {
       m_timer.reset();
     }
   }
-  public void disableLights() {
-    for (var i = 0; i < Constants.LightsConstants.LED_LENGTH; i++) {
+  public void disableLights(LightSection section) {
+    LightRange range = getLightRange(section);
+    for (var i = range.start; i < range.end; i++) {
       m_LEDBuffer.setLED(i, Color.kBlack);
     }
 

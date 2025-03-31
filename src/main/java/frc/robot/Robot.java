@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.SysId.RoutineManager;
-import frc.robot.commands.Lights.MakeCool;
 import frc.robot.commands.Lights.MakeRainbow;
 import frc.robot.commands.Lights.MoveLights;
 import frc.robot.subsystems.Vision;

@@ -5,16 +5,23 @@
 package frc.robot.commands.Lights;
 
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Lights.LightSection;
 import frc.robot.testingdashboard.Command;
 
 public class MakeCool extends Command {
   Lights m_lights;
+  LightSection m_section;
   /** Creates a new MakeCool. */
   public MakeCool() {
+    this(LightSection.ALL);
+  }
+
+  public MakeCool(LightSection section) {
     super(Lights.getInstance(), "Basic", "MakeCool");
     m_lights = Lights.getInstance();
     addRequirements(m_lights);
-    // Use addRequirements() here to declare subsystem dependencies.
+
+    m_section = section;
   }
 
   @Override
@@ -29,7 +36,7 @@ public class MakeCool extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_lights.cool();
+    m_lights.cool(m_section);
     m_lights.setData();
   }
 
