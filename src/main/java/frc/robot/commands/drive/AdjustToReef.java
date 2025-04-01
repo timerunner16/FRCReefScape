@@ -22,7 +22,7 @@ public class AdjustToReef extends Command {
   Supplier<TargetPose> m_targetSupplier;
   Drive m_drive;
   Vision m_vision;
-  Elevator m_elevator;
+  //Elevator m_elevator;
   boolean m_gotVisionMeasurement;
 
   double m_shoulderLastTargetAngle;
@@ -32,7 +32,7 @@ public class AdjustToReef extends Command {
     super(Drive.getInstance(), "Drive", "AdjustToReef");
     m_drive = Drive.getInstance();
     m_vision = Vision.getInstance();
-    m_elevator = Elevator.getInstance();
+    //m_elevator = Elevator.getInstance();
     m_poseEstimator = 
       new SwerveDrivePoseEstimator(
         Constants.DriveConstants.m_kinematics, 
@@ -42,6 +42,7 @@ public class AdjustToReef extends Command {
     m_targetSupplier = targetSupplier;
 
     m_DriveToPose = new DriveToPose(m_targetSupplier, m_poseEstimator::getEstimatedPosition);
+    addRequirements(m_drive);
   }
 
   // Called when the command is initially scheduled.
@@ -49,8 +50,8 @@ public class AdjustToReef extends Command {
   public void initialize() {
     System.out.println("im here");
 
-    m_shoulderLastTargetAngle = m_elevator.getShoulderTargetAngle();
-    m_elevator.setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderLowerLimitDegrees);
+    //m_shoulderLastTargetAngle = m_elevator.getShoulderTargetAngle();
+    //m_elevator.setShoulderTargetAngle(Constants.ElevatorConstants.kShoulderWEEEEE);
 
     var visionResult = m_vision.getLatestFromCamera(Constants.VisionConstants.kReefCameraName);
     if(visionResult.isPresent())
@@ -97,7 +98,7 @@ public class AdjustToReef extends Command {
   @Override
   public void end(boolean interrupted) {
     System.out.println("gootbye");
-    m_elevator.setShoulderTargetAngle(m_shoulderLastTargetAngle);
+    //m_elevator.setShoulderTargetAngle(m_shoulderLastTargetAngle);
     m_DriveToPose.end(false);
   }
 
