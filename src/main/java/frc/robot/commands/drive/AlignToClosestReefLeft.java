@@ -21,6 +21,7 @@ public class AlignToClosestReefLeft extends Command {
     super(Drive.getInstance(), "Auto Commands", "AlignToClosestReefLeft");
 
     m_adjustToReef = new AdjustToReef(this::reefLeftPoseSupplier);
+    addRequirements(Drive.getInstance());
   }
 
   private TargetPose reefLeftPoseSupplier() {
@@ -33,17 +34,19 @@ public class AlignToClosestReefLeft extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_adjustToReef.schedule();
+    m_adjustToReef.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_adjustToReef.execute();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_adjustToReef.cancel();
+    m_adjustToReef.end(interrupted);
   }
 
   // Returns true when the command should end.

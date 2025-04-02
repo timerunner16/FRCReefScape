@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.commands.WoS.Consume;
 import frc.robot.commands.funnel.Implode;
 import frc.robot.subsystems.Elevator;
@@ -16,8 +17,7 @@ public class FeedingTime extends Command {
   /** Creates a new FeedingTime. */
   private Elevator m_elevator;
   private WoS m_WoS;
-  private Implode m_implode;
-  private Consume m_consume;
+  private Funnel m_Funnel;
 
   private boolean m_hungry;
   private boolean m_set;
@@ -26,10 +26,9 @@ public class FeedingTime extends Command {
     super(Elevator.getInstance(), "Level", "FeedingTime");
     m_elevator = Elevator.getInstance();
     m_WoS = WoS.getInstance();
-    addRequirements(m_elevator);
+    m_Funnel = Funnel.getInstance();
+    addRequirements(m_elevator, m_Funnel, m_WoS);
 
-    m_implode = new Implode();
-    m_consume = new Consume();
   }
 
   // Called when the command is initially scheduled.
@@ -47,8 +46,8 @@ public class FeedingTime extends Command {
   public void execute() {
     m_hungry = m_elevator.inGoalPosition();
     if (m_hungry && !m_set) {
-      m_implode.schedule();
-      m_consume.schedule();
+      m_Funnel.spinIn(Constants.FunnelConstants.kFunnelSpeed);
+      m_WoS.spinIn(Constants.WoSConstants.kWoSSpeed);
       m_set = true;
     }
   }
@@ -56,8 +55,8 @@ public class FeedingTime extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_implode.cancel();
-    m_consume.cancel();
+    m_Funnel.noSpin(0);
+    m_WoS.noSpin(0);
   }
 
   // Returns true when the command should end.

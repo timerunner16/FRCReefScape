@@ -152,6 +152,7 @@ public final class Constants {
     public static final double kShoulderMotorToShoulderRatio = 40/18.0;
 
     public static final double kShoulderLowerLimitDegrees = -5;
+    public static final double kShoulderWEEEEE = 180;
     public static final double kShoulderUpperLimitDegrees = 290;
 
     public static final double[] kShoulderLevels = {
@@ -424,7 +425,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 65; // amps
+    public static final int kDrivingMotorCurrentLimit = 80; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
 
     //Enables SysID Characterization Mode. !!Should be false during competitions. Can cause the Operator controller to be remapped!!

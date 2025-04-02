@@ -11,13 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom_BottomRight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Level4"
+                  "pathName": "Bottom_Left2"
                 }
               }
             ]
@@ -30,7 +24,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 0.5
                 }
               },
               {
@@ -55,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BottomRight_BottomStationLeft"
+                  "pathName": "Right2_RightStation_Left"
                 }
               },
               {
@@ -71,12 +65,6 @@
           "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.5
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -99,13 +87,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BottomStationLeft_BottomLeft"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Level4"
+                  "pathName": "RightStation_Left_Right4"
                 }
               }
             ]
@@ -118,7 +100,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 0.5
                 }
               },
               {
@@ -143,7 +125,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BottomLeft_BottomStationLeft"
+                  "pathName": "Right4_RightStation_Left"
                 }
               },
               {
@@ -159,12 +141,6 @@
           "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.5
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -184,6 +160,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "two piece",
   "choreoAuto": false
 }
