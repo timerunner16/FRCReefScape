@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.4911100751441881,
-        "y": 7.241352352761757
+        "x": 1.459053002994676,
+        "y": 7.431930734250221
       },
       "prevControl": {
-        "x": 2.4534168840500277,
-        "y": 6.244147686965793
+        "x": 2.4213598119005155,
+        "y": 6.434726068454257
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LeftCoralStation"
+      "linkedName": "new Left Coral Station"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 127.64637689667279
+    "rotation": 125.41615374738178
   },
   "reversed": false,
   "folder": "left side",
