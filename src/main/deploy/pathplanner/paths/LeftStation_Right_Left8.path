@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.459053002994676,
-        "y": 7.431930734250221
+        "x": 1.584604799800355,
+        "y": 7.198954289596274
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1683457074275765,
-        "y": 6.025357524719019
+        "x": 3.2938975042332554,
+        "y": 5.792381080065072
       },
       "isLocked": false,
-      "linkedName": "new Left Coral Station"
+      "linkedName": "LeftCoralStation"
     },
     {
       "anchor": {
@@ -48,7 +48,7 @@
   "folder": "left side",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 125.41615374738178
+    "rotation": 127.64637689667279
   },
   "useDefaultConstraints": true
 }
