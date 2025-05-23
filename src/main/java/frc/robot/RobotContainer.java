@@ -26,6 +26,7 @@ import frc.robot.subsystems.Lights;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.testingdashboard.TestingDashboard;
 import frc.robot.SysId.RoutineManager;
+import frc.robot.commands.FullAutonomous;
 import frc.robot.commands.FeedingTime;
 import frc.robot.commands.Level0;
 import frc.robot.commands.Level1;
@@ -34,6 +35,7 @@ import frc.robot.commands.Level3;
 import frc.robot.commands.Level4;
 import frc.robot.commands.AlgaeIntake.Nibble;
 import frc.robot.commands.AlgaeIntake.Spit;
+import frc.robot.commands.FullAutonomous.ScoreStrategy;
 import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.commands.Lights.MakeRainbow;
 import frc.robot.commands.Lights.MoveLights;
@@ -104,6 +106,7 @@ public class RobotContainer {
     // Build the auto commands and add them to the chooser
     m_autoChooser = AutoBuilder.buildAutoChooser("Middle_twoPiece4");
     m_autoChooser.addOption("BasicestAuto", new BasicestAuto());
+    m_autoChooser.addOption("FullAutonomous", new FullAutonomous(ScoreStrategy.SCORE));
     new TDSendable(Drive.getInstance(), "Auto Commands", "Chooser", m_autoChooser);
     
     // Configure the trigger/button bindings
@@ -134,6 +137,7 @@ public class RobotContainer {
     new YoureUnderArrest();
     new AlignToClosestReefLeft();
     new AlignToClosestReefRight();
+    new FullAutonomous(ScoreStrategy.SCORE);
 
     new ElevatorManualPowerControl();
     new ShoulderPowerControl();

@@ -305,7 +305,7 @@ public final class Constants {
     public static final double kCameraMountAngleYaw = 45;
     
     public static final String kFrontLeftCameraName = "Arducam_OV9782_D";
-    public static final String kFrontRightCameraName = "Arducam_OV2311_A";
+    public static final String kCoralCameraName = "Arducam_OV2311_A";
     public static final String kReefCameraName = "Arducam_OV9782_C";
     public static final String kRearRightCameraName = "Arducam_OV9782_B";
     public static final VisionConfig[] kTwigVisionSystems = {
@@ -328,12 +328,12 @@ public final class Constants {
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right front camera, facing rear right corner
-      new VisionConfig(kFrontRightCameraName,
+      new VisionConfig(kCoralCameraName,
               new Transform3d(new Translation3d(
-                        Units.inchesToMeters(Constants.VisionConstants.kCameraLengthOffset)
-                        , Units.inchesToMeters(-Constants.VisionConstants.kCameraWidthOffset)
-                        , Units.inchesToMeters(Constants.VisionConstants.kCameraHeight)), 
-              new Rotation3d(0, 0, Units.degreesToRadians(-90 + -1 * Constants.VisionConstants.kCameraMountAngleYaw))),
+                        Units.inchesToMeters(-3.5)
+                        , Units.inchesToMeters(-10.5)
+                        , Units.inchesToMeters(34.25)),
+              new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(0))),
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right rear camera, facing rear left
@@ -367,6 +367,9 @@ public final class Constants {
 
     public static final Translation2d kReefLeftScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), -0.2);
     public static final Translation2d kReefRightScoreTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), 0.2);//Should be the same but with -y
+
+    public static final Translation2d kCoralLeftTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), -0.5);
+    public static final Translation2d kCoralRightTrans = new Translation2d((DriveConstants.kWheelBase/2)+Units.inchesToMeters(5.75), 0.5);
 
     public static final TargetPose kRedCoralA1Pose = new TargetPose(new Pose2d(15.878, 0.773, new Rotation2d(Units.degreesToRadians(125))), true);
     public static final TargetPose kRedCoralA2Pose = new TargetPose(new Pose2d(16.858, 1.382, new Rotation2d(Units.degreesToRadians(125))), true);

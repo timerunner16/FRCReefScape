@@ -15,22 +15,22 @@ import frc.robot.testingdashboard.Command;
 import frc.robot.utils.TargetPose;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class AdjustToReef extends Command {
-  PathFindToPose m_PathFindToPose;
+public class AdjustToCoral extends Command {
+  DriveToPose m_DriveToPose;
   SwerveDrivePoseEstimator m_poseEstimator;
   Supplier<TargetPose> m_targetSupplier;
   Drive m_drive;
   Vision m_vision;
-  //Elevator m_elevator;
   boolean m_gotVisionMeasurement;
 
   double m_shoulderLastTargetAngle;
 
-  /** Creates a new AdjustToReef. */
-  public AdjustToReef(Supplier<TargetPose> targetSupplier) {
-    super(Drive.getInstance(), "Drive", "AdjustToReef");
+  /** Creates a new AdjustToCoral. */
+  public AdjustToCoral(Supplier<TargetPose> targetSupplier) {
+    super(Drive.getInstance(), "Drive", "AdjustToCoral");
     m_drive = Drive.getInstance();
     m_vision = Vision.getInstance();
+    
     m_poseEstimator = 
       new SwerveDrivePoseEstimator(
         Constants.DriveConstants.m_kinematics, 
@@ -39,14 +39,14 @@ public class AdjustToReef extends Command {
         m_drive.getPose());
     m_targetSupplier = targetSupplier;
 
-    m_PathFindToPose = new PathFindToPose(m_targetSupplier);
+    m_DriveToPose = new DriveToPose(m_targetSupplier, m_poseEstimator::getEstimatedPosition);
     addRequirements(m_drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    var visionResult = m_vision.getLatestFromCamera(Constants.VisionConstants.kReefCameraName);
+    var visionResult = m_vision.getLatestFromCamera(Constants.VisionConstants.kCoralCameraName);
     if(visionResult.isPresent())
     {
       m_poseEstimator.resetPosition(Rotation2d.fromDegrees(m_drive.getGyroAngle()), m_drive.getModulePositions(), visionResult.get().estimatedPose.toPose2d());
@@ -56,13 +56,13 @@ public class AdjustToReef extends Command {
       m_gotVisionMeasurement = false;
     }
 
-    m_PathFindToPose.initialize();
+    m_DriveToPose.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    var visionResult = m_vision.getLatestFromCamera(Constants.VisionConstants.kReefCameraName);
+    var visionResult = m_vision.getLatestFromCamera(Constants.VisionConstants.kCoralCameraName);
     if(!m_gotVisionMeasurement && visionResult.isPresent()) {
       m_poseEstimator.resetPosition(Rotation2d.fromDegrees(m_drive.getGyroAngle()), m_drive.getModulePositions(), visionResult.get().estimatedPose.toPose2d());
       m_gotVisionMeasurement = true;
@@ -77,18 +77,18 @@ public class AdjustToReef extends Command {
         visionResult.get().stdDevs);
     }
 
-    m_PathFindToPose.execute();
+    m_DriveToPose.execute();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_PathFindToPose.end(false);
+    m_DriveToPose.end(false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_PathFindToPose.isFinished();
+    return m_DriveToPose.isFinished();
   }
 }

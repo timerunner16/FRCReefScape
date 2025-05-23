@@ -45,19 +45,21 @@ public class PathFindToPose extends Command {
   public void initialize() {
     m_currentTarget = m_targetSupplier.get();
 
+    boolean valid = m_currentTarget.getPose() != null;
     TDCurrentTargetX = new TDNumber(m_drive, "Test Outputs", "Current Target X");
-    TDCurrentTargetX.set(m_currentTarget.getPose().getX());
+    if (valid) TDCurrentTargetX.set(m_currentTarget.getPose().getX());
     TDCurrentTargetY = new TDNumber(m_drive, "Test Outputs", "Current Target Y");
-    TDCurrentTargetY.set(m_currentTarget.getPose().getY());
+    if (valid) TDCurrentTargetY.set(m_currentTarget.getPose().getY());
     TDCurrentTargetAngle = new TDNumber(m_drive, "Test Outputs", "Current Target Angle");
-    TDCurrentTargetAngle.set(m_currentTarget.getPose().getRotation().getDegrees());
+    if (valid) TDCurrentTargetAngle.set(m_currentTarget.getPose().getRotation().getDegrees());
     m_blinkLights.schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_currentPathCommand == null || m_currentTarget == null)
+    System.out.println("greetings, cruel world");
+    if (m_currentPathCommand == null && m_currentTarget.getPose() != null)
     {
       Pose2d target = m_currentTarget.getReversedApproach()? 
       new Pose2d(m_currentTarget.getPose().getX(), m_currentTarget.getPose().getY(), m_currentTarget.getPose().getRotation().plus(Rotation2d.k180deg)) 
@@ -70,7 +72,8 @@ public class PathFindToPose extends Command {
                                                         0);
       m_currentPathCommand.initialize();
     }
-    m_currentPathCommand.execute();
+    if (m_currentPathCommand != null) m_currentPathCommand.execute();
+    System.out.println("goodbye, cruel world");
   }
 
   // Called once the command ends or is interrupted.

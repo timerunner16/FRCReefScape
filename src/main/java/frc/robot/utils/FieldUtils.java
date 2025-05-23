@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
+import frc.robot.subsystems.GameDataHolder.ReefState;
 
 public class FieldUtils{
     private static FieldUtils m_fieldUtils;
@@ -95,6 +96,16 @@ public class FieldUtils{
         kRight
     }
 
+    public enum CoralStationSide {
+        kLeft,
+        kRight
+    }
+
+    public enum CoralStationOffset {
+        kLeft,
+        kRight
+    }
+
     /**
      * Returns the best scoring postion on the reef based on current robot pose
      * @param currentRobotPose
@@ -118,6 +129,49 @@ public class FieldUtils{
         }
 
         Translation2d scoreTranslation = ((offsetDirection==ReefFaceOffset.kLeft)? 
+                                            Constants.FieldLocationConstants.kReefLeftScoreTrans :
+                                            Constants.FieldLocationConstants.kReefRightScoreTrans);
+        Transform2d scoreTransform = new Transform2d(scoreTranslation, Rotation2d.k180deg);
+        Pose2d scoringPose = faceTagPose.transformBy(scoreTransform);
+
+        return scoringPose;
+    }
+
+    public Pose2d getCoralStationPose(CoralStationSide side, CoralStationOffset offsetDirection) {
+        Pose2d stationPose;
+        switch (side) {
+            default:
+            case kLeft:
+                stationPose = getTagPose(getAllianceAprilTags().leftCoralStation).toPose2d();
+                break;
+            case kRight: 
+                stationPose = getTagPose(getAllianceAprilTags().rightCoralStation).toPose2d();
+                break;
+        }
+
+        Translation2d coralOffsetTranslation = ((offsetDirection==CoralStationOffset.kLeft)?
+                                            Constants.FieldLocationConstants.kCoralLeftTrans :
+                                            Constants.FieldLocationConstants.kCoralRightTrans);
+        Transform2d coralOffsetTransform = new Transform2d(coralOffsetTranslation, Rotation2d.k180deg);
+        Pose2d coralPose = stationPose.transformBy(coralOffsetTransform);
+
+        return coralPose;
+    }
+
+    public Pose2d getPoseFromScorePosition(ReefState reefState, Alliance alliance) {
+        int sextant = reefState.position/2;
+
+        Pose2d faceTagPose = new Pose2d();
+        switch (alliance) {
+            case Blue:
+                faceTagPose = getBlueFaceTag(sextant);
+                break;
+            case Red:
+                faceTagPose = getRedFaceTag(sextant);
+                break;
+        }
+
+        Translation2d scoreTranslation = (reefState.position%2==0?
                                             Constants.FieldLocationConstants.kReefLeftScoreTrans :
                                             Constants.FieldLocationConstants.kReefRightScoreTrans);
         Transform2d scoreTransform = new Transform2d(scoreTranslation, Rotation2d.k180deg);
