@@ -333,7 +333,7 @@ public final class Constants {
                         Units.inchesToMeters(-3.5)
                         , Units.inchesToMeters(-10.5)
                         , Units.inchesToMeters(34.25)),
-              new Rotation3d(0, Units.degreesToRadians(30), Units.degreesToRadians(0))),
+              new Rotation3d(Units.degreesToRadians(180), Units.degreesToRadians(30), Units.degreesToRadians(0))),
                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                        PoseStrategy.LOWEST_AMBIGUITY),
       // Right rear camera, facing rear left
