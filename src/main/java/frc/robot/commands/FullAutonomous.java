@@ -68,6 +68,9 @@ public class FullAutonomous extends Command {
 
   FeedingTime m_feedingTime;
 
+  boolean m_finishedDrive = false;
+  boolean m_finishedElevator = false;
+
   /** Creates a new FullAutonomous. */
   public FullAutonomous() {
     this(ScoreStrategy.SCORE);
@@ -169,45 +172,45 @@ public class FullAutonomous extends Command {
           m_consume.cancel();
           m_driveToPose.cancel();
           m_autoState = AutoState.ALIGNING_TO_REEF;
+          m_finishedElevator = false;
+          m_finishedDrive = false;
         }
 
         break;
       }
 
       case ALIGNING_TO_REEF: {
-        boolean finished_drive = false;
-        boolean finished_elevator = false;
         switch (m_targetState.level) {
           case 1: {
             m_level1.schedule();
-            if (m_level1.isFinished()) finished_elevator = true;
+            if (m_level1.isFinished()) m_finishedElevator = true;
             break;
           }
           case 2: {
             m_level2.schedule();
-            if (m_level2.isFinished()) finished_elevator = true;
+            if (m_level2.isFinished()) m_finishedElevator = true;
             break;
           }
           case 3: {
             m_level3.schedule();
-            if (m_level3.isFinished()) finished_elevator = true;
+            if (m_level3.isFinished()) m_finishedElevator = true;
             break;
           }
           case 4: {
             m_level4.schedule();
-            if (m_level4.isFinished()) finished_elevator = true;
+            if (m_level4.isFinished()) m_finishedElevator = true;
             break;
           }
         }
         if (m_targetState.position%2==0) {
           m_alignToClosestReefLeft.schedule();
-          if (m_alignToClosestReefLeft.isFinished()) finished_drive = true;
+          if (m_alignToClosestReefLeft.isFinished()) m_finishedDrive = true;
         } else {
           m_alignToClosestReefRight.schedule();
-          if (m_alignToClosestReefRight.isFinished()) finished_drive = true;
+          if (m_alignToClosestReefRight.isFinished()) m_finishedDrive = true;
         }
 
-        if (finished_drive && finished_elevator) {
+        if (m_finishedDrive && m_finishedElevator) {
           m_autoState = AutoState.SCORING;
         }
 
