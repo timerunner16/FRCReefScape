@@ -8,9 +8,11 @@ import frc.robot.testingdashboard.Command;
 import frc.robot.utils.FieldUtils;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.commands.WoS.Consume;
@@ -19,7 +21,7 @@ import frc.robot.commands.drive.AlignToClosestReefLeft;
 import frc.robot.commands.drive.AlignToClosestReefRight;
 import frc.robot.commands.drive.AlignToLeftCoral;
 import frc.robot.commands.drive.AlignToRightCoral;
-import frc.robot.commands.drive.DriveToPose;
+import frc.robot.commands.drive.PathFindToPose;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.GameDataHolder;
 import frc.robot.subsystems.GameDataHolder.ReefState;
@@ -51,7 +53,7 @@ public class FullAutonomous extends Command {
   ScoreStrategy m_scoreStrategy;
   ReefState m_targetState;
   Pose2d m_targetPose;
-  DriveToPose m_driveToPose;
+  PathFindToPose m_driveToPose;
   Consume m_consume;
 
   AlignToClosestReefLeft m_alignToClosestReefLeft;
@@ -71,6 +73,8 @@ public class FullAutonomous extends Command {
   boolean m_finishedDrive = false;
   boolean m_finishedElevator = false;
 
+  Pose2d m_poseAtMoveStart;
+
   /** Creates a new FullAutonomous. */
   public FullAutonomous() {
     this(ScoreStrategy.SCORE);
@@ -88,7 +92,7 @@ public class FullAutonomous extends Command {
     m_gameDataHolder = GameDataHolder.getInstance();
     m_drive = Drive.getInstance();
     m_targetPose = null;
-    m_driveToPose = new DriveToPose(this::GetTargetPose);
+    m_driveToPose = new PathFindToPose(this::GetTargetPose);
 
     m_scoreStrategy = scoreStrategy;
     m_targetState = null;
@@ -120,17 +124,7 @@ public class FullAutonomous extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    /*
-     * GENERAL PLAN:
-     * find optimal coral position based on score strategy and game state
-     * go to reef face
-     * align to closest reef face and move elevator
-     * score
-     * add score to reef structure
-     * go to coral station
-     * align to coral station while intaking
-     * repeat
-     */
+    // Move from the current position (probably start line or coral station) to the closest available reef state according to score strategy
     switch (m_autoState) {
       case MOVING_TO_REEF: {
         int level;
@@ -163,22 +157,40 @@ public class FullAutonomous extends Command {
               m_targetPose = pose;
             }
           }
+          if (m_targetState != null && m_targetPose != null) break;
         }
-
-        m_consume.schedule();
-        m_driveToPose.schedule();
-
-        if (m_driveToPose.isFinished()) {
+        
+        if (m_targetState == null || m_targetPose == null) {
+          System.out.println("Finished MOVING_TO_REEF (no open reef state); cancelling");
           m_consume.cancel();
           m_driveToPose.cancel();
           m_autoState = AutoState.ALIGNING_TO_REEF;
           m_finishedElevator = false;
           m_finishedDrive = false;
+          return;
+        }
+        
+        m_gameDataHolder.SetDisplayLevel(m_targetState.level);
+
+        m_consume.schedule();
+        m_driveToPose.schedule();
+
+        if ((Math.abs(m_drive.getMeasuredSpeeds().vxMetersPerSecond)+Math.abs(m_drive.getMeasuredSpeeds().vyMetersPerSecond)) < 0.05 &&
+            m_drive.getPose().getTranslation().getDistance(m_targetPose.getTranslation()) < 0.05) {
+          System.out.println("Finished MOVING_TO_REEF; advancing to ALIGNING_TO_REEF");
+          m_consume.cancel();
+          m_driveToPose.cancel();
+          m_autoState = AutoState.ALIGNING_TO_REEF;
+          m_finishedElevator = false;
+          m_finishedDrive = false;
+          
+          m_poseAtMoveStart = m_drive.getPose();
         }
 
         break;
       }
 
+      // Move more accurately to the correct position at the reef structre
       case ALIGNING_TO_REEF: {
         switch (m_targetState.level) {
           case 1: {
@@ -211,18 +223,23 @@ public class FullAutonomous extends Command {
         }
 
         if (m_finishedDrive && m_finishedElevator) {
+          System.out.println("Finished ALIGNING_TO_REEF; advancing to SCORING");
           m_autoState = AutoState.SCORING;
+
+          m_poseAtMoveStart = m_drive.getPose();
         }
 
         break;
       }
 
+      // Expel at the current state for a short time
       case SCORING: {
         m_timer.start();
         
         m_expel.schedule();
 
         if (m_timer.get() > 0.5) {
+          System.out.println("Finished SCORING; advancing to MOVING_TO_CORAL");
           m_gameDataHolder.SetState(m_targetState.level, m_targetState.position, true);
 
           m_expel.cancel();
@@ -231,29 +248,64 @@ public class FullAutonomous extends Command {
           m_timer.reset();
 
           m_autoState = AutoState.MOVING_TO_CORAL;
+
+          m_poseAtMoveStart = m_drive.getPose();
         }
         break;
       }
 
+      // Move from the reef structure to the coral station; inaccurate movement
       case MOVING_TO_CORAL: {
-        m_targetPose = m_fieldUtils.getCoralStationPose(CoralStationSide.kLeft, CoralStationOffset.kRight);
+        double xOffsetBound = 14.0;
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        if(alliance.isPresent()){
+            if(alliance.get() == DriverStation.Alliance.Red){
+                xOffsetBound = 14.0;
+            } else if(alliance.get() == DriverStation.Alliance.Blue) {
+                xOffsetBound = 3.5;
+            }
+        }
+        CoralStationSide side;
+        CoralStationOffset offset;
+        if (m_poseAtMoveStart.getY() < 4.0) {
+          side = CoralStationSide.kLeft;
+          if (m_poseAtMoveStart.getX() < xOffsetBound) offset = CoralStationOffset.kRight;
+          else offset = CoralStationOffset.kLeft;
+        } else {
+          side = CoralStationSide.kRight;
+          if (m_poseAtMoveStart.getX() < xOffsetBound) offset = CoralStationOffset.kLeft;
+          else offset = CoralStationOffset.kRight;
+        }
+        m_targetPose = m_fieldUtils.getCoralStationPose(side, offset);
         m_driveToPose.schedule();
 
-        if (m_driveToPose.isFinished()) {
+        if ((Math.abs(m_drive.getMeasuredSpeeds().vxMetersPerSecond)+Math.abs(m_drive.getMeasuredSpeeds().vyMetersPerSecond)) < 0.05 &&
+            m_drive.getPose().getTranslation().getDistance(m_targetPose.getTranslation()) < 0.05) {
+          System.out.println("Finished MOVING_TO_CORAL; advancing to ALIGNING_TO_CORAL");
           m_driveToPose.cancel();
           m_autoState = AutoState.ALIGNING_TO_CORAL;
+          m_timer.reset();
+          m_timer.start();
+          
+          m_poseAtMoveStart = m_drive.getPose();
         }
         break;
-      }
+      } 
       
+      // Move more accurately to the correct position at the coral station while intaking until full
       case ALIGNING_TO_CORAL: {
-        m_alignToLeftCoral.schedule();
+        //m_alignToLeftCoral.schedule();
         m_feedingTime.schedule();
 
-        if (m_feedingTime.isFinished()) {
+        if (m_feedingTime.isFinished() || (m_timer.get() > 1.0 && RobotBase.isSimulation())) {
+          System.out.println("Finished ALIGNING_TO_CORAL; cycle complete; advancing to MOVING_TO_REEF");
           m_alignToLeftCoral.cancel();
           m_feedingTime.cancel();
           m_autoState = AutoState.MOVING_TO_REEF;
+          m_timer.stop();
+          m_timer.reset();
+          
+          m_poseAtMoveStart = m_drive.getPose();
         }
         break;
       }

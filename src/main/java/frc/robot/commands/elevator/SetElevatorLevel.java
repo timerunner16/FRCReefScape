@@ -5,6 +5,7 @@
 package frc.robot.commands.elevator;
 
 import frc.robot.testingdashboard.Command;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants;
 import frc.robot.commands.Lights.BlinkLights;
 import frc.robot.Constants;
@@ -67,6 +68,6 @@ public class SetElevatorLevel extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_finished;
+    return m_finished || RobotBase.isSimulation();
   }
 }

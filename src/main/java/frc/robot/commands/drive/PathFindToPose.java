@@ -58,7 +58,7 @@ public class PathFindToPose extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("greetings, cruel world");
+    //System.out.println(m_currentPathCommand == null);
     if (m_currentPathCommand == null && m_currentTarget.getPose() != null)
     {
       Pose2d target = m_currentTarget.getReversedApproach()? 
@@ -73,7 +73,6 @@ public class PathFindToPose extends Command {
       m_currentPathCommand.initialize();
     }
     if (m_currentPathCommand != null) m_currentPathCommand.execute();
-    System.out.println("goodbye, cruel world");
   }
 
   // Called once the command ends or is interrupted.

@@ -109,6 +109,7 @@ public class RobotMap {
   //[U]ser Input
 	public static int U_DRIVER_XBOX_CONTROLLER = 0;
 	public static int U_OPERATOR_XBOX_CONTROLLER = 1;
+	public static int U_REEF_CONTROLLER = 2;
 
   //[V]ision
   public static boolean V_ENABLED = true;

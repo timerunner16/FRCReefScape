@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.GameDataHolder;
 import frc.robot.subsystems.WoS;
 import frc.robot.commands.drive.AlignToClosestReefLeft;
 import frc.robot.commands.drive.AlignToClosestReefRight;
@@ -59,6 +61,7 @@ public class OI {
 
   private static XboxController m_DriverXboxController;
   private static XboxController m_OperatorXboxController;
+  private static GenericHID m_ReefController;
 
   private SwerveDriveInputs m_driveInputs;
 
@@ -78,6 +81,7 @@ public class OI {
     // TODO: Tune deadband
     m_DriverXboxController = new XboxController(RobotMap.U_DRIVER_XBOX_CONTROLLER);
     m_OperatorXboxController = new XboxController(RobotMap.U_OPERATOR_XBOX_CONTROLLER);
+    m_ReefController = new GenericHID(RobotMap.U_REEF_CONTROLLER);
 
     // Set up drive translation and rotation inputs
     XboxController driveController = m_DriverXboxController;
@@ -123,6 +127,20 @@ public class OI {
     new Trigger(m_OperatorXboxController.povDown(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new SetElevatorAlgaeRemoveLow());
     new Trigger(m_OperatorXboxController.povLeft(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new ClimberIn());
     new Trigger(m_OperatorXboxController.povRight(CommandScheduler.getInstance().getDefaultButtonLoop())).whileTrue(new ClimberOut());
+
+    //Reef Controller (AAAUUGGHHGH)
+    new JoystickButton(m_ReefController, 1).onTrue(
+      GameDataHolder.getInstance().SetDisplayLevel1());
+    new JoystickButton(m_ReefController, 2).onTrue(
+      GameDataHolder.getInstance().SetDisplayLevel2());
+    new JoystickButton(m_ReefController, 3).onTrue(
+      GameDataHolder.getInstance().SetDisplayLevel3());
+    new JoystickButton(m_ReefController, 4).onTrue(
+      GameDataHolder.getInstance().SetDisplayLevel4());
+    for (int i = 0; i < 12; i++) {
+      new JoystickButton(m_ReefController, i+5).onTrue(
+        GameDataHolder.getInstance().SetStateCommand(i));
+    }
   };
   
 
@@ -136,6 +154,14 @@ public class OI {
 
   public XboxController getOperatorXboxController() {
     return m_OperatorXboxController;
+  }
+
+  /**
+   * Returns the reef state controller
+   * @return the Controller
+   */
+  public GenericHID getReefController() {
+    return m_ReefController;
   }
 
   public SwerveDriveInputs getDriveInputs() {
