@@ -100,43 +100,46 @@ public class GameDataHolder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_displayLevel = (int)Math.round(m_TDdisplayLevel.get());
-    if (m_displayLevel < 1) m_displayLevel = 1;
-    if (m_displayLevel > 4) m_displayLevel = 4;
-    for (int i = 0; i < 12; i++) {
-      if (GetState((int)m_displayLevel, i).filled) {
-        boolean flipX = false;
-        boolean flipY = false;
-        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if(alliance.isPresent()){
-            if(alliance.get() == DriverStation.Alliance.Red){
-                flipX = true;
-                flipY = false;
-            } else if(alliance.get() == DriverStation.Alliance.Blue) {
-                flipX = false;
-                flipY = true;
-            }
+    for (int i = 1; i <= 4; i++) {
+      for (int j = 0; j < 12; j++) {
+        if (GetState(i, j).filled) {
+          boolean flipX = false;
+          boolean flipY = false;
+          Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+          if(alliance.isPresent()){
+              if(alliance.get() == DriverStation.Alliance.Red){
+                  flipX = true;
+                  flipY = false;
+              } else if(alliance.get() == DriverStation.Alliance.Blue) {
+                  flipX = false;
+                  flipY = true;
+              }
+          }
+          double a = Math.toRadians(((j/2)/6.0)*360.0-90.0);
+          Translation2d trans = new Translation2d(3,0)
+            .rotateBy(new Rotation2d(a))
+            .plus(new Translation2d(0,j%2==0?-2./3.:2./3.).rotateBy(new Rotation2d(a)));
+          trans = new Translation2d(trans.getX()+6, -trans.getY()+6);
+          Pose2d pose = new Pose2d(
+            trans,
+            new Rotation2d(Math.PI-a)
+          );
+          if (flipX) pose = new Pose2d(12.0-pose.getX(), pose.getY(), Rotation2d.fromRadians(Math.PI-pose.getRotation().getRadians()));
+          if (flipY) pose = new Pose2d(pose.getX(), 12.0-pose.getY(), Rotation2d.fromRadians(-pose.getRotation().getRadians()));
+          pose = new Pose2d(pose.getX(), pose.getY()+(i-1)*12.0, pose.getRotation());
+          m_stateField.getObject(String.valueOf(i*12+j)).setPose(pose);
+        } else {
+          m_stateField.getObject(String.valueOf(i*12+j)).setPose(
+            new Pose2d(new Translation2d(-10, 0), Rotation2d.kZero));
         }
-        double a = Math.toRadians(((i/2)/6.0)*360.0-90.0);
-        Translation2d trans = new Translation2d(3,0)
-          .rotateBy(new Rotation2d(a))
-          .plus(new Translation2d(0,i%2==0?-2./3.:2./3.).rotateBy(new Rotation2d(a)));
-        trans = new Translation2d(trans.getX()+6, -trans.getY()+6);
-        Pose2d pose = new Pose2d(
-          trans,
-          new Rotation2d(Math.PI-a)
-        );
-        if (flipX) pose = new Pose2d(12.0-pose.getX(), pose.getY(), Rotation2d.fromRadians(Math.PI-pose.getRotation().getRadians()));
-        if (flipY) pose = new Pose2d(pose.getX(), 12.0-pose.getY(), Rotation2d.fromRadians(-pose.getRotation().getRadians()));
-        m_stateField.getObject(String.valueOf(i)).setPose(pose);
-      } else {
-        m_stateField.getObject(String.valueOf(i)).setPose(
-          new Pose2d(new Translation2d(-10, 0), Rotation2d.kZero));
       }
     }
 
+    m_displayLevel = (int)Math.round(m_TDdisplayLevel.get());
+    if (m_displayLevel < 1) m_displayLevel = 1;
+    if (m_displayLevel > 4) m_displayLevel = 4;
     Pose2d levelPose = new Pose2d(
-      new Translation2d(1, m_displayLevel),
+      new Translation2d(1, (m_displayLevel-1)*12+6),
       Rotation2d.kZero
     );
     m_stateField.getObject("Display Level").setPose(levelPose);
