@@ -152,7 +152,7 @@ public class FieldUtils{
         Translation2d coralOffsetTranslation = ((offsetDirection==CoralStationOffset.kLeft)?
                                             Constants.FieldLocationConstants.kCoralLeftTrans :
                                             Constants.FieldLocationConstants.kCoralRightTrans);
-        Transform2d coralOffsetTransform = new Transform2d(coralOffsetTranslation, Rotation2d.k180deg);
+        Transform2d coralOffsetTransform = new Transform2d(coralOffsetTranslation, Rotation2d.kZero);
         Pose2d coralPose = stationPose.transformBy(coralOffsetTransform);
 
         return coralPose;
